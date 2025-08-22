@@ -1,0 +1,28 @@
+html {
+  font-size: 16px;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 右上角通知样式 */
+.t-notification {
+  padding: 0.5rem 1rem !important;
+}
+
+.t-notification__title {
+  font-size: 1rem !important;
+}
+
+.t-notification__content {
+  font-size: 0.8rem !important;
+}
+
+.t-notification__icon {
+  font-size: 1rem !important;
+}

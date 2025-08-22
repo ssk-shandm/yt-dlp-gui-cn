@@ -1,0 +1,8 @@
+/node_modules
+/frontend/node_modules
+/frontend/dist
+/bin
+__pycache__/
+*.pyc
+.vscode/
+.idea/
