@@ -84,9 +84,9 @@
 
 4.  **执行打包命令**: 在项目根目录运行：
     ```bash
-    pyinstaller --noconfirm --onefile --windowed --name "yt-dlp-gui-cn" ^
-    --add-data "frontend/dist;frontend/dist" ^
-    --add-data "bin;bin" ^
+    pyinstaller --noconfirm --onefile --windowed --name "yt-dlp-gui-cn" `
+    --add-data "frontend/dist;frontend/dist" `
+    --add-data "bin;bin" `
     main.py
     ```
 
