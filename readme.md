@@ -84,10 +84,7 @@
 
 4.  **执行打包命令**: 在项目根目录运行：
     ```bash
-    pyinstaller --noconfirm --onefile --windowed --name "yt-dlp-gui-cn" `
-    --add-data "frontend/dist;frontend/dist" `
-    --add-data "bin;bin" `
-    main.py
+    pyinstaller --noconfirm --onefile --windowed --name "yt-dlp-gui-cn" --add-data "frontend/dist;frontend/dist" --add-data "bin;bin" main.py
     ```
 
 5.  **找到你的 EXE 文件**: 可执行文件位于 `dist/yt-dlp-gui-cn.exe`。

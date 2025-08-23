@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 .vscode/
 .idea/
+icon.ico
+build/
+dist/
+yt-dlp-gui-cn.spec
