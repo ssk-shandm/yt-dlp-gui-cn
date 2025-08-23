@@ -1,33 +1,17 @@
 import sys
 import os
 
-def is_frozen():
-    return getattr(sys, 'frozen', False)
+if getattr(sys, "frozen", False) and sys.stdout is None:
 
-if is_frozen() and sys.stdout is None:
-    log_dir = os.path.join(os.path.expanduser("~"), "yt-dlp-gui-cn-logs")
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
-    log_file_path = os.path.join(log_dir, "app_run.log")
-
-    class StreamWriter:
-        def __init__(self, stream, log_file):
-            self.stream = stream
-            self.log_file = log_file
-
-        def write(self, data):
-            with open(self.log_file, 'a', encoding='utf-8') as f:
-                f.write(data)
-            if self.stream:
-                self.stream.write(data)
+    class DevNull:
+        def write(self, msg):
+            pass
 
         def flush(self):
-            if self.stream:
-                self.stream.flush()
+            pass
 
-    # 重定向
-    sys.stdout = open(log_file_path, 'w', encoding='utf-8')
-    sys.stderr = open(log_file_path, 'w', encoding='utf-8')
+    sys.stdout = DevNull()
+    sys.stderr = DevNull()
 
 import eel
 import subprocess
@@ -89,6 +73,7 @@ def analyze_url(url):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             check=True,
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
         print("完整指令:", result)
         if not result.stdout:
@@ -211,6 +196,7 @@ def run_ytdlp(url, retry):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
