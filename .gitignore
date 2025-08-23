@@ -10,3 +10,4 @@ icon.ico
 build/
 dist/
 yt-dlp-gui-cn.spec
+chrome-portable/

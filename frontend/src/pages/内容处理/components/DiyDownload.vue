@@ -47,7 +47,7 @@ import { storeToRefs } from 'pinia'
 import DiySelect from '@/components/TxSelect.vue'
 import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
-import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin';
+import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 import { useUrlStore } from '@/stores/urlStore'
 import { useFormatStore } from '@/stores/formatStore'
 
@@ -107,7 +107,7 @@ watch(audioQualityOptions, (newOptions) => {
 })
 
 // 更新下载函数
-const handleDownload = async () => {
+const handleDownload = () => {
   if (!urlStore.currentUrl) {
     NotificationPlugin.warning({ title: '操作提示', content: '你小子,又忘了分析了吧' })
     return
@@ -118,30 +118,51 @@ const handleDownload = async () => {
     return
   }
 
-  let loadingMsg = null;
-  try {
-    loadingMsg = NotificationPlugin.info({ title: '系统提示', content: 'DIY中...', duration: 0 })
-    const result = await window.eel.download_diy_format(
-      urlStore.currentUrl,
-      selectedVideoId.value,
-      selectedAudioId.value,
-      selectedContainerFormat.value,
-    )
-
-    NotificationPlugin.close(loadingMsg)
-    if (result.status === 'success') {
-      NotificationPlugin.success({ title: '下载成功', content: result.message })
-    } else {
-      NotificationPlugin.error({ title: '下载失败', content: result.message })
-    }
-  } catch (e) {
-    if (loadingMsg) {
-        NotificationPlugin.close(loadingMsg)
-    }
-    NotificationPlugin.error({ title: '严重错误', content: '错误' })
-    console.error(e)
-  }
+  NotificationPlugin.info({ title: '系统提示', content: 'DIY 合成下载任务已开始...', duration: 5000 })
+  window.eel.download_diy_format(
+    urlStore.currentUrl,
+    selectedVideoId.value,
+    selectedAudioId.value,
+    selectedContainerFormat.value,
+  )
 }
+
+// // 更新下载函数
+// const handleDownload = async () => {
+//   if (!urlStore.currentUrl) {
+//     NotificationPlugin.warning({ title: '操作提示', content: '你小子,又忘了分析了吧' })
+//     return
+//   }
+//   // 校验
+//   if (!selectedVideoId.value || !selectedAudioId.value) {
+//     NotificationPlugin.warning({ title: '操作提示', content: '选好规格!' })
+//     return
+//   }
+
+//   let loadingMsg = null;
+//   try {
+//     loadingMsg = NotificationPlugin.info({ title: '系统提示', content: 'DIY中...', duration: 0 })
+//     const result = await window.eel.download_diy_format(
+//       urlStore.currentUrl,
+//       selectedVideoId.value,
+//       selectedAudioId.value,
+//       selectedContainerFormat.value,
+//     )
+
+//     NotificationPlugin.close(loadingMsg)
+//     if (result.status === 'success') {
+//       NotificationPlugin.success({ title: '下载成功', content: result.message })
+//     } else {
+//       NotificationPlugin.error({ title: '下载失败', content: result.message })
+//     }
+//   } catch (e) {
+//     if (loadingMsg) {
+//         NotificationPlugin.close(loadingMsg)
+//     }
+//     NotificationPlugin.error({ title: '严重错误', content: '错误' })
+//     console.error(e)
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>

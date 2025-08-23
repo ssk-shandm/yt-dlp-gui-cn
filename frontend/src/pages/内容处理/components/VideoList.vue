@@ -16,7 +16,7 @@
         resizable
       >
       </t-table>
-  </div>
+    </div>
   </BOX>
 </template>
 
@@ -36,7 +36,7 @@ const { formats, isLoading } = storeToRefs(formatStore)
 // 定义表头
 const columns: BaseTableProps['columns'] = [
   { colKey: 'id', title: 'ID', width: '7vw' },
-  { colKey: 'ext', title: 'EXT' ,width: '6vw'},
+  { colKey: 'ext', title: 'EXT', width: '6vw' },
   { colKey: 'resolution', title: '分辨率' },
   { colKey: 'fps', title: 'FPS' },
   { colKey: 'vcodec', title: '视频编码', ellipsis: true },
@@ -65,7 +65,7 @@ const columns: BaseTableProps['columns'] = [
 ]
 
 // 下载逻辑
-const downloadFormat = async (formatId: string) => {
+const downloadFormat = (formatId: string) => {
   if (!urlStore.analyzedUrl) {
     NotificationPlugin.warning({ title: '操作提示', content: '链接未分析！' })
     return
@@ -76,25 +76,41 @@ const downloadFormat = async (formatId: string) => {
     return
   }
 
-  // 下载
-  let loadingMsg = null
-  try {
-    loadingMsg = NotificationPlugin.info({ title: '系统提示', content: `下载中...`, duration: 0 })
-    const result = await window.eel.download_specific_format(urlStore.analyzedUrl, formatId)
-    NotificationPlugin.close(loadingMsg)
-    if (result.status === 'success') {
-      NotificationPlugin.success({ title: '下载成功', content: result.message })
-    } else {
-      NotificationPlugin.error({ title: '下载失败', content: result.message })
-    }
-  } catch (e) {
-    if (loadingMsg) {
-      NotificationPlugin.close(loadingMsg)
-    }
-    NotificationPlugin.error({ title: '严重错误', content: 'error' })
-    console.error(e)
-  }
+  NotificationPlugin.info({ title: '系统提示', content: `ID: ${formatId} 的下载任务已开始...`, duration: 5000 })
+  window.eel.download_specific_format(urlStore.analyzedUrl, formatId)
 }
+
+// // 下载逻辑
+// const downloadFormat = async (formatId: string) => {
+//   if (!urlStore.analyzedUrl) {
+//     NotificationPlugin.warning({ title: '操作提示', content: '链接未分析！' })
+//     return
+//   }
+//   // 更新防御
+//   if (!formatId) {
+//     NotificationPlugin.error({ title: '操作失败', content: '无效的格式ID！' })
+//     return
+//   }
+
+//   // 下载
+//   let loadingMsg = null
+//   try {
+//     loadingMsg = NotificationPlugin.info({ title: '系统提示', content: `下载中...`, duration: 0 })
+//     const result = await window.eel.download_specific_format(urlStore.analyzedUrl, formatId)
+//     NotificationPlugin.close(loadingMsg)
+//     if (result.status === 'success') {
+//       NotificationPlugin.success({ title: '下载成功', content: result.message || '下载成功。'})
+//     } else {
+//       NotificationPlugin.error({ title: '下载失败', content: result.message || '下载失败，后端错误。'})
+//     }
+//   } catch (e) {
+//     if (loadingMsg) {
+//       NotificationPlugin.close(loadingMsg)
+//     }
+//     NotificationPlugin.error({ title: '严重错误', content: 'error' })
+//     console.error(e)
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>

@@ -4,6 +4,7 @@ import router from './router'
 import ArcoVue from '@arco-design/web-vue'
 import TDesign from 'tdesign-vue-next'
 import App from './App.vue'
+import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 
 import { useUrlStore } from './stores/urlStore'
 import { useSettingsStore } from './stores/settingsStore'
@@ -59,6 +60,16 @@ function connectToEel() {
       formatStore.setFormats(formats)
     }
     window.eel.expose(receive_format_list, 'receive_format_list')
+
+    // function 6 - 处理下载结果
+    function handle_download_result(result: { status: string; message: string }) {
+      if (result && result.status === 'success') {
+        NotificationPlugin.success({ title: '下载成功', content: result.message || '下载完成！' });
+      } else {
+        NotificationPlugin.error({ title: '下载失败', content: result.message || '下载失败，后端错误。' });
+      }
+    }
+    window.eel.expose(handle_download_result, 'handle_download_result');
 
     window.eel.frontend_is_ready()
   } else {

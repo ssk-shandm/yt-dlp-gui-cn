@@ -1,18 +1,3 @@
-import sys
-import os
-
-if getattr(sys, "frozen", False) and sys.stdout is None:
-
-    class DevNull:
-        def write(self, msg):
-            pass
-
-        def flush(self):
-            pass
-
-    sys.stdout = DevNull()
-    sys.stderr = DevNull()
-
 import eel
 import subprocess
 import locale
@@ -22,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 import json
 import sys
+import threading
 
 eel.init("./frontend/dist")
 
@@ -73,7 +59,6 @@ def analyze_url(url):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             check=True,
-            creationflags=subprocess.CREATE_NO_WINDOW
         )
         print("完整指令:", result)
         if not result.stdout:
@@ -171,8 +156,10 @@ def analyze_url(url):
         eel.receive_format_list([])
 
 
-@eel.expose
-def run_ytdlp(url, retry):
+def run_ytdlp_thread(url, retry):
+    """
+    run_ytdlp 的线程函数
+    """
     try:
         conv = Ansi2HTMLConverter()
         command = [
@@ -188,6 +175,7 @@ def run_ytdlp(url, retry):
         elif retry == "infinite":
             command.extend(["--retries", "infinite"])
         command.append(url)
+
         process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -196,21 +184,43 @@ def run_ytdlp(url, retry):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
-            creationflags=subprocess.CREATE_NO_WINDOW,
         )
+
         for line in iter(process.stdout.readline, ""):
             if not line:
                 break
             eel.update_terminal_output(conv.convert(line, full=False))
             eel.sleep(0.01)
+
         process.wait()
-        eel.update_terminal_output("<br><b>下载任务已完成或出错。</b><br>")
-        return {"status": "success", "message": "快速下载已完成！"}
+
+        if process.returncode == 0:
+            eel.update_terminal_output("<br><b>下载任务已完成。</b><br>")
+            eel.handle_download_result(
+                {"status": "success", "message": "快速下载已完成！"}
+            )
+        else:
+            eel.update_terminal_output(
+                "<br><b style='color:red;'>下载任务出错，请检查终端日志。</b><br>"
+            )
+            eel.handle_download_result(
+                {"status": "error", "message": "下载失败，请检查终端输出。"}
+            )
+
     except Exception as e:
-        eel.update_terminal_output(
-            f"<br><b style='color:red;'>执行下载时出错: {e}</b><br>"
-        )
-        return {"status": "error", "message": f"下载时发生错误: {e}"}
+        error_message = f"下载时发生错误: {e}"
+        eel.update_terminal_output(f"<br><b style='color:red;'>{error_message}</b><br>")
+        eel.handle_download_result({"status": "error", "message": error_message})
+
+
+@eel.expose
+def run_ytdlp(url, retry):
+    """
+    启动一个新线程来处理下载。
+    """
+    # 2. 创建并启动线程
+    thread = threading.Thread(target=run_ytdlp_thread, args=(url, retry))
+    thread.start()
 
 
 @eel.expose
@@ -340,10 +350,9 @@ def download_video_introduction(url):
         )
 
 
-@eel.expose
-def download_specific_subtitle(url, lang_code):
+def download_subtitle_thread(url, lang_code):
     """
-    下载指定的字幕
+    download_specific_subtitle 的线程函数
     """
     try:
         command = [
@@ -356,33 +365,60 @@ def download_specific_subtitle(url, lang_code):
             download_path,
             url,
         ]
-        result = subprocess.run(
+
+        process = subprocess.Popen(
             command,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
             encoding=locale.getpreferredencoding(),
             errors="ignore",
-            check=True,
+            bufsize=1,
         )
-        eel.update_terminal_output(f"<br><b>{lang_code} 字幕下载成功。</b><br>")
-        return {"status": "success", "message": f"{lang_code} 字幕已下载到指定目录。"}
-    except subprocess.CalledProcessError as e:
-        error_message = e.stderr or e.stdout
-        eel.update_terminal_output(
-            f"<br><b style='color:red;'>下载字幕 {lang_code} 失败: {error_message}</b><br>"
-        )
-        return {"status": "error", "message": f"下载失败: {error_message}"}
+        conv = Ansi2HTMLConverter()
+        for line in iter(process.stdout.readline, ""):
+            if not line:
+                break
+            eel.update_terminal_output(conv.convert(line, full=False))
+            eel.sleep(0.01)
+
+        process.wait()
+
+        if process.returncode == 0:
+            eel.update_terminal_output(f"<br><b>{lang_code} 字幕下载成功。</b><br>")
+            eel.handle_download_result(
+                {"status": "success", "message": f"{lang_code} 字幕已下载到指定目录。"}
+            )
+        else:
+            eel.update_terminal_output(
+                f"<br><b style='color:red;'>下载字幕 {lang_code} 失败, 详情请看上方日志。</b><br>"
+            )
+            eel.handle_download_result(
+                {
+                    "status": "error",
+                    "message": f"下载字幕 {lang_code} 失败, 请检查终端输出。",
+                }
+            )
+
     except Exception as e:
         eel.update_terminal_output(
             f"<br><b style='color:red;'>下载字幕 {lang_code} 时发生未知错误: {e}</b><br>"
         )
-        return {"status": "error", "message": f"未知错误: {e}"}
+        eel.handle_download_result({"status": "error", "message": f"未知错误: {e}"})
 
 
 @eel.expose
-def download_specific_format(url, format_id):
+def download_specific_subtitle(url, lang_code):
     """
-    下载指定格式的视频或音频
+    启动一个新线程来下载指定字幕。
+    """
+    thread = threading.Thread(target=download_subtitle_thread, args=(url, lang_code))
+    thread.start()
+
+
+def download_format_thread(url, format_id):
+    """
+    download_specific_format 的线程函数
     """
     try:
         conv = Ansi2HTMLConverter()
@@ -411,18 +447,40 @@ def download_specific_format(url, format_id):
                 break
             eel.update_terminal_output(conv.convert(line, full=False))
             eel.sleep(0.01)
+
         process.wait()
-        eel.update_terminal_output("<br><b>下载任务已完成或出错。</b><br>")
-        return {"status": "success", "message": "下载已完成"}
+
+        if process.returncode == 0:
+            eel.update_terminal_output("<br><b>下载任务已完成。</b><br>")
+            eel.handle_download_result(
+                {"status": "success", "message": "指定格式下载已完成"}
+            )
+        else:
+            eel.update_terminal_output(
+                "<br><b style='color:red;'>下载任务出错，请检查终端日志。</b><br>"
+            )
+            eel.handle_download_result(
+                {"status": "error", "message": "下载错误，请检查终端输出"}
+            )
     except Exception as e:
         eel.update_terminal_output(f"<br><b style='color:red;'>下载出错: {e}</b><br>")
-        return {"status": "error", "message": f"下载错误"}
+        eel.handle_download_result(
+            {"status": "error", "message": f"下载时发生严重错误: {e}"}
+        )
 
 
 @eel.expose
-def download_diy_format(url, video_id, audio_id, container_format):
+def download_specific_format(url, format_id):
     """
-    diy视频和音频质量合成下载
+    启动一个新线程来下载指定格式
+    """
+    thread = threading.Thread(target=download_format_thread, args=(url, format_id))
+    thread.start()
+
+
+def download_diy_format_thread(url, video_id, audio_id, container_format):
+    """
+    download_diy_format 的线程函数
     """
     try:
         conv = Ansi2HTMLConverter()
@@ -454,13 +512,28 @@ def download_diy_format(url, video_id, audio_id, container_format):
             eel.update_terminal_output(conv.convert(line, full=False))
             eel.sleep(0.01)
         process.wait()
-        eel.update_terminal_output("<br><b>DIY下载任务已完成或出错。</b><br>")
-        return {"status": "success", "message": "DIY下载完成！"}
+        if process.returncode == 0:
+            eel.update_terminal_output("<br><b>DIY下载任务已完成。</b><br>")
+            return {"status": "success", "message": "DIY下载完成！"}
+        else:
+            eel.update_terminal_output(
+                "<br><b style='color:red;'>DIY下载任务出错，请检查终端日志。</b><br>"
+            )
+            return {"status": "error", "message": "DIY下载时发生错误"}
     except Exception as e:
         eel.update_terminal_output(
             f"<br><b style='color:red;'>DIY下载时出错: {e}</b><br>"
         )
         return {"status": "error", "message": "DIY下载时发生错误"}
+
+
+@eel.expose
+def download_diy_format(url, video_id, audio_id, container_format):
+    """
+    启动一个新线程来diy视频和音频质量合成下载
+    """
+    thread = threading.Thread(target=download_format_thread, args=(url, format_id))
+    thread.start()
 
 
 try:

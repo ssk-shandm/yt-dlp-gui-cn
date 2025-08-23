@@ -83,29 +83,15 @@ const HA = async () => {
 }
 
 // 快速下载
-const HQD = async () => {
+const HQD = () => {
   if (!urlStore.currentUrl || !urlStore.analyzedUrl || urlStore.currentUrl !== urlStore.analyzedUrl) {
     NotificationPlugin.warning({ title: '操作提示', content: '叫你链接进行分析就是不听！' })
     return
   }
 
-  let loadingNotify = null
-  try {
-    loadingNotify = NotificationPlugin.info({ title: '系统提示', content: '下载中，请稍候...', duration: 0 })
-    const result = await window.eel.run_ytdlp(urlStore.currentUrl, settingsStore.retryTimes)
-    NotificationPlugin.close(loadingNotify)
-    if (result && result.status === 'success') {
-      NotificationPlugin.success({ title: '下载成功', content: result.message || '下载完成！' })
-    } else {
-      NotificationPlugin.error({ title: '下载失败', content: result.message || '下载失败，请检查终端输出。' })
-    }
-  } catch (e) {
-    if (loadingNotify) {
-      NotificationPlugin.close(loadingNotify)
-    }
-    NotificationPlugin.error({ title: '严重错误', content: '通信错误。' })
-    console.error('出现错误:', e)
-  }
+  NotificationPlugin.info({ title: '系统提示', content: '下载任务已开始，请关注终端输出和最终通知。', duration: 5000 })
+  window.eel.run_ytdlp(urlStore.currentUrl, settingsStore.retryTimes)
+
 }
 </script>
 
