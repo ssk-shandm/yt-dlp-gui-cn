@@ -11,6 +11,11 @@ import threading
 
 eel.init("./frontend/dist")
 
+# 打包成 exe 后,用于执行命令的隐藏终端
+creation_flags = 0
+if sys.platform == "win32":
+    creation_flags = subprocess.CREATE_NO_WINDOW
+
 
 def get_bin_directory():
     """
@@ -59,6 +64,7 @@ def analyze_url(url):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             check=True,
+            creationflags=creation_flags,
         )
         print("完整指令:", result)
         if not result.stdout:
@@ -184,6 +190,7 @@ def run_ytdlp_thread(url, retry):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
 
         for line in iter(process.stdout.readline, ""):
@@ -218,7 +225,6 @@ def run_ytdlp(url, retry):
     """
     启动一个新线程来处理下载。
     """
-    # 2. 创建并启动线程
     thread = threading.Thread(target=run_ytdlp_thread, args=(url, retry))
     thread.start()
 
@@ -269,6 +275,7 @@ def download_cover_page(url):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
@@ -300,6 +307,7 @@ def list_all_suppost_website():
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
@@ -336,6 +344,7 @@ def download_video_introduction(url):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
@@ -374,6 +383,7 @@ def download_subtitle_thread(url, lang_code):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         conv = Ansi2HTMLConverter()
         for line in iter(process.stdout.readline, ""):
@@ -441,6 +451,7 @@ def download_format_thread(url, format_id):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
@@ -505,6 +516,7 @@ def download_diy_format_thread(url, video_id, audio_id, container_format):
             encoding=locale.getpreferredencoding(),
             errors="ignore",
             bufsize=1,
+            creationflags=creation_flags,
         )
         for line in iter(process.stdout.readline, ""):
             if not line:
