@@ -511,20 +511,29 @@ def download_diy_format_thread(url, video_id, audio_id, container_format):
                 break
             eel.update_terminal_output(conv.convert(line, full=False))
             eel.sleep(0.01)
+
         process.wait()
+
         if process.returncode == 0:
             eel.update_terminal_output("<br><b>DIY下载任务已完成。</b><br>")
-            return {"status": "success", "message": "DIY下载完成！"}
+            eel.handle_download_result(
+                {"status": "success", "message": "DIY下载完成！"}
+            )
         else:
             eel.update_terminal_output(
                 "<br><b style='color:red;'>DIY下载任务出错，请检查终端日志。</b><br>"
             )
-            return {"status": "error", "message": "DIY下载时发生错误"}
+            eel.handle_download_result(
+                {"status": "error", "message": "DIY下载时发生错误，请检查终端。"}
+            )
+
     except Exception as e:
         eel.update_terminal_output(
             f"<br><b style='color:red;'>DIY下载时出错: {e}</b><br>"
         )
-        return {"status": "error", "message": "DIY下载时发生错误"}
+        eel.handle_download_result(
+            {"status": "error", "message": f"DIY下载时发生严重错误: {e}"}
+        )
 
 
 @eel.expose
@@ -532,7 +541,10 @@ def download_diy_format(url, video_id, audio_id, container_format):
     """
     启动一个新线程来diy视频和音频质量合成下载
     """
-    thread = threading.Thread(target=download_format_thread, args=(url, format_id))
+    thread = threading.Thread(
+        target=download_diy_format_thread,
+        args=(url, video_id, audio_id, container_format),
+    )
     thread.start()
 
 
