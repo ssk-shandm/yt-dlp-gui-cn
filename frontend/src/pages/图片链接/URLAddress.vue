@@ -92,7 +92,7 @@ const HQD = async () => {
   let loadingNotify = null
   try {
     loadingNotify = NotificationPlugin.info({ title: '系统提示', content: '下载中，请稍候...', duration: 0 })
-    const result = await window.eel.run_ytdlp(urlStore.currentUrl, settingsStore.retryTimes)()
+    const result = await window.eel.run_ytdlp(urlStore.currentUrl, settingsStore.retryTimes)
     NotificationPlugin.close(loadingNotify)
     if (result && result.status === 'success') {
       NotificationPlugin.success({ title: '下载成功', content: result.message || '下载完成！' })

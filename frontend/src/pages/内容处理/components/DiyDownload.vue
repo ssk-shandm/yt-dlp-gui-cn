@@ -126,7 +126,7 @@ const handleDownload = async () => {
       selectedVideoId.value,
       selectedAudioId.value,
       selectedContainerFormat.value,
-    )()
+    )
 
     NotificationPlugin.close(loadingMsg)
     if (result.status === 'success') {

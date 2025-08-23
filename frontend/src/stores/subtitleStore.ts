@@ -26,7 +26,7 @@ export const useSubtitleStore = defineStore('subtitle', () => {
     }
     NotificationPlugin.info({ title: '系统提示', content: `正在请求下载 ${langCode} 字幕...` })
 
-    const result = await window.eel.download_specific_subtitle(url, langCode)()
+    const result = await window.eel.download_specific_subtitle(url, langCode)
     if (result.status === 'success') {
       NotificationPlugin.success({ title: '下载成功', content: result.message })
     } else {

@@ -1,3 +1,34 @@
+import sys
+import os
+
+def is_frozen():
+    return getattr(sys, 'frozen', False)
+
+if is_frozen() and sys.stdout is None:
+    log_dir = os.path.join(os.path.expanduser("~"), "yt-dlp-gui-cn-logs")
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_file_path = os.path.join(log_dir, "app_run.log")
+
+    class StreamWriter:
+        def __init__(self, stream, log_file):
+            self.stream = stream
+            self.log_file = log_file
+
+        def write(self, data):
+            with open(self.log_file, 'a', encoding='utf-8') as f:
+                f.write(data)
+            if self.stream:
+                self.stream.write(data)
+
+        def flush(self):
+            if self.stream:
+                self.stream.flush()
+
+    # 重定向
+    sys.stdout = open(log_file_path, 'w', encoding='utf-8')
+    sys.stderr = open(log_file_path, 'w', encoding='utf-8')
+
 import eel
 import subprocess
 import locale

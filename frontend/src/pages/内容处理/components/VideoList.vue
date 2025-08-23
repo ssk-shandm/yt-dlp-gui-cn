@@ -80,7 +80,7 @@ const downloadFormat = async (formatId: string) => {
   let loadingMsg = null
   try {
     loadingMsg = NotificationPlugin.info({ title: '系统提示', content: `下载中...`, duration: 0 })
-    const result = await window.eel.download_specific_format(urlStore.analyzedUrl, formatId)()
+    const result = await window.eel.download_specific_format(urlStore.analyzedUrl, formatId)
     NotificationPlugin.close(loadingMsg)
     if (result.status === 'success') {
       NotificationPlugin.success({ title: '下载成功', content: result.message })
