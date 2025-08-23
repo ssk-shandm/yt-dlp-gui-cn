@@ -5,14 +5,18 @@
   >
     <div class="box-inner">
       <div class="box-inner-inner">
-        <BBB @click="selectPath" style="width: 9vw">下载目录</BBB>
+        <BBB
+          @click="selectPath"
+          style="width: 9vw"
+          >下载目录</BBB
+        >
 
         <!-- 下载次数 -->
         <DiySelect
           v-model="settingsStore.retryTimes"
           :options="timeOptions"
           width="8vw"
-            />
+        />
       </div>
       <div>
         <t-input
@@ -39,7 +43,11 @@
           />
         </div>
       </div>-->
-      <BBB  style="width: 15vw" @click="get_all_supported_sites">列出所有支持的网站</BBB>
+      <BBB
+        style="width: 15vw"
+        @click="get_all_supported_sites"
+        >列出所有支持的网站</BBB
+      >
       <p class="ip-change-tip">下载境外视频请自行使用梯子</p>
     </div>
   </BOX>
@@ -52,6 +60,7 @@ import { ref, watch } from 'vue'
 import BBB from '@/components/DiyButtom.vue'
 import BOX from '@/components/BoxStyle.vue'
 import DiySelect from '@/components/TxSelect.vue'
+import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 
 // 获取实例
 const settingsStore = useSettingsStore()
@@ -63,11 +72,16 @@ const selectPath = () => {
 
 // 下载封面图
 const get_cover_image = () => {
+  if (!urlStore.currentUrl) {
+    NotificationPlugin.warning({ title: '操作提示', content: '请先粘贴并分析链接！' })
+    return
+  }
+  NotificationPlugin.info({ title: '系统提示', content: '已请求获取封面...' })
   window.eel.download_cover_page(urlStore.currentUrl)
 }
-
 // 列出所有支持的网站
 const get_all_supported_sites = () => {
+  NotificationPlugin.info({ title: '系统提示', content: '正在获取列表，请稍后在终端查看...' })
   window.eel.list_all_suppost_website()
 }
 
@@ -148,7 +162,7 @@ watch(
   align-items: center;
 } */
 :deep(.t-input) {
-  font-size:1rem;
+  font-size: 1rem;
 }
 .ip-change-tip {
   display: flex;

@@ -28,6 +28,7 @@ import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
 import { useUrlStore } from '@/stores/urlStore'
 import { useSubtitleStore } from '@/stores/subtitleStore'
+import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 
 interface SubtitleItem {
   language: string
@@ -42,6 +43,7 @@ const { subtitles, isLoading } = storeToRefs(subtitleStore)
 // 下载视频描述或简介
 const download_video_introduction = () => {
   if (urlStore.analyzedUrl) {
+    NotificationPlugin.info({ title: '系统提示', content: '正在下载视频描述...' })
     window.eel.download_video_introduction(urlStore.analyzedUrl)
   }
 }
@@ -57,7 +59,7 @@ const columns: TableProps['columns'] = [
     cell: (_, { row: file }) => {
       return h(
         TButton,
-  {
+        {
           theme: 'primary',
           size: 'small',
           onClick: () => HD(file as SubtitleItem),
