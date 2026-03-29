@@ -1,6 +1,7 @@
 import eel
 import subprocess
 import locale
+import shutil
 from ansi2html import Ansi2HTMLConverter
 import os
 import tkinter as tk
@@ -17,22 +18,42 @@ if sys.platform == "win32":
     creation_flags = subprocess.CREATE_NO_WINDOW
 
 
-def get_bin_directory():
-    """
-    获取包含 ffmpeg.exe 的 bin 目录的路径
-    """
+def get_base_path():
+    """获取应用的基础路径（打包后为临时目录，开发时为当前目录）"""
     if getattr(sys, "frozen", False):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
+        return sys._MEIPASS
+    return os.path.abspath(".")
 
-    bin_path = os.path.join(base_path, "bin")
-    return bin_path
+
+def get_bin_directory():
+    """获取包含 ffmpeg.exe 的 bin 目录的路径"""
+    return os.path.join(get_base_path(), "bin")
+
+
+def get_ytdlp_path():
+    """
+    查找 yt-dlp 可执行文件路径。
+    优先查找 bin 目录，然后查找系统 PATH。
+    """
+    # 1. 检查 bin 目录
+    bin_path = get_bin_directory()
+    for name in ("yt-dlp.exe", "yt-dlp"):
+        candidate = os.path.join(bin_path, name)
+        if os.path.isfile(candidate):
+            return candidate
+
+    # 2. 检查系统 PATH
+    found = shutil.which("yt-dlp")
+    if found:
+        return found
+
+    return None
 
 
 # 启动时就获取路径，并存入全局变量
 # 全局变量
 bin_dir = get_bin_directory()
+ytdlp_path = get_ytdlp_path()
 download_path = os.path.join(os.path.expanduser("~"), "Downloads")  # 默认下载目录
 frontend_ready_flag = False
 
@@ -54,9 +75,14 @@ def analyze_url(url):
     调用前端的函数来更新UI和Store。
     formatStore
     """
+    if not ytdlp_path:
+        eel.update_terminal_output(
+            "<br><b style='color:red;'>错误: 找不到 yt-dlp，请将 yt-dlp.exe 放入 bin 目录或安装到系统 PATH 中。</b><br>"
+        )
+        return
     print(f"开始全面分析 URL: {url}")
     try:
-        command = ["yt-dlp", "--list-subs", "--dump-json", "--no-warnings", url]
+        command = [ytdlp_path, "--list-subs", "--dump-json", "--no-warnings", url]
         result = subprocess.run(
             command,
             capture_output=True,
@@ -169,7 +195,7 @@ def run_ytdlp_thread(url, retry):
     try:
         conv = Ansi2HTMLConverter()
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "--ffmpeg-location",
             bin_dir,
             "-P",
@@ -260,7 +286,7 @@ def download_cover_page(url):
         print(f"下载封面请求, URL: {url}")
         conv = Ansi2HTMLConverter()
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "-P",
             download_path,
             "--write-all-thumbnails",
@@ -298,7 +324,7 @@ def list_all_suppost_website():
     try:
         print(f"罗列支持的网站...")
         conv = Ansi2HTMLConverter()
-        command = ["yt-dlp", "--list-extractors"]
+        command = [ytdlp_path, "--list-extractors"]
         process = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -329,7 +355,7 @@ def download_video_introduction(url):
         print(f"下载视频描述或简介,URL: {url}")
         conv = Ansi2HTMLConverter()
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "--write-description",
             "--skip-download",
             "-P",
@@ -365,7 +391,7 @@ def download_subtitle_thread(url, lang_code):
     """
     try:
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "--write-sub",
             "--sub-langs",
             lang_code,
@@ -433,7 +459,7 @@ def download_format_thread(url, format_id):
     try:
         conv = Ansi2HTMLConverter()
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "--ffmpeg-location",
             bin_dir,
             "-f",
@@ -496,7 +522,7 @@ def download_diy_format_thread(url, video_id, audio_id, container_format):
     try:
         conv = Ansi2HTMLConverter()
         command = [
-            "yt-dlp",
+            ytdlp_path,
             "--ffmpeg-location",
             bin_dir,
             "-f",
@@ -562,6 +588,14 @@ def download_diy_format(url, video_id, audio_id, container_format):
 
 try:
     print("正在启动应用...")
-    eel.start("index.html", mode="edge", size=(1280, 720))
+    if not ytdlp_path:
+        print("警告: 未找到 yt-dlp，部分功能将不可用。请将 yt-dlp.exe 放入 bin 目录或安装到系统 PATH。")
+    # 尝试多种浏览器模式
+    for mode in ("edge", "chrome", "default", None):
+        try:
+            eel.start("index.html", mode=mode, size=(1280, 720))
+            break
+        except EnvironmentError:
+            continue
 except Exception as e:
     print(f"启动或运行 Eel 应用时发生致命错误: {e}")
