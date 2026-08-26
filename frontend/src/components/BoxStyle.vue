@@ -10,8 +10,10 @@
       <span class="title-tag">{{ title }}</span>
     </div>
 
-    <div class="content-wrapper">
-      <slot />
+    <div class="card">
+      <div class="content-wrapper">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -40,29 +42,18 @@ const props = defineProps({
   flex: 1;
   min-width: 0;
   height: v-bind('props.height');
-
-  background-color: var(--container-bg-color);
-  border-radius: 1.25rem;
-  box-shadow:
-    inset 0.0625rem 0.0625rem 0.1875rem rgba(163, 177, 198, 0.6),
-    inset -0.0625rem -0.0625rem 0.1875rem rgba(255, 255, 255, 1);
-  overflow: hidden;
 }
 
 .title-wrapper {
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  padding-left: 1.25rem;
-  background: linear-gradient(90deg, var(--win11-blue) 0%, var(--win11-blue) 30%, transparent 100%);
+  left: 1.25rem;
+  transform: translateY(-40%);
   z-index: 1;
 }
 
 .title-tag {
+  display: inline-block;
   background-color: var(--win11-blue);
   color: white;
   font-size: 0.875rem;
@@ -73,9 +64,22 @@ const props = defineProps({
   white-space: nowrap;
 }
 
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background-color: var(--container-bg-color);
+  border-radius: 1.25rem;
+  box-shadow:
+    inset 0.0625rem 0.0625rem 0.1875rem rgba(163, 177, 198, 0.6),
+    inset -0.0625rem -0.0625rem 0.1875rem rgba(255, 255, 255, 1);
+  overflow: hidden;
+}
+
 .content-wrapper {
   flex: 1;
-  padding: 2rem 0.8rem 0.8rem 0.8rem;
+  padding: 1.375rem 0.8rem 0.8rem 0.8rem;
   overflow: auto;
   min-height: 0;
 }

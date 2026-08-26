@@ -32,7 +32,7 @@
         :data="filteredAndSortedFormats"
         :columns="columns"
         :loading="isLoading"
-        height="35vh"
+        height="100%"
         resizable
       >
       </t-table>
@@ -203,6 +203,7 @@ const downloadFormat = (formatId: string) => {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  min-height: 0;
   gap: 0.75rem;
 }
 
@@ -241,6 +242,7 @@ const downloadFormat = (formatId: string) => {
 .table-container {
   box-sizing: border-box;
   flex-grow: 1;
+  min-height: 0;
   border-radius: 0.625rem;
   overflow: hidden;
   border: 1px solid #e8ebf0;

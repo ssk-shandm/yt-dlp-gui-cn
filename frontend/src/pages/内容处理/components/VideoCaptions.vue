@@ -11,7 +11,7 @@
         :data="subtitles"
         :columns="columns"
         :loading="isLoading"
-        max-height="6rem"
+        height="100%"
         size="small"
       />
     </div>
@@ -76,8 +76,8 @@ const downloadSubtitle = (row: SubtitleItem) => {
 .box-inner {
   display: flex;
   flex-direction: column;
-  height: auto;
-  min-height: 6.5rem;
+  height: 100%;
+  min-height: 0;
   gap: 0.3rem;
 }
 
@@ -90,7 +90,8 @@ const downloadSubtitle = (row: SubtitleItem) => {
 }
 
 .box-inner :deep(.t-table) {
-  flex-grow: 1;
+  flex: 1;
+  min-height: 0;
   border-radius: 0.4rem;
   overflow: hidden;
   border: 1px solid #ebeef5;

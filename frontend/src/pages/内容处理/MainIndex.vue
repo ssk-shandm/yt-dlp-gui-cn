@@ -32,36 +32,43 @@ import VList from '@/pages/内容处理/components/VideoList.vue'
   display: flex;
   flex-direction: row;
   gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: stretch;
+  flex: 3 1 0;
+  min-height: 0;
+  padding-top: 2px;
 }
 
 .top-container > * {
-  flex: 1;
-  min-width: 15rem;
+  min-width: 10rem;
+}
+
+.top-container > *:nth-child(1) {
+  flex: 2;
+}
+
+.top-container > *:nth-child(2) {
+  flex: 5;
+  min-width: 16rem;
+}
+
+.top-container > *:nth-child(3) {
+  flex: 3;
 }
 
 .bottom-container {
-  flex: 1;
+  flex: 7 1 0;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
   min-height: 0;
 }
 
 @media (max-width: 1600px) {
   .top-container > * {
+    min-width: 8rem;
+  }
+
+  .top-container > *:nth-child(2) {
     min-width: 12rem;
-  }
-}
-
-@media (max-width: 1200px) {
-  .top-container {
-    flex-direction: column;
-  }
-
-  .top-container > * {
-    width: 100%;
-    min-width: auto;
   }
 }
 </style>

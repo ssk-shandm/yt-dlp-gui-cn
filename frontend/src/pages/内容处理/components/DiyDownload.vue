@@ -18,6 +18,8 @@
             class="select-sm"
           />
         </div>
+      </div>
+      <div class="select-row">
         <div class="select-item">
           <label class="label-sm">格式</label>
           <DiySelect
@@ -112,18 +114,17 @@ const handleDownload = () => {
 }
 
 .select-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.3rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  align-items: end;
 }
 
 .select-item {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  flex: 1;
-  min-width: 5rem;
+  min-width: 0;
 }
 
 .label-sm {
@@ -146,7 +147,7 @@ const handleDownload = () => {
   padding: 0.25rem 0.5rem !important;
   font-size: 0.8rem !important;
   height: 1.8rem !important;
-  align-self: flex-end;
+  justify-self: start;
 }
 
 .warning-text {

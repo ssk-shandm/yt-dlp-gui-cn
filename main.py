@@ -587,16 +587,32 @@ def download_diy_format(url, video_id, audio_id, container_format):
     thread.start()
 
 
+def get_window_size():
+    """
+    按屏幕分辨率的 75% 计算窗口初始大小
+    """
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        root.destroy()
+        return (int(screen_width * 0.75), int(screen_height * 0.75))
+    except Exception:
+        return (1280, 720)
+
+
 try:
     print("正在启动应用...")
     if not ytdlp_path:
         print("警告: 未找到 yt-dlp，部分功能将不可用。请将 yt-dlp.exe 放入 bin 目录或安装到系统 PATH。")
+    window_size = get_window_size()
     # 尝试多种浏览器模式
     browser_started = False
     for mode in ("edge", "chrome", "default"):
         try:
             print(f"尝试使用 {mode} 模式启动应用...")
-            eel.start("index.html", mode=mode, size=(1280, 720))
+            eel.start("index.html", mode=mode, size=window_size)
             browser_started = True
             break
         except Exception as e:
