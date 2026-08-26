@@ -79,12 +79,13 @@ const downloadSubtitle = (row: SubtitleItem) => {
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 10.75rem;
-  gap: 0.625rem;
+  min-height: 8rem;
+  gap: 0.4rem;
 }
 
 .btn-download {
   align-self: flex-start;
+  min-width: 6rem;
 }
 
 .container :deep(.t-table) {
@@ -92,7 +93,7 @@ const downloadSubtitle = (row: SubtitleItem) => {
   border-radius: 0.5rem;
   overflow: hidden;
   border: 1px solid #ebeef5;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
 .container :deep(.t-table table) {
@@ -100,11 +101,13 @@ const downloadSubtitle = (row: SubtitleItem) => {
 }
 
 .container :deep(td) {
-  padding: 0.5rem 0.25rem !important;
+  padding: 0.35rem 0.25rem !important;
+  font-size: 0.75rem;
 }
 
 .container :deep(th) {
-  padding: 0.5rem 0.25rem !important;
+  padding: 0.35rem 0.25rem !important;
   font-weight: 600;
+  font-size: 0.75rem;
 }
 </style>

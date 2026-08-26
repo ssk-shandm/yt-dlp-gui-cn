@@ -37,10 +37,10 @@ const props = defineProps({
   --win11-blue: #0078d4;
 
   position: relative;
-  display: inline-flex;
-
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 
   padding: 0.8rem;
   padding-top: 1.875rem;
@@ -51,10 +51,9 @@ const props = defineProps({
 
   box-shadow:
     inset 0.0625rem 0.0625rem 0.1875rem rgba(163, 177, 198, 0.6),
-    inset -0.0625rem -0.0625rem 0.1875rem rgba(255, 255, 255, 1),
+    inset -0.0625rem -0.0625rem 0.1875rem rgba(255, 255, 255, 1);
 }
 
-// 标题
 .title-wrapper {
   position: absolute;
   top: 0;
@@ -69,7 +68,6 @@ const props = defineProps({
 .title-tag {
   background-color: var(--win11-blue);
   color: white;
-  /* 大标题 */
   font-size: 1rem;
   font-weight: bold;
   padding: 0.125rem 0.75rem;

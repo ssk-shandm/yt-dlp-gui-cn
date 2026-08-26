@@ -31,10 +31,14 @@ import VList from '@/pages/内容处理/components/VideoList.vue'
 .top-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
   align-items: flex-start;
+}
+
+.top-container > * {
+  flex: 1;
+  min-width: 15rem;
 }
 
 .bottom-container {
@@ -44,6 +48,12 @@ import VList from '@/pages/内容处理/components/VideoList.vue'
   min-height: 0;
 }
 
+@media (max-width: 1600px) {
+  .top-container > * {
+    min-width: 12rem;
+  }
+}
+
 @media (max-width: 1200px) {
   .top-container {
     flex-direction: column;
@@ -51,6 +61,7 @@ import VList from '@/pages/内容处理/components/VideoList.vue'
 
   .top-container > * {
     width: 100%;
+    min-width: auto;
   }
 }
 </style>

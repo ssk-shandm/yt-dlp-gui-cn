@@ -74,27 +74,27 @@ watch(
 
 <style scoped>
 .box {
-  align-items: center;
+  align-items: stretch;
 }
 
 .box-inner {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
+  gap: 0.5rem;
   width: 100%;
 }
 
 .box-inner-inner {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 0.4rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .btn-adaptive {
   flex: 1;
-  min-width: 8rem;
+  min-width: 5rem;
 }
 
 .btn-full-width {
@@ -103,21 +103,22 @@ watch(
 
 .select-adaptive {
   flex: 1;
-  min-width: 8rem;
+  min-width: 6rem;
 }
 
 :deep(.t-input) {
-  font-size: 1rem;
+  font-size: 0.875rem;
   width: 100%;
 }
 
 .ip-change-tip {
   display: flex;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   width: auto;
   color: grey;
   margin: 0;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 1200px) {

@@ -123,23 +123,23 @@ const handleDownload = () => {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.625rem;
+  gap: 0.4rem;
+  align-items: stretch;
+  padding: 0.4rem;
 }
 
 .command-preview {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: stretch;
+  gap: 0.4rem;
   width: 100%;
 }
 
 .select-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
   width: 100%;
 }
 
@@ -147,27 +147,28 @@ const handleDownload = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
+  gap: 0.15rem;
   width: 100%;
 }
 
 .select-label {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: #333;
 }
 
 .select-input {
   width: 100%;
-  min-width: 10rem;
-}
-
-.download-btn {
   min-width: 6rem;
 }
 
+.download-btn {
+  min-width: 5rem;
+  align-self: flex-start;
+}
+
 .cpu-warning {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: #888;
   margin: 0;
   text-align: center;
