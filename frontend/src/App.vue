@@ -22,22 +22,20 @@ import Tabs from './components/PageTabs.vue'
   height: 100vh;
   background-color: #f0f2f5;
   width: 100vw;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-/* 侧边栏样式 */
 .sidebar {
   flex-shrink: 0;
   max-width: 12.5rem;
   transition: width 0.2s ease-in-out;
 }
 
-/* 主内容区域样式 */
 .main-content {
   box-sizing: border-box;
   flex-grow: 1;
   overflow-y: auto;
-  padding-top: 1rem;
-  padding-right: 0.5rem;
+  overflow-x: hidden;
+  padding: 0.5rem 0.5rem 0 0;
 }
 </style>

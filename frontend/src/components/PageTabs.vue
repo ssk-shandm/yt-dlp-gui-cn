@@ -61,9 +61,19 @@ function pushway(key: string) {
 </script>
 
 <style lang="scss" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .container :deep(.arco-tabs) {
   transform: translateX(14%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
 .container :deep(.arco-tabs-tab) {
   display: flex;
   width: 100%;
@@ -72,6 +82,12 @@ function pushway(key: string) {
   margin-bottom: 1.25rem;
   padding: 0 0.5rem;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.container :deep(.arco-tabs-tab:hover) {
+  background-color: rgba(24, 144, 255, 0.08);
+  border-radius: 0.5rem;
 }
 
 .container :deep(.arco-tabs-nav-vertical) {
@@ -80,10 +96,26 @@ function pushway(key: string) {
 }
 
 .container :deep(.arco-tabs-tab-title) {
-  font-size: 1.3rem;
+  font-size: 1rem;
+  font-weight: 500;
   white-space: nowrap;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
 }
+
+.container :deep(.arco-tabs-tab[aria-selected='true'] .arco-tabs-tab-title) {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1890ff;
+}
+
 .container :deep(.arco-tabs-tab:focus) {
   outline: none;
+}
+
+.container :deep(.arco-tabs-ink) {
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #1890ff 0%, #0050b3 100%);
 }
 </style>

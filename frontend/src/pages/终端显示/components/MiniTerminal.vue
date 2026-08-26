@@ -5,65 +5,62 @@
       ref="terminalContainer"
     >
       <pre v-html="outputHtml"></pre>
+      <button
+        v-show="showScrollBtn"
+        class="scroll-to-bottom-btn"
+        @click="scrollToBottom"
+        title="滚到底部"
+      >
+        ⬇️
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, nextTick, computed,onActivated } from 'vue'
+import { ref, watch, nextTick, computed, onActivated } from 'vue'
 import { useTerminalStore } from '@/stores/terminalStore'
 
 const terminalStore = useTerminalStore()
-
 const terminalContainer = ref<HTMLElement | null>(null)
+const showScrollBtn = ref(false)
 
+const outputHtml = computed(() => {
+  return terminalStore.state.output.join('') + '<span class="cursor">|</span>'
+})
 
-// 在所有返回的数据之后添加光标
-const outputHtml = computed(()=>{
-  return terminalStore.state.output.join('')+'<span class="cursor">|</span>'
-}
-)
-
-// 滚动
 const scrollToBottom = async () => {
   await nextTick()
   if (terminalContainer.value) {
     terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
   }
 }
-// watch(outputHtml, async () => {
-//   await nextTick()
-//   if (terminalContainer.value) {
-//     // 滚动条滚到最底部
-//     terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
-//   }
-// })
+
+const handleScroll = () => {
+  if (!terminalContainer.value) return
+  const { scrollTop, scrollHeight, clientHeight } = terminalContainer.value
+  showScrollBtn.value = scrollHeight - scrollTop - clientHeight > 100
+}
+
 onActivated(() => {
   scrollToBottom()
 })
+
 watch(outputHtml, () => {
   scrollToBottom()
 })
-
-
-// 追加数据
-// const handleTerminalOutput = (event: Event) => {
-//   const newLine = (event as CustomEvent).detail;
-//   terminalStore.addLine(newLine);
-// }
-
-// onMounted(() => {
-//   window.addEventListener('terminal-output', handleTerminalOutput)
-// })
-// onUnmounted(() => {
-//   window.removeEventListener('terminal-output', handleTerminalOutput)
-// })
-
 </script>
 
 <style scoped>
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .terminal-container {
-  margin: 2vh 0 2vh 0;
+  position: relative;
+  margin: 2vh 0;
   height: 90vh;
   overflow-y: auto;
   font-family: monospace;
@@ -81,13 +78,11 @@ watch(outputHtml, () => {
   margin: 0;
 }
 
-/* 光标的闪烁动画 */
 @keyframes blink {
   0%,
   100% {
     opacity: 1;
   }
-
   50% {
     opacity: 0;
   }
@@ -101,7 +96,6 @@ watch(outputHtml, () => {
   user-select: none;
 }
 
-/* 滚动条样式 */
 .terminal-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -113,5 +107,33 @@ watch(outputHtml, () => {
 .terminal-container::-webkit-scrollbar-thumb {
   background-color: #4a5568;
   border-radius: 4px;
+}
+
+.scroll-to-bottom-btn {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.scroll-to-bottom-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5);
+}
+
+.scroll-to-bottom-btn:active {
+  transform: scale(0.95);
 }
 </style>

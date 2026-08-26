@@ -1,45 +1,54 @@
 <template>
   <div class="container">
     <div class="image-container">
-      <p>所有链接都要先分析！</p>
-      <div class="tdesign-demo-image-viewer__base">
+      <p class="tip-text">开始使用：粘贴视频链接，然后点击「分析」按钮获取详细信息</p>
+      <div class="image-viewer-wrapper">
         <t-image-viewer :images="[{ mainImage: img, download: false }]">
           <template #trigger="{ open }">
-            <div class="tdesign-demo-image-viewer__ui-image">
+            <div class="image-display">
               <img
-                alt="test"
+                alt="视频封面预览"
                 :src="img"
-                class="tdesign-demo-image-viewer__ui-image--img"
+                class="preview-img"
                 referrerpolicy="no-referrer"
                 :key="img"
               />
               <div
-                class="tdesign-demo-image-viewer__ui-image--hover"
+                class="preview-overlay"
                 @click="open"
               >
-                <span> <BrowseIcon size="1.4em" /> 预览 </span>
+                <span><BrowseIcon size="1.4em" />预览</span>
               </div>
             </div>
           </template>
         </t-image-viewer>
       </div>
     </div>
-    <div class="URL-input">
+    <div class="url-input-section">
       <BBB
         @click="HA"
-        style="width: 5rem"
-        >分析</BBB
+        class="analyze-btn"
+        :disabled="!urlStore.currentUrl"
       >
+        {{ formatStore.isLoading ? '分析中...' : '分析' }}
+      </BBB>
       <t-input
         v-model="urlStore.currentUrl"
         autofocus
         placeholder="粘贴视频链接"
         type="url"
         size="large"
+        clearable
+        class="url-input"
       />
     </div>
     <div class="fast-download">
-      <BBB @click="HQD">快速下载</BBB>
+      <BBB
+        @click="HQD"
+        :disabled="!urlStore.analyzedUrl || urlStore.currentUrl !== urlStore.analyzedUrl"
+      >
+        快速下载
+      </BBB>
       <p>默认下载视频和音频质量最好的版本</p>
     </div>
   </div>
@@ -55,43 +64,50 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { useSubtitleStore } from '@/stores/subtitleStore'
 import { useFormatStore } from '@/stores/formatStore'
 
-// 实例
 const settingsStore = useSettingsStore()
 const urlStore = useUrlStore()
 const subtitleStore = useSubtitleStore()
 const formatStore = useFormatStore()
 
-// 获取图片
 const img = computed(() => urlStore.thumbnailUrl)
 
-// 分析链接
 const HA = async () => {
   if (!urlStore.currentUrl) {
-    NotificationPlugin.warning({ title: '操作提示', content: '叫你先填地址后再分析就是不听！' })
+    NotificationPlugin.warning({ title: '提示', content: '请先粘贴视频链接' })
     return
   }
-  NotificationPlugin.info({ title: '系统提示', content: '分析中，请稍候...' })
 
-  // 设置加载状态
+  if (!isValidUrl(urlStore.currentUrl)) {
+    NotificationPlugin.warning({ title: '提示', content: '请输入有效的URL地址' })
+    return
+  }
+
+  NotificationPlugin.info({ title: '分析中', content: '正在获取视频信息，请稍候...' })
+
   subtitleStore.startLoading()
   formatStore.startLoading()
-
-  // 存储 url
   urlStore.analyzedUrl = urlStore.currentUrl
 
   window.eel.analyze_url(urlStore.currentUrl)
 }
 
-// 快速下载
 const HQD = () => {
   if (!urlStore.currentUrl || !urlStore.analyzedUrl || urlStore.currentUrl !== urlStore.analyzedUrl) {
-    NotificationPlugin.warning({ title: '操作提示', content: '叫你链接进行分析就是不听！' })
+    NotificationPlugin.warning({ title: '提示', content: '请先分析链接后再下载' })
     return
   }
 
-  NotificationPlugin.info({ title: '系统提示', content: '下载任务已开始，请关注终端输出和最终通知。', duration: 5000 })
+  NotificationPlugin.info({ title: '下载开始', content: '下载任务已启动，请关注终端输出', duration: 5000 })
   window.eel.run_ytdlp(urlStore.currentUrl, settingsStore.retryTimes)
+}
 
+const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
 }
 </script>
 
@@ -104,74 +120,50 @@ const HQD = () => {
   flex-direction: column;
   gap: 1.25rem;
   justify-content: flex-start;
-  padding-top: 8vh;
-}
-
-.URL-input {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-p {
-  font-size: 0.8rem;
-  color: #888;
-}
-.URL-input p {
-  top: 100%;
-  margin-top: 0.5rem;
-}
-
-.fast-download {
-  display: flex;
-  gap: 0.75rem;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 1.25rem;
-}
-
-.fast-download p {
-  margin: 0;
-  text-align: center;
-}
-
-.container :deep(.t-input__wrap) {
-  width: 100%;
-  max-width: 50rem;
-}
-
-.container :deep(.t-input) {
-  width: auto;
+  padding: 3rem 1rem 1rem 1rem;
 }
 
 .image-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
 }
 
-.tdesign-demo-image-viewer__base {
-  width: 90%;
-  max-width: 20rem;
-  height: calc((320px * 9) / 16);
-  margin: 0.625rem;
-  border: 4px solid var(--td-bg-color-secondarycontainer);
-  border-radius: 1.25rem;
+.tip-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
-.tdesign-demo-image-viewer__ui-image {
+.image-viewer-wrapper {
   width: 100%;
-  height: 100%;
-  display: inline-flex;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--td-radius-small);
+  max-width: 20rem;
+  aspect-ratio: 16 / 9;
+  border: 2px solid var(--td-bg-color-secondarycontainer);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
   overflow: hidden;
 }
 
-.tdesign-demo-image-viewer__ui-image--hover {
+.image-viewer-wrapper:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.image-display {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.preview-overlay {
   width: 100%;
   height: 100%;
   display: flex;
@@ -182,22 +174,72 @@ p {
   top: 0;
   opacity: 0;
   background-color: rgba(0, 0, 0, 0.6);
-  color: var(--td-text-color-anti);
-  line-height: 1.375rem;
-  transition: 0.2s;
-}
-
-.tdesign-demo-image-viewer__ui-image:hover .tdesign-demo-image-viewer__ui-image--hover {
-  opacity: 1;
+  color: white;
+  transition: opacity 0.2s ease;
   cursor: pointer;
 }
 
-.tdesign-demo-image-viewer__ui-image--img {
+.image-display:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-img {
   width: auto;
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  cursor: pointer;
   position: absolute;
+}
+
+.url-input-section {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.analyze-btn {
+  flex-shrink: 0;
+  min-width: 5rem;
+}
+
+.url-input {
+  flex: 1;
+  min-width: 15rem;
+  max-width: 50rem;
+}
+
+.fast-download {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fast-download p {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem 0.5rem 0.5rem 0.5rem;
+  }
+
+  .url-input-section {
+    flex-direction: column;
+  }
+
+  .url-input {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .image-viewer-wrapper {
+    max-width: 100%;
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="top-contianer">
+    <div class="top-container">
       <MControl />
       <VCaptions />
       <DDownload />
@@ -24,19 +24,33 @@ import VList from '@/pages/内容处理/components/VideoList.vue'
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
+  gap: 1rem;
+  padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
-.top-contianer {
+.top-container {
   display: flex;
-flex-direction: row;
+  flex-direction: row;
   justify-content: space-between;
   gap: 0.5rem;
-  padding-top: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
+
 .bottom-container {
-  padding-top: 1rem;
+  flex: 1;
   display: flex;
   overflow: hidden;
+  min-height: 0;
+}
 
+@media (max-width: 1200px) {
+  .top-container {
+    flex-direction: column;
+  }
+
+  .top-container > * {
+    width: 100%;
+  }
 }
 </style>

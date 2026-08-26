@@ -2,10 +2,11 @@
   <BOX title="字幕下载">
     <div class="container">
       <BBB
-        style="width: 9rem"
+        class="btn-download"
         @click="download_video_introduction"
-        >下载视频描述</BBB
       >
+        下载视频描述
+      </BBB>
       <t-table
         bordered
         hover
@@ -13,8 +14,8 @@
         :data="subtitles"
         :columns="columns"
         :loading="isLoading"
-        maxHeight="9rem"
-      ></t-table>
+        max-height="9rem"
+      />
     </div>
   </BOX>
 </template>
@@ -22,8 +23,7 @@
 <script lang="tsx" setup>
 import { h } from 'vue'
 import { storeToRefs } from 'pinia'
-import { type TableProps } from 'tdesign-vue-next'
-import { Button as TButton } from 'tdesign-vue-next'
+import { type TableProps, Button as TButton } from 'tdesign-vue-next'
 import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
 import { useUrlStore } from '@/stores/urlStore'
@@ -35,12 +35,10 @@ interface SubtitleItem {
   formats: string
 }
 
-// 实例
 const urlStore = useUrlStore()
 const subtitleStore = useSubtitleStore()
 const { subtitles, isLoading } = storeToRefs(subtitleStore)
 
-// 下载视频描述或简介
 const download_video_introduction = () => {
   if (urlStore.analyzedUrl) {
     NotificationPlugin.info({ title: '系统提示', content: '正在下载视频描述...' })
@@ -55,14 +53,13 @@ const columns: TableProps['columns'] = [
     colKey: 'Download',
     title: '下载',
     width: '18%',
-    // ts 组件 cell 函数参数
     cell: (_, { row: file }) => {
       return h(
         TButton,
         {
           theme: 'primary',
           size: 'small',
-          onClick: () => HD(file as SubtitleItem),
+          onClick: () => downloadSubtitle(file as SubtitleItem),
         },
         () => '下载',
       )
@@ -70,8 +67,7 @@ const columns: TableProps['columns'] = [
   },
 ]
 
-// 下载
-const HD = (row: SubtitleItem) => {
+const downloadSubtitle = (row: SubtitleItem) => {
   if (urlStore.analyzedUrl) {
     subtitleStore.downloadSubtitle(urlStore.analyzedUrl, row.language)
   }
@@ -82,31 +78,33 @@ const HD = (row: SubtitleItem) => {
 .container {
   display: flex;
   flex-direction: column;
-  height: 10.75rem;
+  height: auto;
+  min-height: 10.75rem;
   gap: 0.625rem;
 }
-// 圆角设计
+
+.btn-download {
+  align-self: flex-start;
+}
+
 .container :deep(.t-table) {
   flex-grow: 1;
-  border-radius: 0.8125rem;
+  border-radius: 0.5rem;
   overflow: hidden;
   border: 1px solid #ebeef5;
+  font-size: 0.875rem;
 }
+
 .container :deep(.t-table table) {
   table-layout: fixed;
 }
-.container :deep(.t-table) {
-  font-size: 1rem;
-}
+
 .container :deep(td) {
-  padding: 0rem 0.25rem !important;
-}
-/**表头样式 */
-.container :deep(th) {
-  padding: 0.125rem 0.25rem !important;
+  padding: 0.5rem 0.25rem !important;
 }
 
-.mt-2 {
-  width: 6.125rem;
+.container :deep(th) {
+  padding: 0.5rem 0.25rem !important;
+  font-weight: 600;
 }
 </style>

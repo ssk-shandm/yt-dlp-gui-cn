@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  yt-dlp-gui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yt-dlp-gui-cn
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    volumes:
+      - ./downloads:/app/downloads
+      - ./config:/app/config
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DOWNLOAD_PATH=/app/downloads
+      - CONFIG_PATH=/app/config
+      - DISPLAY=${DISPLAY}
+      - QT_QPA_PLATFORMTHEME=offscreen
+    restart: unless-stopped
+    networks:
+      - yt-dlp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  yt-dlp-network:
+    driver: bridge
