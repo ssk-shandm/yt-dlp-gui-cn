@@ -1,11 +1,8 @@
 <template>
-  <BOX title="字幕下载">
-    <div class="container">
-      <BBB
-        class="btn-download"
-        @click="download_video_introduction"
-      >
-        下载视频描述
+  <BOX title="字幕下载" class="box">
+    <div class="box-inner">
+      <BBB class="btn-sm" @click="download_video_introduction">
+        下载描述
       </BBB>
       <t-table
         bordered
@@ -14,7 +11,8 @@
         :data="subtitles"
         :columns="columns"
         :loading="isLoading"
-        max-height="9rem"
+        max-height="6rem"
+        size="small"
       />
     </div>
   </BOX>
@@ -47,12 +45,12 @@ const download_video_introduction = () => {
 }
 
 const columns: TableProps['columns'] = [
-  { colKey: 'language', title: '语言', width: '20%' },
-  { colKey: 'formats', title: '格式', width: '62%' },
+  { colKey: 'language', title: '语言', width: '25%' },
+  { colKey: 'formats', title: '格式', width: '55%' },
   {
     colKey: 'Download',
-    title: '下载',
-    width: '18%',
+    title: '操作',
+    width: '20%',
     cell: (_, { row: file }) => {
       return h(
         TButton,
@@ -75,39 +73,48 @@ const downloadSubtitle = (row: SubtitleItem) => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.box-inner {
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 8rem;
-  gap: 0.4rem;
+  min-height: 6.5rem;
+  gap: 0.3rem;
 }
 
-.btn-download {
+.btn-sm {
   align-self: flex-start;
-  min-width: 6rem;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  height: 1.8rem !important;
+  min-width: 5rem;
 }
 
-.container :deep(.t-table) {
+.box-inner :deep(.t-table) {
   flex-grow: 1;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   overflow: hidden;
   border: 1px solid #ebeef5;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
-.container :deep(.t-table table) {
+.box-inner :deep(.t-table table) {
   table-layout: fixed;
 }
 
-.container :deep(td) {
-  padding: 0.35rem 0.25rem !important;
-  font-size: 0.75rem;
+.box-inner :deep(td) {
+  padding: 0.25rem 0.2rem !important;
+  font-size: 0.7rem;
 }
 
-.container :deep(th) {
-  padding: 0.35rem 0.25rem !important;
+.box-inner :deep(th) {
+  padding: 0.25rem 0.2rem !important;
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+}
+
+.box-inner :deep(.t-button) {
+  padding: 0.1rem 0.3rem !important;
+  font-size: 0.7rem !important;
+  height: 1.4rem !important;
 }
 </style>

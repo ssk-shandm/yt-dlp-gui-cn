@@ -1,42 +1,34 @@
 <template>
-  <BOX title="DIY下载">
-    <div class="container">
-      <div class="command-preview">
-        <div class="select-group">
-          <div class="select-item">
-            <label class="select-label">视频质量</label>
-            <DiySelect
-              v-model="selectedVideoId"
-              :options="videoQualityOptions"
-              class="select-input"
-            />
-          </div>
-          <div class="select-item">
-            <label class="select-label">音频质量</label>
-            <DiySelect
-              v-model="selectedAudioId"
-              :options="audioQualityOptions"
-              class="select-input"
-            />
-          </div>
-          <div class="select-item">
-            <label class="select-label">输出格式</label>
-            <DiySelect
-              v-model="selectedContainerFormat"
-              :options="containerFormatOptions"
-              class="select-input"
-            />
-          </div>
+  <BOX title="DIY下载" class="box">
+    <div class="box-inner">
+      <div class="select-row">
+        <div class="select-item">
+          <label class="label-sm">视频</label>
+          <DiySelect
+            v-model="selectedVideoId"
+            :options="videoQualityOptions"
+            class="select-sm"
+          />
         </div>
-        <BBB
-          class="download-btn"
-          @click="handleDownload"
-        >
-          下载
-        </BBB>
+        <div class="select-item">
+          <label class="label-sm">音频</label>
+          <DiySelect
+            v-model="selectedAudioId"
+            :options="audioQualityOptions"
+            class="select-sm"
+          />
+        </div>
+        <div class="select-item">
+          <label class="label-sm">格式</label>
+          <DiySelect
+            v-model="selectedContainerFormat"
+            :options="containerFormatOptions"
+            class="select-sm"
+          />
+        </div>
+        <BBB class="btn-download" @click="handleDownload">下载</BBB>
       </div>
-
-      <p class="cpu-warning">此下载方式可能会占用极高的cpu</p>
+      <p class="warning-text">此方式可能占用极高cpu</p>
     </div>
   </BOX>
 </template>
@@ -59,7 +51,7 @@ const videoQualityOptions = computed(() => {
   return formats.value
     .filter((file) => file.vcodec !== 'none' && file.acodec === 'none')
     .map((file) => ({
-      label: `${file.resolution || ''} (${file.ext}) @ ${file.vbr || file.tbr || 'N/A'}`,
+      label: `${file.resolution || 'N/A'} (${file.ext})`,
       value: file.id,
     }))
 })
@@ -68,15 +60,15 @@ const audioQualityOptions = computed(() => {
   return formats.value
     .filter((file) => file.acodec !== 'none' && file.vcodec === 'none')
     .map((file) => ({
-      label: `${file.acodec} (${file.ext}) @ ${file.abr || 'N/A'}`,
+      label: `${file.acodec} (${file.ext})`,
       value: file.id,
     }))
 })
 
 const containerFormatOptions = ref([
-  { label: 'MP4 (兼容性好)', value: 'mp4' },
-  { label: 'MKV (功能强大)', value: 'mkv' },
-  { label: 'WebM (网页格式)', value: 'webm' },
+  { label: 'MP4', value: 'mp4' },
+  { label: 'MKV', value: 'mkv' },
+  { label: 'WebM', value: 'webm' },
 ])
 
 const selectedVideoId = ref<string | undefined>(undefined)
@@ -84,32 +76,24 @@ const selectedAudioId = ref<string | undefined>(undefined)
 const selectedContainerFormat = ref('mp4')
 
 watch(videoQualityOptions, (newOptions) => {
-  if (newOptions.length > 0) {
-    selectedVideoId.value = newOptions[0].value
-  } else {
-    selectedVideoId.value = undefined
-  }
+  selectedVideoId.value = newOptions.length > 0 ? newOptions[0].value : undefined
 })
 
 watch(audioQualityOptions, (newOptions) => {
-  if (newOptions.length > 0) {
-    selectedAudioId.value = newOptions[0].value
-  } else {
-    selectedAudioId.value = undefined
-  }
+  selectedAudioId.value = newOptions.length > 0 ? newOptions[0].value : undefined
 })
 
 const handleDownload = () => {
   if (!urlStore.currentUrl) {
-    NotificationPlugin.warning({ title: '操作提示', content: '你小子,又忘了分析了吧' })
+    NotificationPlugin.warning({ title: '操作提示', content: '请先分析链接' })
     return
   }
   if (!selectedVideoId.value || !selectedAudioId.value) {
-    NotificationPlugin.warning({ title: '操作提示', content: '选好规格!' })
+    NotificationPlugin.warning({ title: '操作提示', content: '请选择视频和音频' })
     return
   }
 
-  NotificationPlugin.info({ title: '系统提示', content: 'DIY 合成下载任务已开始...', duration: 5000 })
+  NotificationPlugin.info({ title: '系统提示', content: 'DIY 合成下载已开始...', duration: 5000 })
   window.eel.download_diy_format(
     urlStore.currentUrl,
     selectedVideoId.value,
@@ -120,63 +104,55 @@ const handleDownload = () => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.box-inner {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  align-items: stretch;
-  padding: 0.4rem;
-}
-
-.command-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.4rem;
+  gap: 0.3rem;
   width: 100%;
 }
 
-.select-group {
+.select-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  width: 100%;
+  gap: 0.3rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .select-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 0.15rem;
-  width: 100%;
+  flex: 1;
+  min-width: 5rem;
 }
 
-.select-label {
-  font-size: 0.75rem;
-  font-weight: 500;
+.label-sm {
+  font-size: 0.65rem;
+  font-weight: 600;
   color: #333;
 }
 
-.select-input {
-  width: 100%;
-  min-width: 6rem;
+.select-sm {
+  height: 1.8rem;
 }
 
-.download-btn {
-  min-width: 5rem;
-  align-self: flex-start;
+.select-sm :deep(.t-select) {
+  height: 1.8rem;
+  font-size: 0.75rem;
 }
 
-.cpu-warning {
-  font-size: 0.65rem;
+.btn-download {
+  min-width: 4rem;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  height: 1.8rem !important;
+  align-self: flex-end;
+}
+
+.warning-text {
+  font-size: 0.6rem;
   color: #888;
   margin: 0;
   text-align: center;
-}
-
-@media (max-width: 1200px) {
-  .select-input {
-    width: 100%;
-  }
 }
 </style>

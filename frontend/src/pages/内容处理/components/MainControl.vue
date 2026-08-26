@@ -1,30 +1,25 @@
 <template>
   <BOX title="主要用法" class="box">
     <div class="box-inner">
-      <div class="box-inner-inner">
-        <BBB @click="selectPath" class="btn-adaptive">
-          下载目录
-        </BBB>
+      <div class="row-group">
+        <BBB @click="selectPath" class="btn-sm">下载目录</BBB>
         <DiySelect
           v-model="settingsStore.retryTimes"
           :options="timeOptions"
-          class="select-adaptive"
+          class="select-sm"
         />
       </div>
-      <div>
-        <t-input
-          disabled
-          v-model="settingsStore.downloadPath"
-          placeholder="默认目录为下载目录"
-        />
+      <t-input
+        disabled
+        v-model="settingsStore.downloadPath"
+        placeholder="默认目录"
+        size="small"
+      />
+      <div class="row-group">
+        <BBB @click="get_cover_image" class="btn-sm">获取封面</BBB>
+        <BBB @click="get_all_supported_sites" class="btn-sm">支持网站</BBB>
       </div>
-      <div class="box-inner-inner">
-        <BBB @click="get_cover_image">获取封面图</BBB>
-      </div>
-      <BBB class="btn-full-width" @click="get_all_supported_sites">
-        列出所有支持的网站
-      </BBB>
-      <p class="ip-change-tip">下载境外视频请自行使用梯子</p>
+      <p class="tip-text">下载境外视频请自行使用梯子</p>
     </div>
   </BOX>
 </template>
@@ -73,62 +68,51 @@ watch(
 </script>
 
 <style scoped>
-.box {
-  align-items: stretch;
-}
-
 .box-inner {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   width: 100%;
 }
 
-.box-inner-inner {
+.row-group {
   display: flex;
-  flex-direction: row;
-  gap: 0.4rem;
+  gap: 0.3rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.btn-adaptive {
+.btn-sm {
   flex: 1;
   min-width: 5rem;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  height: 1.8rem !important;
 }
 
-.btn-full-width {
-  width: 100%;
-}
-
-.select-adaptive {
+.select-sm {
   flex: 1;
   min-width: 6rem;
 }
 
+.select-sm :deep(.t-select) {
+  height: 1.8rem;
+  font-size: 0.8rem;
+}
+
 :deep(.t-input) {
-  font-size: 0.875rem;
-  width: 100%;
+  font-size: 0.8rem;
+  height: 1.8rem;
 }
 
-.ip-change-tip {
-  display: flex;
-  justify-content: center;
+:deep(.t-input__input) {
+  padding: 0.25rem 0.5rem;
+}
+
+.tip-text {
   font-size: 0.65rem;
-  width: auto;
-  color: grey;
+  color: #666;
   margin: 0;
-  margin-top: 0.25rem;
-}
-
-@media (max-width: 1200px) {
-  .box-inner-inner {
-    flex-direction: column;
-  }
-
-  .btn-adaptive,
-  .select-adaptive {
-    width: 100%;
-  }
+  text-align: center;
 }
 </style>
