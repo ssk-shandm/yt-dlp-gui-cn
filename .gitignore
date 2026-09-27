@@ -1,13 +1,56 @@
-/node_modules
-/frontend/node_modules
-/frontend/dist
-/bin
+# Python caches, environments, and test artifacts
 __pycache__/
-*.pyc
-.vscode/
-.idea/
-icon.ico
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage*
+htmlcov/
+
+# Vue / Vite / Node.js
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+.npm/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local configuration and runtime data
+.env
+.env.*
+!.env.example
+!.env.sample
+/downloads/
+/config/
+/tmp_ffmpeg_download/
+/bin/
+/chrome-portable/
+*.log
+
+# Build and packaging outputs
 build/
 dist/
 yt-dlp-gui-cn.spec
-chrome-portable/
+icon.ico
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
