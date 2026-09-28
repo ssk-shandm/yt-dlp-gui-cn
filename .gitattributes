@@ -1,0 +1,6 @@
+# Exclude small supporting languages from GitHub Linguist statistics.
+# Keep these files tracked and usable; this only affects language detection.
+Dockerfile -linguist-detectable
+*.html -linguist-detectable
+*.css -linguist-detectable
+*.js -linguist-detectable
