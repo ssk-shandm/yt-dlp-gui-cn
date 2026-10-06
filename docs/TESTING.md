@@ -13,9 +13,27 @@ npm run desktop:build
 npm run test:desktop
 ```
 
-前端测试共 19 项，覆盖任务事件更新、历史数量限制、日志上限、设置初始化、协议注册、NSIS/资源配置和自动更新控制器（手动更新、无更新、并发点击、任务延后、偏好关闭、网络错误及浏览器预览限制）。Rust 测试覆盖 URL / 参数验证、下载模式、元数据映射、UTF-8 流、JSON 大小限制、任务并发限制和更新安装器校验。
+前端测试覆盖任务事件更新、历史数量限制、日志上限、设置初始化、协议注册、NSIS/资源配置和自动更新控制器（手动更新、无更新、并发点击、任务延后、偏好关闭、网络错误及浏览器预览限制）。Rust 测试覆盖 URL / 参数验证、下载模式、元数据映射、UTF-8 流、JSON 大小限制、任务并发限制和更新安装器校验。
 
 测试通过不代表目标网站一定可下载；站点、登录、地区限制和 yt-dlp 版本会影响结果。
+
+## 更新下载网络烟测（2.0.1 修复）
+
+常规 Rust 测试不访问互联网。可单独运行以下忽略测试，使用生产下载器相同的系统证书、系统代理和超时配置，完整读取 GitHub Release 安装包；检查 EXE 的 MZ 标识及 Content-Length，不写入或启动安装器。
+
+```powershell
+# 在 frontend 目录执行；也可改为待验证的 GitHub Release 安装包 URL。
+$env:YT_DLP_GUI_UPDATE_TEST_URL = 'https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.0/yt-dlp.GUI_2.0.0_x64-setup.exe'
+cargo test --manifest-path src-tauri/Cargo.toml github_release_download_network_smoke -- --ignored --nocapture
+```
+
+该测试会产生完整安装包的网络流量（v2.0.0 约 110 MiB）。不代表 NSIS 覆盖安装或所有网络环境已验收。
+
+本机修复前使用原下载器复现 `InvalidCertificate(UnknownIssuer)`；系统证书配置修复后，同一 URL 完整读取 115,596,191 字节，HTTPS、EXE 标识和 Content-Length 验证通过。2.0.1 前端测试 20/20、Rust 常规测试 12/12 通过；网络烟测单独运行通过。Windows 系统代理支持由依赖特性启用，尚未逐一验证 PAC、代理认证、离线及其他机器环境。
+
+本地 2.0.1 验证：TypeScript/Vite 构建、ESLint、cargo fmt、cargo clippy（all-targets / -D warnings）、UI 浏览器烟测及 NSIS 打包通过。已生成并发布 v2.0.1 安装包；未执行本次 NSIS 覆盖安装。
+
+安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.1_x64-setup.exe`；大小 **115571498 bytes**。SHA-256：`02f471aff9cf4480f989ff8ea39b56c249e3a9de50bba70cec5795130656aa24`。
 
 ## 界面浏览器烟测
 

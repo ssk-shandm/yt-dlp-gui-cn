@@ -113,3 +113,18 @@ test('Rust update commands are registered without the Tauri updater plugin', () 
   assert.doesNotMatch(rust, /tauri_plugin_updater/)
 })
 
+
+test('update downloader honors system trust/proxies without disabling TLS verification', () => {
+  const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
+  const cargo = read('../src-tauri/Cargo.toml')
+  const rust = read('../src-tauri/src/updater.rs')
+  assert.match(cargo, /"rustls-tls-native-roots"/)
+  assert.match(cargo, /"system-proxy"/)
+  assert.match(rust, /https_only\(true\)/)
+  assert.match(rust, /connect_timeout/)
+  assert.match(rust, /read_timeout/)
+  assert.match(rust, /error\.source\(\)/)
+  assert.match(rust, /update_network_error\("更新下载失败"/)
+  assert.match(rust, /update_network_error\("读取更新数据失败"/)
+  assert.doesNotMatch(rust, /danger_accept_invalid_(?:certs|hostnames)/)
+})

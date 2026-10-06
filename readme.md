@@ -41,6 +41,7 @@ npm run desktop:dev
 
 - “关于”页可手动检查并安装；启动时的自动检查可在“设置”中关闭。
 - 下载或解析任务运行期间不会启动安装，任务结束后再继续；下载过程中显示进度。
+- 下载器使用系统信任的根证书及 Windows 系统代理，保持 HTTPS 证书校验；若失败，提示会显示底层证书、连接或超时原因。
 - 更新链接只接受 HTTPS GitHub Release 资产；安装器启动后应用退出，由 NSIS 完成覆盖安装并重新启动。
 - 发布新版本时，必须上传 `npm run desktop:build` 生成的 `*-setup.exe`。当前实现不读取 `latest.json`、`.sig` 或 Tauri updater endpoint。
 

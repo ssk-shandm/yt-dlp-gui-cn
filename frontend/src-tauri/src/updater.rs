@@ -1,10 +1,12 @@
 use crate::{process::tool_directory, AppState};
 use serde::Serialize;
 use std::{
+    error::Error,
     fs,
     io::Write,
     path::Path,
     sync::atomic::{AtomicBool, Ordering},
+    time::Duration,
 };
 use tauri::{AppHandle, Emitter, Manager, State};
 
@@ -81,6 +83,45 @@ fn safe_update_file_name(file_name: &str) -> Result<String, String> {
     Ok(name.to_string())
 }
 
+// Load the OS trust store (including user-trusted proxy/enterprise roots), and
+// honor system proxies. Keep TLS verification enabled for executable downloads.
+fn update_http_client() -> Result<reqwest::Client, String> {
+    reqwest::Client::builder()
+        .user_agent("yt-dlp-gui-cn-updater")
+        .https_only(true)
+        .connect_timeout(Duration::from_secs(30))
+        // Limit stalled reads, not the total duration of a large installer download.
+        .read_timeout(Duration::from_secs(60))
+        .build()
+        .map_err(|error| update_network_error("无法初始化更新下载器", &error))
+}
+
+fn error_chain(error: &dyn Error) -> String {
+    let mut details = error.to_string();
+    let mut source = error.source();
+    while let Some(cause) = source {
+        details.push_str(" → ");
+        details.push_str(&cause.to_string());
+        source = cause.source();
+    }
+    details
+}
+
+fn update_network_error(context: &str, error: &reqwest::Error) -> String {
+    let details = error_chain(error);
+    let lower = details.to_ascii_lowercase();
+    let hint = if error.is_timeout() {
+        "连接或读取超时，请检查网络及系统代理后重试。"
+    } else if lower.contains("certificate") || lower.contains("unknownissuer") {
+        "HTTPS 证书校验失败，请检查系统时间、系统信任证书及代理软件的证书配置；请勿关闭证书校验。"
+    } else if error.is_connect() {
+        "无法连接 GitHub 下载服务器，请检查网络及 Windows 系统代理设置。"
+    } else {
+        "请检查网络及系统代理，或通过浏览器下载 Release 中的安装包后手动安装。"
+    };
+    format!("{context}：{hint}\n详细原因：{details}")
+}
+
 #[tauri::command]
 pub async fn download_and_install_update(
     app: AppHandle,
@@ -132,13 +173,12 @@ async fn download_update_package(
     fs::create_dir_all(&save_dir).map_err(|error| format!("无法创建更新保存目录：{error}"))?;
     let target = save_dir.join(safe_name);
     let partial = save_dir.join(format!("{safe_name}.part"));
-    let response = reqwest::Client::new()
+    let response = update_http_client()?
         .get(url)
         .header("Accept", "application/octet-stream")
-        .header("User-Agent", "yt-dlp-gui-cn-updater")
         .send()
         .await
-        .map_err(|error| format!("更新下载失败：{error}"))?;
+        .map_err(|error| update_network_error("更新下载失败", &error))?;
     if !response.status().is_success() {
         return Err(format!("更新下载失败（HTTP {}）", response.status()));
     }
@@ -165,7 +205,7 @@ async fn download_update_package(
     while let Some(chunk) = response
         .chunk()
         .await
-        .map_err(|error| format!("读取更新数据失败：{error}"))?
+        .map_err(|error| update_network_error("读取更新数据失败", &error))?
     {
         output
             .write_all(&chunk)
@@ -173,11 +213,11 @@ async fn download_update_package(
         downloaded += chunk.len() as u64;
         match total {
             Some(size) => {
-                let percent = if size == 0 {
-                    100
-                } else {
-                    (downloaded.saturating_mul(100) / size).min(100) as u8
-                };
+                let percent = downloaded
+                    .saturating_mul(100)
+                    .checked_div(size)
+                    .unwrap_or(100)
+                    .min(100) as u8;
                 if last_percent != Some(percent) {
                     last_percent = Some(percent);
                     emit_progress(downloaded, Some(percent));
@@ -298,6 +338,76 @@ pub async fn get_tool_info(app: AppHandle) -> Result<ToolInfo, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    #[ignore = "requires network access to a GitHub Release asset"]
+    async fn github_release_download_network_smoke() {
+        let url = std::env::var("YT_DLP_GUI_UPDATE_TEST_URL")
+            .expect("set YT_DLP_GUI_UPDATE_TEST_URL to a GitHub Release installer URL");
+        validate_update_url(&url).unwrap();
+        let result = update_http_client()
+            .unwrap()
+            .get(url)
+            .header("Accept", "application/octet-stream")
+            .send()
+            .await;
+        let response = result
+            .unwrap_or_else(|error| panic!("{}", update_network_error("更新下载失败", &error)));
+        assert!(response.status().is_success(), "{}", response.status());
+        let expected_length = response.content_length();
+        let mut response = response;
+        let mut downloaded = 0_u64;
+        let mut signature: Vec<u8> = Vec::new();
+        while let Some(chunk) = response
+            .chunk()
+            .await
+            .unwrap_or_else(|error| panic!("{}", update_network_error("读取更新数据失败", &error)))
+        {
+            signature.extend(chunk.iter().copied().take(2 - signature.len()));
+            downloaded += chunk.len() as u64;
+        }
+        assert_eq!(signature, b"MZ", "installer has no EXE signature");
+        assert!(downloaded > 0, "empty installer");
+        if let Some(length) = expected_length {
+            assert_eq!(downloaded, length, "incomplete installer");
+        }
+        println!("GitHub installer stream verified: {downloaded} bytes");
+    }
+
+    #[test]
+    fn network_errors_keep_the_underlying_cause() {
+        #[derive(Debug)]
+        struct Failure(Option<Box<Failure>>, &'static str);
+
+        impl std::fmt::Display for Failure {
+            fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str(self.1)
+            }
+        }
+
+        impl Error for Failure {
+            fn source(&self) -> Option<&(dyn Error + 'static)> {
+                self.0.as_deref().map(|error| error as &dyn Error)
+            }
+        }
+
+        let error = Failure(
+            Some(Box::new(Failure(
+                None,
+                "invalid peer certificate: UnknownIssuer",
+            ))),
+            "error sending request",
+        );
+        assert_eq!(
+            error_chain(&error),
+            "error sending request → invalid peer certificate: UnknownIssuer"
+        );
+    }
+
+    #[test]
+    fn updater_client_can_be_built_with_system_trust() {
+        assert!(update_http_client().is_ok());
+    }
 
     #[test]
     fn update_operations_are_serialized() {
