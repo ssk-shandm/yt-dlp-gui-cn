@@ -1,86 +1,62 @@
 <template>
-  <div
-    class="container"
+  <section
+    class="box-surface"
     :style="{ height: props.height }"
   >
-    <div
+    <header
       v-if="title"
-      class="title-wrapper"
+      class="box-heading"
     >
-      <span class="title-tag">{{ title }}</span>
-    </div>
-
-    <div class="card">
-      <div class="content-wrapper">
-        <slot />
-      </div>
-    </div>
-  </div>
+      <span
+        class="title-dot"
+        aria-hidden="true"
+      ></span
+      >{{ title }}
+    </header>
+    <div class="content-wrapper"><slot /></div>
+  </section>
 </template>
-
 <script lang="ts" setup>
-const props = defineProps({
-  title: {
-    type: String,
-    default: '',
-  },
-  height: {
-    type: String,
-    default: 'auto',
-  },
-})
+const props = defineProps({ title: { type: String, default: '' }, height: { type: String, default: 'auto' } })
 </script>
-
-<style lang="scss" scoped>
-.container {
-  --container-bg-color: #e0e2e5;
-  --win11-blue: #0078d4;
-
-  position: relative;
+<style scoped>
+.box-surface {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  height: v-bind('props.height');
-}
-
-.title-wrapper {
-  position: absolute;
-  top: 0;
-  left: 1.25rem;
-  transform: translateY(-40%);
-  z-index: 1;
-}
-
-.title-tag {
-  display: inline-block;
-  background-color: var(--win11-blue);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.375rem;
-  box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
-  white-space: nowrap;
-}
-
-.card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
-  background-color: var(--container-bg-color);
-  border-radius: 1.25rem;
-  box-shadow:
-    inset 0.0625rem 0.0625rem 0.1875rem rgba(163, 177, 198, 0.6),
-    inset -0.0625rem -0.0625rem 0.1875rem rgba(255, 255, 255, 1);
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow);
   overflow: hidden;
+  transition:
+    box-shadow var(--motion-duration) ease,
+    border-color var(--motion-duration) ease;
 }
-
+.box-surface:hover {
+  border-color: #cbdcf1;
+  box-shadow: 0 8px 24px rgba(40, 65, 100, 0.08);
+}
+.box-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 18px 12px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.title-dot {
+  width: 5px;
+  height: 14px;
+  background: var(--ui-accent);
+  border-radius: 3px;
+}
 .content-wrapper {
   flex: 1;
-  padding: 1.375rem 0.8rem 0.8rem 0.8rem;
-  overflow: auto;
   min-height: 0;
+  padding: 4px 16px 16px;
+  overflow: auto;
 }
 </style>

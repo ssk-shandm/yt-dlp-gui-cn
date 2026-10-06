@@ -1,15 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import defaultImage from '@/assets/test.jpg'
 
 export const useUrlStore = defineStore('Url', () => {
   // url 地址
   const currentUrl = ref('')
   const analyzedUrl = ref('')
 
-  // 默认图片
-  const thumbnailUrl = ref(defaultImage)
-  function setThumbnailUrl(url:string){
+  // 分析前和重置后均不显示图片
+  const thumbnailUrl = ref('')
+  function setThumbnailUrl(url: string) {
     thumbnailUrl.value = url
   }
 
@@ -17,6 +16,9 @@ export const useUrlStore = defineStore('Url', () => {
     currentUrl,
     analyzedUrl,
     setThumbnailUrl,
-    thumbnailUrl
+    thumbnailUrl,
+    resetThumbnail: () => {
+      thumbnailUrl.value = ''
+    },
   }
 })

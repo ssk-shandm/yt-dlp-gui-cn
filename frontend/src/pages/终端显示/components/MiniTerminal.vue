@@ -3,8 +3,9 @@
     <div
       class="terminal-container"
       ref="terminalContainer"
+      @scroll="handleScroll"
     >
-      <pre v-html="outputHtml"></pre>
+      <pre>{{ outputText }}<span class="cursor">|</span></pre>
       <button
         v-show="showScrollBtn"
         class="scroll-to-bottom-btn"
@@ -25,8 +26,8 @@ const terminalStore = useTerminalStore()
 const terminalContainer = ref<HTMLElement | null>(null)
 const showScrollBtn = ref(false)
 
-const outputHtml = computed(() => {
-  return terminalStore.state.output.join('') + '<span class="cursor">|</span>'
+const outputText = computed(() => {
+  return terminalStore.state.output.join('\n')
 })
 
 const scrollToBottom = async () => {
@@ -46,7 +47,7 @@ onActivated(() => {
   scrollToBottom()
 })
 
-watch(outputHtml, () => {
+watch(outputText, () => {
   scrollToBottom()
 })
 </script>
@@ -60,14 +61,16 @@ watch(outputHtml, () => {
 
 .terminal-container {
   position: relative;
-  margin: 2vh 0;
-  height: 90vh;
+  margin: 0;
+  height: 100%;
   overflow-y: auto;
   font-family: monospace;
   color: white;
   background-color: #1a202c;
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid #2c3b50;
+  box-shadow: var(--ui-shadow);
+  padding: 24px;
   box-sizing: border-box;
 }
 

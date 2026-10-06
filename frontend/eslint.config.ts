@@ -1,35 +1,21 @@
-import { globalIgnores } from 'eslint/config'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
-import { configureVueProject } from '@vue/eslint-config-typescript'
-
-configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-
-export default defineConfigWithVueTs(
+export default defineConfig(
+  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**', '**/src-tauri/target/**', '**/src-tauri/gen/**']),
+  ...tseslint.configs.recommended.map((config) => ({ ...config, files: ['**/*.{ts,mts,tsx,vue}'] })),
+  ...pluginVue.configs['flat/essential'],
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
-
+    files: ['**/*.vue'],
     languageOptions: {
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
+      parserOptions: { parser: tseslint.parser, extraFileExtensions: ['.vue'], ecmaFeatures: { jsx: true } },
     },
   },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-  pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
   skipFormatting,
   {
-    name: 'app/final-rule-overrides',
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
+    files: ['**/*.{ts,mts,tsx,vue}'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },
 )

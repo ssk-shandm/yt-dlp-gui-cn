@@ -43,6 +43,7 @@ import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 import { useUrlStore } from '@/stores/urlStore'
+import { startDownload } from '@/services/desktop'
 import { useFormatStore } from '@/stores/formatStore'
 
 const urlStore = useUrlStore()
@@ -96,12 +97,7 @@ const handleDownload = () => {
   }
 
   NotificationPlugin.info({ title: '系统提示', content: 'DIY 合成下载已开始...', duration: 5000 })
-  window.eel.download_diy_format(
-    urlStore.currentUrl,
-    selectedVideoId.value,
-    selectedAudioId.value,
-    selectedContainerFormat.value,
-  )
+  void startDownload({ url: urlStore.analyzedUrl, kind: 'combined', videoId: selectedVideoId.value, audioId: selectedAudioId.value, containerFormat: selectedContainerFormat.value })
 }
 </script>
 

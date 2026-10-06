@@ -3,35 +3,37 @@ import TAU from '@/pages/图片链接/URLAddress.vue'
 import pagetwo from '@/pages/内容处理/MainIndex.vue'
 import PageThree from '@/pages/下载列表/MainIndex.vue'
 import PageFour from '@/pages/终端显示/MainIndex.vue'
+import AboutPage from '@/pages/关于/AboutPage.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path:'/',
+      path: '/',
       name: 'TabsAndURL',
-      component: TAU
+      component: TAU,
     },
     {
-      path:'/page-two',
+      path: '/page-two',
       name: 'page-two',
-      component: pagetwo
+      component: pagetwo,
     },
     {
-      path:'/page-three',
+      path: '/page-three',
       name: 'page-three',
-      component:PageThree,
+      component: PageThree,
     },
     {
-      path:'/page-four',
+      path: '/page-four',
       name: 'page-four',
-      component:PageFour,
-
-    }
+      component: PageFour,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutPage,
+    },
   ],
-
-
 })
-
 
 export default router

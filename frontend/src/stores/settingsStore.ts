@@ -1,26 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { Settings } from '@/types/desktop'
 
 export const useSettingsStore = defineStore('settings', () => {
-  // 设置下载目录
-  const downloadPath = ref('设置下载目录')
-  console.log('设置了下载目录:',downloadPath.value)
-
-  function setDownloadPath(path: string) {
-    downloadPath.value = path
+  const downloadPath = ref('')
+  const retryTimes = ref('10')
+  const initialized = ref(false)
+  function applySettings(settings: Settings) {
+    downloadPath.value = settings.downloadPath
+    retryTimes.value = settings.retryTimes
   }
-
-  // 设置重试次数
-  const retryTimes = ref('重试次数')
-  console.log('设置了重试次数:',retryTimes.value)
-
-  // // 伪造ip
-  // const fakeip = ref('默认ip')
-
-  return {
-    downloadPath,
-    setDownloadPath,
-    retryTimes,
-    // fakeip
-  }
+  return { downloadPath, retryTimes, initialized, applySettings }
 })

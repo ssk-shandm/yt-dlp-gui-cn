@@ -54,3 +54,13 @@ icon.ico
 *~
 .DS_Store
 Thumbs.db
+
+# Tauri / Rust
+/frontend/src-tauri/target/
+/frontend/src-tauri/gen/
+/frontend/src-tauri/.tauri/
+!/frontend/src-tauri/icons/icon.ico
+
+# Never commit updater signing secrets
+*.key
+*.key.pub

@@ -10,18 +10,18 @@
         label="下载中"
       >
         <div style="margin: 20px">
-        <DownloadFile />
+          <DownloadFile />
         </div>
-    </t-tab-panel>
+      </t-tab-panel>
       <t-tab-panel
         :value="2"
-        label="已完成"
+        label="已结束"
       >
         <div style="margin: 20px">
-<FinishedFile />
+          <FinishedFile />
         </div>
-    </t-tab-panel>
-  </t-tabs>
+      </t-tab-panel>
+    </t-tabs>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ import FinishedFile from '@/pages/下载列表/components/FinishedFile.vue'
 
 <style scoped lang="scss">
 .my-tabs-container {
-  height: 80vh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }

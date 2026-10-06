@@ -1,53 +1,18 @@
 <template>
-  <t-table
-    hover
-    row-key="index"
-    :data="data"
-    :columns="columns"
-    :selected-row-keys="selectedRowKeys"
-    @select-change="handleSelectChange"
-    maxHeight="71vh"
-    class="tabs-container"
-  />
+  <p>运行中的任务最多 4 个；关闭应用会终止未完成任务。</p>
+  <t-table row-key="taskId" :data="tasks" :columns="columns" max-height="65vh" empty="暂无运行中的任务" />
 </template>
-
-<script lang="tsx" setup>
-import { ref } from 'vue'
-import { type TableProps } from 'tdesign-vue-next'
-
-// 组件交互
-const selectedRowKeys = ref<TableProps['selectedRowKeys']>([])
-const handleSelectChange = (value: TableProps['selectedRowKeys']) => {
-  selectedRowKeys.value = value
-}
-
+<script lang="ts" setup>
+import { computed, h } from 'vue'
+import { Button, type TableProps } from 'tdesign-vue-next'
+import { useTaskStore } from '@/stores/taskStore'
+import { cancelTask } from '@/services/desktop'
+const store = useTaskStore()
+const tasks = computed(() => store.tasks.filter((task) => task.status === 'running'))
 const columns: TableProps['columns'] = [
-  { colKey: 'row-select', type: 'multiple', width: '5%' },
-  { colKey: 'applicant', title: '文件', width: '75%' },
-  { colKey: 'channel', title: '大小', width: '10%' },
-  { colKey: 'status', title: '状态', width: '10%' },
+  { colKey: 'taskId', title: 'ID', width: 70 },
+  { colKey: 'title', title: '任务' },
+  { colKey: 'message', title: '状态' },
+  { colKey: 'cancel', title: '操作', width: 90, cell: (_, { row }) => h(Button, { theme: 'danger', size: 'small', onClick: () => void cancelTask(row.taskId) }, () => '取消') },
 ]
-
-const data = ref([
-  {
-    index: 1,
-    applicant: '我在岛上呆了100小时！',
-    channel: '460mb',
-    status: '待下载',
-  },
-  {
-    index: 2,
-    applicant: '不行，太饿了我先干了',
-    channel: '线下',
-    status: '待下载',
-  },
-  {
-    index: 3,
-    applicant: '⚡两面包夹芝士⚡',
-    channel: '679mb',
-    status: '待下载',
-  },
-])
 </script>
-
-<style lang="scss" scoped></style>

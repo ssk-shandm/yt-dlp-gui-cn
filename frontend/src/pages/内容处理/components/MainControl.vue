@@ -25,6 +25,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useUrlStore } from '@/stores/urlStore'
+import { selectDownloadDirectory, startDownload, listSupportedSites, saveRetryTimes } from '@/services/desktop'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { ref, watch } from 'vue'
 import BBB from '@/components/DiyButtom.vue'
@@ -33,36 +35,37 @@ import DiySelect from '@/components/TxSelect.vue'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 
 const settingsStore = useSettingsStore()
+const urlStore = useUrlStore()
 
 const selectPath = () => {
-  window.eel.select_download_directory()
+  void selectDownloadDirectory()
 }
 
 const get_cover_image = () => {
-  if (!settingsStore.downloadPath) {
-    NotificationPlugin.warning({ title: '操作提示', content: '请先选择下载目录' })
+  if (!urlStore.analyzedUrl) {
+    NotificationPlugin.warning({ title: '操作提示', content: '请先分析视频链接' })
     return
   }
   NotificationPlugin.info({ title: '系统提示', content: '已请求获取封面...' })
-  window.eel.download_cover_page(settingsStore.downloadPath)
+  void startDownload({ url: urlStore.analyzedUrl, kind: 'thumbnail' })
 }
 
 const get_all_supported_sites = () => {
   NotificationPlugin.info({ title: '系统提示', content: '正在获取列表，请稍后在终端查看...' })
-  window.eel.list_all_suppost_website()
+  void listSupportedSites()
 }
 
 const timeOptions = ref([
-  { label: '3次', value: 3 },
-  { label: '5次', value: 5 },
-  { label: '10次', value: 10 },
+  { label: '3次', value: '3' },
+  { label: '5次', value: '5' },
+  { label: '10次', value: '10' },
   { label: '无限', value: 'infinite' },
 ])
 
 watch(
   () => settingsStore.retryTimes,
   (newValue) => {
-    console.log(`重试次数已设置为: ${newValue}`)
+    if (settingsStore.initialized) void saveRetryTimes(newValue)
   },
 )
 </script>

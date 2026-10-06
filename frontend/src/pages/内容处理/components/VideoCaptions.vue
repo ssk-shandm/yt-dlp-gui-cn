@@ -25,6 +25,7 @@ import { type TableProps, Button as TButton } from 'tdesign-vue-next'
 import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
 import { useUrlStore } from '@/stores/urlStore'
+import { startDownload } from '@/services/desktop'
 import { useSubtitleStore } from '@/stores/subtitleStore'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 
@@ -40,7 +41,7 @@ const { subtitles, isLoading } = storeToRefs(subtitleStore)
 const download_video_introduction = () => {
   if (urlStore.analyzedUrl) {
     NotificationPlugin.info({ title: '系统提示', content: '正在下载视频描述...' })
-    window.eel.download_video_introduction(urlStore.analyzedUrl)
+    void startDownload({ url: urlStore.analyzedUrl, kind: 'description' })
   }
 }
 

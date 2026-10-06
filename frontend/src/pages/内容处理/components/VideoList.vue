@@ -47,6 +47,7 @@ import { type BaseTableProps, Button as TButton } from 'tdesign-vue-next'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 import BOX from '@/components/BoxStyle.vue'
 import { useUrlStore } from '@/stores/urlStore'
+import { startDownload } from '@/services/desktop'
 import { useFormatStore } from '@/stores/formatStore'
 
 const urlStore = useUrlStore()
@@ -193,7 +194,7 @@ const downloadFormat = (formatId: string) => {
   }
 
   NotificationPlugin.info({ title: '系统提示', content: `正在下载格式 ${formatId}...`, duration: 5000 })
-  window.eel.download_specific_format(urlStore.analyzedUrl, formatId)
+  void startDownload({ url: urlStore.analyzedUrl, kind: 'format', formatId })
 }
 </script>
 
@@ -209,7 +210,8 @@ const downloadFormat = (formatId: string) => {
 
 .controls-bar {
   display: flex;
-  gap: 2rem;
+  gap: 16px;
+  flex-wrap: wrap;
   align-items: center;
   padding: 0.5rem 0.75rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #f9fafb 100%);
