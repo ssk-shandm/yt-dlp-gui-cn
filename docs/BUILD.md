@@ -61,7 +61,7 @@ npm run desktop:build
 1. 在 `frontend/` 更新 `package.json`、`src-tauri/Cargo.toml` 和 `src-tauri/tauri.conf.json` 的版本号，并同步 `docs/CHANGELOG.md`。
 2. 准备 `bin/yt-dlp.exe`、`bin/ffmpeg.exe`、`bin/ffprobe.exe`，运行 `npm run tools:check` 和 `npm run desktop:build`。
 3. 从 `src-tauri/target/release/bundle/nsis/` 取出以 `-setup.exe` 结尾的安装包，记录 SHA-256 并完成测试清单。
-4. 将安装包上传到对应 GitHub Release。自动更新按最高正式版本比较 `tag_name`；预发布版本不应作为正式更新目标。
-5. 正式发布前完成代码签名、第三方许可材料和覆盖安装验收。未签名或仅上传主 EXE 的 Release 不满足自动更新要求。
+4. 先创建对应标签的草稿 Release 并上传安装包；未完成第三方分发材料审核和安装验收时保持草稿，不公开发布。自动更新按最高正式版本比较 `tag_name`；预发布版本不应作为正式更新目标。
+5. 正式发布前完成代码签名、第三方许可材料和覆盖安装验收。未签名安装包可能触发 SmartScreen；仅上传主 EXE 的 Release 不满足自动更新要求。
 
 自动更新只适用于已安装的当前用户 NSIS 版本。开发版、便携版或运行目录中没有 `uninstall.exe` 的程序会拒绝自动安装，避免误替换开发文件。

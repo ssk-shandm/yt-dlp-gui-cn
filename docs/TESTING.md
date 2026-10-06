@@ -57,14 +57,14 @@ Rust 与 UI 测试通过不等于已经验证原生系统浏览器实际启动�
 | TypeScript + Vite production build | 通过；保留组件库带来大 chunk 提示，不是构建错误 |
 | ESLint | 通过 |
 | 前端状态 / 配置 / 更新控制器测试 | 19 / 19 通过 |
-| Rust 单元测试 | 7 / 7 通过 |
+| Rust 单元测试 | 10 / 10 通过 |
 | cargo fmt --check | 通过 |
 | cargo clippy --all-targets -- -D warnings | 通过 |
 | npm audit | 0 vulnerabilities（仅指该次 JS 依赖审计，不等于完整安全审计） |
 | Tauri release / NSIS x64 构建 | 通过 |
 | WebView2 真实桌面烟测 | 通过，范围见下节 |
 
-安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.0_x64-setup.exe`。本次文件大小 **115,596,191 bytes（约 110.24 MiB）**。未签名、未正式发布。
+安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.0_x64-setup.exe`。本次文件大小 **115,596,191 bytes（约 110.24 MiB）**。未签名；代码与 `v2.0.0` 标签已推送，GitHub Release 保持草稿，第三方分发材料和安装验收补齐前不公开发布。
 
 安装包 SHA-256：`de5fb0162348e6b7ed364cfd1be4a97ec3711607dae2bb1a5ad730666a8966a8`。
 

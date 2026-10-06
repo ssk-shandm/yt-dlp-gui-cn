@@ -2,7 +2,7 @@
 
 基于 **Vue 3 + TypeScript + Tauri 2 / Rust** 的 Windows 桌面下载工具。下载与媒体合并由外部 **yt-dlp / FFmpeg** 完成，Windows 安装包采用 **NSIS**。
 
-> 当前版本：2.0.0（Tauri 桌面版首个正式大版本）。代码迁移不等于发行完成；安装、签名、自动更新与发布前验收见 [构建文档](docs/BUILD.md) 和 [测试清单](docs/TESTING.md)。旧 Python/Eel 实现已归档，不再用于当前构建。
+> 当前版本：2.0.0（Tauri 桌面版大版本；Release 草稿，尚未正式发行）。代码迁移不等于发行完成；安装、签名、自动更新与发布前验收见 [构建文档](docs/BUILD.md) 和 [测试清单](docs/TESTING.md)。旧 Python/Eel 实现已归档，不再用于当前构建。
 
 ## 功能
 
