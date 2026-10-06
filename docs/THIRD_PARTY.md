@@ -20,7 +20,7 @@
 | ffmpeg.exe | 7.1.1-full_build-www.gyan.dev | 二进制自报 Gyan 构建；原始下载 URL 尚未核实 | `b1383f5d07470d503edecdaee4bddc5891e986e916a698299b357f79cfe445fd` | 本地 `-L` 自报 GPL v3 or later |
 | ffprobe.exe | 7.1.1-full_build-www.gyan.dev | 同一 FFmpeg 构建标识，未核实来源链 | `012bddded3cbc5204055210d7ff4f0b3f7521bca441a694939856d01909f5756` | 构建启用 GPL / version3；完整分发材料待补 |
 
-本地 FFmpeg 配置含 `--enable-gpl` 和 `--enable-version3`，且 `ffmpeg.exe -L` 显示 GPL v3 or later。当前安装包仅带有本项目 LICENSE，**没有完整的第三方许可、对应源码及构建资料，不应将其视为可直接公开分发的最终发行包**。
+本地 FFmpeg 配置含 `--enable-gpl` 和 `--enable-version3`，且 `ffmpeg.exe -L` 显示 GPL v3 or later。当前安装包仅带有本项目 LICENSE，**尚未补齐完整的第三方许可、对应源码及构建资料；公开发布不代表已完成第三方合规审核**。
 
 正式发布前，应核实准确下载 URL、各二进制对应的许可证和通知文件、对应源码/源码获取与构建信息，并依据实际分发方式完成必要审核。不要仅用本项目 MIT 许可覆盖这些工具。参考 FFmpeg 官方 `License and Legal Considerations` 页面；本文不是法律意见。
 

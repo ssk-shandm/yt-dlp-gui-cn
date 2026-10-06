@@ -64,7 +64,7 @@ Rust 与 UI 测试通过不等于已经验证原生系统浏览器实际启动�
 | Tauri release / NSIS x64 构建 | 通过 |
 | WebView2 真实桌面烟测 | 通过，范围见下节 |
 
-安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.0_x64-setup.exe`。本次文件大小 **115,596,191 bytes（约 110.24 MiB）**。未签名；代码与 `v2.0.0` 标签已推送，GitHub Release 保持草稿，第三方分发材料和安装验收补齐前不公开发布。
+安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.0_x64-setup.exe`。本次文件大小 **115,596,191 bytes（约 110.24 MiB）**。未签名；代码与 `v2.0.0` 标签已推送，GitHub Release 已公开发布。发布并不代表下方未验收项目通过；第三方分发材料审核状态见 THIRD_PARTY.md。
 
 安装包 SHA-256：`de5fb0162348e6b7ed364cfd1be4a97ec3711607dae2bb1a5ad730666a8966a8`。
 
