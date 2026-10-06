@@ -19,7 +19,7 @@
 | 全局下载目录 | 用户配置目录下的设置文件 |
 | 假下载记录 | 本次运行真实任务事件列表 |
 
-旧 Python、Docker、Eel 客户端和 pnpm lock 存入 `legacy/python-eel/`，仅保留参考。旧 PyInstaller 本地输出不会转换成新程序；新包需要重新构建。Docker 不再作为当前桌面运行方式。
+迁移时曾将旧 Python、Docker、Eel 客户端和 pnpm lock 归档到 `legacy/python-eel/`。后续项目整理已从当前工作树移除这些非运行文件；旧源码仍可在 Git 标签 `v2.0.1` 的相同路径查看。旧 PyInstaller 本地输出不会转换成新程序；新包需要重新构建。Docker 不再作为当前桌面运行方式。
 
 ## 修复
 

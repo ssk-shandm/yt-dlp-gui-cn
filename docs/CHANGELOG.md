@@ -1,5 +1,21 @@
 # 更新日志
 
+## [Unreleased]
+
+### 项目整理
+
+- 移除不参与新版构建的 Python/Eel、Docker 和 pnpm 归档；旧源码仍可通过 Git 标签 `v2.0.1` 查看。
+- 清理未引用的示例计数器、测试图片、写入探测文件、重复图标及非 Windows NSIS 图标。
+- 删除不用的 Element Plus 图标、Less 和重复的直接 ESLint parser 依赖，保留使用中的 Sass 及 TypeScript/Vue 工具链。
+- 清理本地旧 PyInstaller 产物、Python 环境/缓存、临时工具压缩包和 1.1.0/2.0.0 安装包；保留当前安装包、下载工具、原始图稿及新版构建缓存。
+- 更新项目结构、构建和迁移文档，补充文件维护规则及资源/文档链接回归测试；不改变应用版本号或已发布安装包。
+
+### 发布与仓库信息
+
+- 新增用户向发布说明模板，后续公开 Release 不再包含内部验证、测试或构建结果。
+- 将 v2.0.1 发布说明调整为更新内容、下载与安装、使用须知和文件信息，保留真实安装包大小与 SHA-256；不重发安装包。
+- 补充 README 的中文版视频下载器介绍，便于了解项目用途。
+
 ## [2.0.1] — 2026-10-06
 
 Windows x64 NSIS 修复版本，已发布到 GitHub Release。
@@ -67,4 +83,4 @@ Windows x64 NSIS 修复版本，已发布到 GitHub Release。
 
 ## [1.0.0] — 历史版本
 
-Vue 3 + Python/Eel 实现，使用外部 yt-dlp / FFmpeg 与 PyInstaller。无法从当前源码确定准确发布日期，因此不补造日期。旧实现源码仅保留在 legacy/python-eel/ 供参考，过时的使用文档不再保留。
+Vue 3 + Python/Eel 实现，使用外部 yt-dlp / FFmpeg 与 PyInstaller。无法从当前源码确定准确发布日期，因此不补造日期。旧实现源码曾归档到 legacy/python-eel/，现仅通过 Git 历史保留（可查看标签 v2.0.1），过时的使用文档不再保留。

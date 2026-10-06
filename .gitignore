@@ -40,11 +40,11 @@ pnpm-debug.log*
 /chrome-portable/
 *.log
 
-# Build and packaging outputs
-build/
-dist/
-yt-dlp-gui-cn.spec
-icon.ico
+# Retired root PyInstaller outputs (prevent accidental reintroduction)
+/build/
+/dist/
+/yt-dlp-gui-cn.spec
+/icon.ico
 
 # Editors and operating systems
 .vscode/
@@ -59,7 +59,6 @@ Thumbs.db
 /frontend/src-tauri/target/
 /frontend/src-tauri/gen/
 /frontend/src-tauri/.tauri/
-!/frontend/src-tauri/icons/icon.ico
 
 # Never commit updater signing secrets
 *.key

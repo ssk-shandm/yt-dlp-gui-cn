@@ -35,7 +35,7 @@ npm run desktop:build
 
 ## 应用图标
 
-图标源图像为根目录 `视频下载工具图标设计.png`；当前构建使用 `frontend/app-icon.png`（预处理副本为 `app-icon-jpeg.png`）。Windows EXE 构建读取 `frontend/src-tauri/icons/icon.ico`，包含 16 / 32 / 48 / 256px 等尺寸；对应 PNG 图标也已同步更新，根目录 `icon.ico` 为同一图标副本。
+图标原始图稿为根目录 `视频下载工具图标设计.png`，生成源为 `frontend/app-icon.png`。Windows EXE、安装器和卸载器读取 `frontend/src-tauri/icons/icon.ico`，包含 16 / 32 / 48 / 256px 等尺寸；打包配置同时引用 `32x32.png`、`128x128.png`、`128x128@2x.png`，另保留通用 `icon.png`。重复图标及非当前平台图标已清理。重新生成方式见 [开发指南](DEVELOPMENT.md#修改代码)。
 
 本次只替换图标资源，已有 EXE / 安装包不会自动变化。需要运行 `npm run desktop:build` 重新构建，新产物才会使用新图标。
 
@@ -66,6 +66,19 @@ npm run desktop:build
 
 自动更新只适用于已安装的当前用户 NSIS 版本。开发版、便携版或运行目录中没有 `uninstall.exe` 的程序会拒绝自动安装，避免误替换开发文件。
 
+### Release 内容格式
+
+以后发布说明统一使用 [发布说明模板](RELEASE_TEMPLATE.md)，仅保留面向用户的以下四部分：
+
+1. **更新内容**：新增功能、体验优化和问题修复。
+2. **下载与安装**：安装包选择、安装或升级方式。
+3. **使用须知**：平台限制、签名、WebView2 和必要的安全提示。
+4. **文件信息**：真实安装包名称、大小与 SHA-256。
+
+公开 Release 不再包含“验证”“测试结果”“验收记录”等章节，也不附测试数量、构建、lint、Clippy 或烟测通过列表。内部验证仍正常执行，记录到 [TESTING.md](TESTING.md)，不复制到发布正文。模板占位符必须替换为本次实际信息，不能把未包含在安装包中的源码变更写成已发布功能。
+
+仅调整已发布 Release 文案时，同步对应的本地发布说明；保持标签、版本号、发布时间和安装包资产不变。
+
 ### Release 说明编码
 
-发布说明保存在 UTF-8 编码的 `docs/RELEASE_v2.0.0.md`。使用 GitHub API 时，将 JSON 显式转换为 UTF-8 字节并设置 `Content-Type: application/json; charset=utf-8`；不要依赖 Windows PowerShell 的默认字符串编码。发布后回读 API，逐字核对标题和正文与本地文件一致，避免中文乱码。
+发布说明按版本保存在 UTF-8 编码的 `docs/RELEASE_v<版本>.md`（如 `RELEASE_v2.0.1.md`）。使用 GitHub API 时，将 JSON 显式转换为 UTF-8 字节并设置 `Content-Type: application/json; charset=utf-8`；不要依赖 Windows PowerShell 的默认字符串编码。发布后回读 API，逐字核对标题和正文与本地文件一致，避免中文乱码。

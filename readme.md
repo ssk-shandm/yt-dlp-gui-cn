@@ -1,5 +1,7 @@
 # yt-dlp GUI 中文版
 
+**yt-dlp 视频下载器的中文图形界面**：面向 Windows，提供中文界面（汉化）、视频下载、音频提取、字幕与封面下载，无需输入命令。
+
 基于 **Vue 3 + TypeScript + Tauri 2 / Rust** 的 Windows 桌面下载工具。下载与媒体合并由外部 **yt-dlp / FFmpeg** 完成，Windows 安装包采用 **NSIS**。
 
 
@@ -75,8 +77,10 @@ frontend/
   tests/               Node 内置测试
 bin/                   本地下载工具，不提交 Git
 docs/                  当前项目文档与更新日志
-legacy/python-eel/     旧代码参考，不作为启动入口
+视频下载工具图标设计.png  原始图稿
 ```
+
+旧 Python/Eel、Docker 和 PyInstaller 实现已从当前工作树移除，仅在 Git 历史中保留。目录保留规则与旧源码查看方式见 [开发指南](docs/DEVELOPMENT.md#项目文件维护)。
 
 ## 边界与安全
 
