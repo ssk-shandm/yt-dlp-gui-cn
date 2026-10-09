@@ -2,6 +2,12 @@
 
 # Changelog
 
+## [2.3.2] — 2026-10-09
+
+### Fixes
+
+- Fixed intermittent "access denied (os error 5)" failures when downloading tools for the first time on Windows. Brief system locks during the install step are now retried automatically, and failure messages include the affected paths.
+
 ## [2.3.1] — 2026-10-09
 
 ### Update fix

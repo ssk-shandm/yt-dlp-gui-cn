@@ -13,7 +13,7 @@
 ## 当前 GUI 发布待办
 
 1. **number-precision（已解决）**：上游 1.6.0 缺完整版权/授权通知，现已由项目自有 MIT 实现替换（frontend/vendor/number-precision），依赖清单 unresolved 为空。
-2. **WebView2 实际验收**：官方条款、SmartScreen 告知、NSIS 许可页和 downloadBootstrapper 策略已落地；无 Runtime 干净系统、标准用户及失败恢复仍需实际验收。静默部署告知见 docs/SILENT-DEPLOYMENT.md。
+2. **WebView2 实际验收**：官方条款、SmartScreen 告知、NSIS 许可页和 downloadBootstrapper 策略已落地；无 Runtime 干净系统、标准用户及失败恢复仍需实际验收。
 3. **GUI 安装包资源（本地已核验）**：2026-10-08 重建隔离 NSIS 包，安装后主 EXE 存在、850 个 LICENSE/licenses 文件逐字节一致，不包含三个工具 EXE；卸载与保护快照检查通过。已发布资产不会自动修复；此结果不覆盖正式产品身份下的跨版本升级。
 4. **运行时下载说明**：核对实际下载供应方、基础版/完整版配置、上游入口和工具目录的版本与许可记录；不要用旧 Gyan 材料描述新的 BtbN 下载结果。
 

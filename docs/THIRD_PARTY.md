@@ -57,6 +57,5 @@ number-precision 已替换为项目自有 MIT 实现（`frontend/vendor/number-p
 
 - 依赖组合条款和 WebView2 通知已记录在 `licenses/gui/`。
 - 无 Runtime 干净系统的 WebView2 验收尚未执行，见 [readme.md](../readme.md#todo)。
-- 静默部署告知与确认见 [SILENT-DEPLOYMENT.md](SILENT-DEPLOYMENT.md)。
 
 在 `frontend/` 目录运行 `npm run licenses:check` 检查随包说明材料。工具下载成功不等于 GUI 代替上游承担第三方项目的许可证义务；发布时应保留清楚的上游链接和用户提示。

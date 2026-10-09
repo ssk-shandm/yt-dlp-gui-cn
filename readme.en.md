@@ -129,8 +129,7 @@ The `licenses/` folder in the installer provides only upstream source informatio
 ## TODO
 
 - **Licensing**: `number-precision` has been replaced by the project's own MIT implementation (`frontend/vendor/number-precision`), and the current version no longer depends on upstream 1.6.0. The complete copyright notice missing from upstream is not being pursued at this time and must not be filled in from npm author fields. If the project switches back to the upstream package, this gap must be addressed again.
-- **Pre-release acceptance**: on a clean Windows machine without the WebView2 Runtime, verify installation, first launch, the network-based runtime setup, and the offline and standard-user scenarios. A Linux VM cannot replace this test, because WebView2 and the NSIS installer only run on Windows. Record the results in `docs/TESTING.md`.
-- **Silent deployment**: the deploying party must complete the confirmation table in `docs/SILENT-DEPLOYMENT.md` (deployer, owner, and terminal scope) and sign it.
+- **WebView2 clean-system acceptance (deferred until an issue is filed)**: on a clean Windows machine without the WebView2 Runtime, verify installation, first launch, the network-based runtime setup, and the offline and standard-user scenarios. A Linux VM cannot replace this test, because WebView2 and the NSIS installer only run on Windows. Record the results in `docs/TESTING.md`.
 - **Redistribution materials for historical tools** (does not affect using the current installer; only needed when redistributing yt-dlp / FFmpeg):
   - Complete the full corresponding source and necessary build materials for the yt-dlp packaged components;
   - Compare the FFmpeg official archive with the two local EXE files one by one;

@@ -16,7 +16,7 @@
 | `npm run test:ui` | 通过 |
 | `npm run licenses:inventory` | 543 个包，unresolved 为 0 |
 | `npm run licenses:check` | 通过 |
-| `npm run licenses:release` | 失败（预期）：仅剩 WebView2 干净系统验收与静默部署表待办，pending 未被清空 |
+| `npm run licenses:release` | 失败（预期）：仅剩 WebView2 干净系统验收待办，pending 未被清空 |
 
 Rust 与桌面烟测的最近记录见 [2026-10-08](#2026-10-08更新链路下载优化与隔离安装)，本次未重跑。
 

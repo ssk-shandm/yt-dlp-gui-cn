@@ -138,6 +138,5 @@ licenses/
 
 生产分发维持 WebView2 `downloadBootstrapper`，明确静默运行时安装。NSIS 交互安装通过 `bundle.licenseFile` 显示中文告知、GUI MIT 原文及 Microsoft 官方最终用户条款。共享 Runtime 不随 GUI 卸载。无网络且缺失 Runtime 不属于可安装范围。
 
-静默或被动部署须另行预先告知并安排适当同意，不以 `/S` 代替用户阅读。告知内容与确认记录见 [静默部署告知与确认](SILENT-DEPLOYMENT.md)，未签署前不得视为已完成。
 
 `licenses/gui/sources/` 随资源交付准确版本的 MPL 和复合许可组件源码；`SOURCE-NOTICE.txt` 说明解压与源码获取方式。更新依赖或通知材料后，依次运行 `npm run licenses:inventory`（有 unresolved 时非零退出）和 `npm run licenses:redistribution`，再运行 `licenses:check` 与 `licenses:release`。number-precision 已由项目自有 MIT 实现替换，详见 [GUI 许可记录](../licenses/gui/README.md)。无 Runtime 干净环境尚未验收，发布门禁仍有效。

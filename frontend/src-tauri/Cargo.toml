@@ -1,6 +1,6 @@
 [package]
 name = "yt-dlp-gui-cn"
-version = "2.3.1"
+version = "2.3.2"
 description = "Vue and Tauri desktop interface for yt-dlp"
 authors = ["GrabMeta contributors"]
 edition = "2021"

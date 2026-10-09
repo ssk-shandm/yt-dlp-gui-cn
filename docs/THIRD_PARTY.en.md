@@ -57,6 +57,5 @@ For the specific review actions and the current gaps, see the [license review ch
 
 - Dependency composite terms and WebView2 notices are recorded in `licenses/gui/`.
 - Acceptance on a clean system without a Runtime, for WebView2, has not been performed; see [readme.md](../readme.md#todo).
-- For the silent deployment notice and confirmation, see [SILENT-DEPLOYMENT.md](SILENT-DEPLOYMENT.md).
 
 Run `npm run licenses:check` in the `frontend/` directory to check the license notice materials in the package. A successful tool download does not mean the GUI assumes the third-party projects' license obligations on their behalf; clear upstream links and user notices should be kept at release time.

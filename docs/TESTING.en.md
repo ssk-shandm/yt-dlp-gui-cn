@@ -16,7 +16,7 @@ The published version is still 2.0.1. The local working tree contains unreleased
 | `npm run test:ui` | Passed |
 | `npm run licenses:inventory` | 543 packages, 0 unresolved |
 | `npm run licenses:check` | Passed |
-| `npm run licenses:release` | Failed (expected): only the WebView2 clean-system acceptance and the silent-deployment sign-off form remain open; pending items have not been cleared |
+| `npm run licenses:release` | Failed (expected): only the WebView2 clean-system acceptance remains open; pending items have not been cleared |
 
 For the most recent Rust and desktop smoke-test records, see [2026-10-08](#2026-10-08-update-chain-download-optimization-and-isolated-installation). They were not re-run this time.
 

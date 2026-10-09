@@ -27,14 +27,13 @@ For the project overview, features and quick start, see the [root README](../rea
 | Document | Purpose |
 | --- | --- |
 | [Third-party tools and licenses](THIRD_PARTY.en.md) | Upstream sources, licenses and distribution notes; release notes do not list hashes |
-| [Silent deployment notice and confirmation](SILENT-DEPLOYMENT.en.md) | Notice and deployer confirmation form before batch installation via passive modes such as `/S` |
 | [License materials directory](../licenses/README.md) | Licenses, source notes and GUI dependency notices distributed with the installer |
 
 ## Suggested reading order
 
 - **Starting development**: Development guide → Architecture and IPC.
 - **Building the installer**: Windows / NSIS build → Third-party tools and licenses → Testing and acceptance.
-- **Bulk deployment**: Windows / NSIS build → Silent deployment notice and confirmation.
+- **Bulk deployment**: Windows / NSIS build build.
 - **License review**: Third-party tools and licenses → [License review checklist](../licenses/RELEASE-CHECKLIST.md).
 - **Understanding version changes**: Changelog → Testing and acceptance.
 

@@ -127,8 +127,7 @@ Tauri/Windows 打包所需的应用图标位于 `frontend/src-tauri/icons/`；�
 ## 待办事项
 
 - **许可证**：`number-precision` 已由本项目自有的 MIT 实现替换（`frontend/vendor/number-precision`），当前版本不再依赖上游 1.6.0。上游缺失的完整版权声明暂不跟进，且不得依据 npm 作者字段补写；若将来改回上游包，需重新处理该缺口。
-- **发布前验收**：在未安装 WebView2 Runtime 的干净 Windows 机器上，验证安装、首次启动、联网引导，以及断网和标准用户场景。Linux 虚拟机无法替代该验证，因为 WebView2 与 NSIS 安装器仅可在 Windows 上运行。验收结果请记入 `docs/TESTING.md`。
-- **静默部署**：部署方须在 `docs/SILENT-DEPLOYMENT.md` 的确认表中补全部署方、负责人及终端范围，并自行签署。
+- **WebView2 干净系统验收（暂缓，待有人提交 issue 后再做）**：在未安装 WebView2 Runtime 的干净 Windows 机器上，验证安装、首次启动、联网引导，以及断网和标准用户场景。Linux 虚拟机无法替代该验证，因为 WebView2 与 NSIS 安装器仅可在 Windows 上运行。验收结果请记入 `docs/TESTING.md`。
 - **历史工具再分发材料**（不影响当前安装包使用，仅在再分发 yt-dlp / FFmpeg 时需要）：
   - 补齐 yt-dlp 打包组件的完整对应源码及必要构建材料；
   - 对 FFmpeg 官方归档与本地两个 EXE 逐一比对；
