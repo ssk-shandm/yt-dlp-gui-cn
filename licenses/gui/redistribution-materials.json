@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T10:02:32.869Z",
-  "inventorySha256": "fea3b0a2774fb5652964beb4831dc254ae0dac6ded92448fc13319e5666f8cff",
+  "checkedAt": "2026-10-09T10:09:47.330Z",
+  "inventorySha256": "d92b907e952b85944a790159b6c89145e32ec9da14f511ab9d68a9f24493775a",
   "sources": [
     {
       "id": "cargo:brotli@9.0.0",

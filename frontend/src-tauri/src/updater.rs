@@ -65,9 +65,12 @@ fn validate_update_url(url: &str) -> AppResult<()> {
     {
         return Err(AppError::new("update.urlNotTrusted"));
     }
-    let path = parsed
-        .path()
-        .strip_prefix("/ssk-shandm/grabmeta/releases/download/")
+    let path = parsed.path();
+    const PROJECT_RELEASE_PREFIX: &str = "/ssk-shandm/grabmeta/releases/download/";
+    let path = path
+        .get(..PROJECT_RELEASE_PREFIX.len())
+        .filter(|prefix| prefix.eq_ignore_ascii_case(PROJECT_RELEASE_PREFIX))
+        .map(|_| &path[PROJECT_RELEASE_PREFIX.len()..])
         .ok_or_else(|| AppError::new("update.urlNotProjectRelease"))?;
     let parts: Vec<_> = path.split('/').collect();
     if parts.len() != 2 || parts.iter().any(|part| part.is_empty()) {
@@ -510,6 +513,7 @@ mod tests {
     #[test]
     fn update_urls_are_restricted_to_this_repository() {
         assert!(validate_update_url("https://github.com/ssk-shandm/grabmeta/releases/download/v2.0.2/app_x64-setup.exe").is_ok());
+        assert!(validate_update_url("https://github.com/ssk-shandm/GrabMeta/releases/download/v2.3.0/GrabMeta_2.3.0_x64-setup.exe").is_ok());
         for url in [
             "http://github.com/ssk-shandm/grabmeta/releases/download/v2.0.2/app.exe",
             "https://github.com/other/repo/releases/download/v2.0.2/app.exe",

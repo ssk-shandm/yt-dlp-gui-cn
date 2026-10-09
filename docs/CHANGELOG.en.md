@@ -2,6 +2,12 @@
 
 # Changelog
 
+## [2.3.1] — 2026-10-09
+
+### Update fix
+
+- Fixed automatic updates rejecting download URLs that use GitHub's actual repository casing (`GrabMeta`). Installed 2.3.0 builds would refuse their own update packages; from this version on, update checks and installation work normally.
+
 ## [2.3.0] — 2026-10-09
 
 ### Rename

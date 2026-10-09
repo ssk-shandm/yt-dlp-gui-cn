@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T10:02:26.770Z",
+  "checkedAt": "2026-10-09T10:09:28.710Z",
   "target": "x86_64-pc-windows-msvc",
   "scope": "Installed npm runtime and build packages; Windows-filtered Cargo graph (conservative superset). Does not certify native SDK components or license compliance.",
   "lockfiles": {
-    "frontend/package-lock.json": "59b1dce2970cabc7d295f072702cc971a4ec539dcc14c8b1288a41b99fd92932",
-    "frontend/src-tauri/Cargo.lock": "5fd8cd1a4e6dd8fc30750e3d37d1ae61e526018ba0a3de39d1425eb6936520a3"
+    "frontend/package-lock.json": "3070380a3108e07fb59d2daace847bbe6a3d3334681d362986be34db3f256f6f",
+    "frontend/src-tauri/Cargo.lock": "cee4308447d4211f01318d00009d9a3f7c2ebe3b27c8834bc05f38aeda4b2e5b"
   },
   "packages": [
     {
