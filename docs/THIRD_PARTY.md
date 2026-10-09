@@ -1,3 +1,5 @@
+**简体中文** | [English](THIRD_PARTY.en.md)
+
 # 第三方工具与许可
 
 项目 MIT 许可只覆盖本项目代码，不覆盖 yt-dlp、FFmpeg、WebView2 等第三方组件。

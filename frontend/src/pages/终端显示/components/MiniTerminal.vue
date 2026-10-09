@@ -1,16 +1,16 @@
 <template>
-  <section class="terminal-shell" aria-label="终端输出">
+  <section class="terminal-shell" :aria-label="$t('terminal.outputLabel')">
     <header class="terminal-toolbar">
       <div class="terminal-title">
         <span class="status-dot" aria-hidden="true" />
         <div>
-          <strong>运行终端</strong>
-          <span>{{ output.length }} 条日志 · {{ running ? '正在输出' : '等待任务' }}</span>
+          <strong>{{ $t('terminal.title') }}</strong>
+          <span>{{ $t('terminal.lineCount', { count: output.length }) }} · {{ running ? $t('terminal.streaming') : $t('terminal.waiting') }}</span>
         </div>
       </div>
       <div class="terminal-actions">
-        <button type="button" class="toolbar-button" data-guide="copy-logs" :disabled="!output.length" @click="copyOutput">复制日志</button>
-        <button type="button" class="toolbar-button" :disabled="!output.length" @click="terminalStore.clear">清空</button>
+        <button type="button" class="toolbar-button" data-guide="copy-logs" :disabled="!output.length" @click="copyOutput">{{ $t('terminal.copy') }}</button>
+        <button type="button" class="toolbar-button" :disabled="!output.length" @click="terminalStore.clear">{{ $t('terminal.clear') }}</button>
       </div>
     </header>
     <div
@@ -20,8 +20,8 @@
     >
       <div v-if="!output.length" class="empty-terminal">
         <span class="empty-icon">›_</span>
-        <strong>暂无终端输出</strong>
-        <p>开始分析或下载后，任务日志会显示在这里。</p>
+        <strong>{{ $t('terminal.emptyTitle') }}</strong>
+        <p>{{ $t('terminal.emptyHint') }}</p>
       </div>
       <ol v-else class="terminal-lines" aria-live="polite">
         <li v-for="(line, index) in output" :key="`${index}-${line}`" class="terminal-line">
@@ -35,8 +35,8 @@
         type="button"
         class="scroll-to-bottom-btn"
         @click="scrollToBottom"
-        title="滚到底部"
-        aria-label="滚到底部"
+        :title="$t('terminal.scrollToBottom')"
+        :aria-label="$t('terminal.scrollToBottom')"
       >↓</button>
     </div>
   </section>

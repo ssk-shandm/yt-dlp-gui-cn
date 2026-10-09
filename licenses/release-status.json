@@ -39,6 +39,12 @@
   ],
   "completed": [
     {
+      "item": "vue-i18n 及 @intlify 相关五个 MIT 依赖的许可审核（用户已确认）",
+      "checkedAt": "2026-10-09",
+      "scope": "vue-i18n@11.4.13 与 @intlify/core-base、devtools-types、message-compiler、shared（均为 11.4.13）按 MIT 采用并保留包内 LICENSE；用户已确认 review.json 中对应的五项记录",
+      "evidence": "licenses/gui/review.json; licenses/gui/packages/npm_vue-i18n_11.4.13/; licenses/gui/packages/npm__intlify_*_11.4.13/"
+    },
+    {
       "item": "静默部署告知与同意确认（用户已确认）",
       "checkedAt": "2026-10-09",
       "scope": "静默安装 WebView2 Runtime 的告知文件已写入；用户确认同意。确认表的部署方、负责人、终端范围与签署栏尚未填写",

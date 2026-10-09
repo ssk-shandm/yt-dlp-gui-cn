@@ -2,9 +2,9 @@
   <section class="link-page surface-card">
     <div class="image-container">
       <div class="preview-heading">
-        <span class="section-eyebrow">视频封面</span
+        <span class="section-eyebrow">{{ t('links.eyebrow') }}</span
         ><span class="preview-status">{{
-          formatStore.isLoading ? '正在获取信息' : hasThumbnail ? '已获取封面' : '等待分析'
+          formatStore.isLoading ? t('links.status.fetching') : hasThumbnail ? t('links.status.fetched') : t('links.status.waiting')
         }}</span>
       </div>
       <div
@@ -20,18 +20,18 @@
             <button
               class="image-display"
               type="button"
-              aria-label="预览视频封面"
+              :aria-label="t('links.preview.ariaPreview')"
               @click="open"
             >
               <img
-                alt="视频封面预览"
+                :alt="t('links.preview.alt')"
                 :src="img"
                 class="preview-img"
                 referrerpolicy="no-referrer"
                 :key="img"
                 @error="imageFailed = true"
               />
-              <span class="preview-overlay"><BrowseIcon size="1.4em" />放大预览</span>
+              <span class="preview-overlay"><BrowseIcon size="1.4em" />{{ t('links.preview.enlarge') }}</span>
             </button>
           </template>
         </t-image-viewer>
@@ -49,15 +49,15 @@
               size="28px"
           /></span>
           <strong>{{
-            formatStore.isLoading ? '正在分析视频…' : imageFailed ? '封面暂时无法加载' : '暂无视频封面'
+            formatStore.isLoading ? t('links.empty.analyzing') : imageFailed ? t('links.empty.failed') : t('links.empty.none')
           }}</strong>
           <p>
             {{
               formatStore.isLoading
-                ? '正在读取封面、格式与字幕信息'
+                ? t('links.empty.analyzingHint')
                 : imageFailed
-                  ? '视频信息仍可用于下载，请检查网络后重试'
-                  : '粘贴链接并分析后，封面将在这里显示'
+                  ? t('links.empty.failedHint')
+                  : t('links.empty.noneHint')
             }}
           </p>
         </div>
@@ -67,14 +67,14 @@
       class="url-form"
       @submit.prevent="HA"
     >
-      <span class="form-label">视频链接</span>
+      <span class="form-label">{{ t('links.form.label') }}</span>
       <div class="url-input-section">
         <label class="url-input"
-          ><span class="sr-only">视频链接</span
+          ><span class="sr-only">{{ t('links.form.label') }}</span
           ><t-input
             id="video-url"
             v-model="urlStore.currentUrl"
-            placeholder="粘贴视频链接，例如 https://…"
+            :placeholder="t('links.form.placeholder')"
             type="url"
             size="large"
             clearable
@@ -87,27 +87,28 @@
           <LoadingIcon
             v-if="formatStore.isLoading"
             class="is-spinning"
-          />{{ formatStore.isLoading ? '分析中…' : '分析链接' }}
+          />{{ formatStore.isLoading ? t('links.form.analyzing') : t('links.form.analyze') }}
         </BBB>
       </div>
-      <p class="input-hint">按 Enter 即可分析 · 分析完成后可前往「内容处理」选择格式</p>
+      <p class="input-hint">{{ t('links.form.hint') }}</p>
     </form>
     <div class="fast-download">
       <div>
-        <strong>一键获取最佳质量</strong>
-        <p>自动选择最佳视频与音频，无需手动配置。</p>
+        <strong>{{ t('links.quick.title') }}</strong>
+        <p>{{ t('links.quick.description') }}</p>
       </div>
       <BBB
         class="quick-btn"
         @click="HQD"
         :disabled="formatStore.isLoading || !urlStore.analyzedUrl || urlStore.currentUrl !== urlStore.analyzedUrl"
-        ><DownloadIcon />快速下载</BBB
+        ><DownloadIcon />{{ t('links.quick.button') }}</BBB
       >
     </div>
   </section>
 </template>
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUrlStore } from '@/stores/urlStore'
 import { BrowseIcon, LoadingIcon, DownloadIcon } from 'tdesign-icons-vue-next'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
@@ -115,6 +116,7 @@ import BBB from '@/components/DiyButtom.vue'
 import { analyzeVideo, startDownload } from '@/services/desktop'
 import { useFormatStore } from '@/stores/formatStore'
 
+const { t } = useI18n()
 const urlStore = useUrlStore()
 const formatStore = useFormatStore()
 
@@ -127,28 +129,28 @@ watch(img, () => {
 
 const HA = async () => {
   if (!urlStore.currentUrl) {
-    NotificationPlugin.warning({ title: '提示', content: '请先粘贴视频链接' })
+    NotificationPlugin.warning({ title: t('links.notice.title'), content: t('links.notice.pasteFirst') })
     return
   }
 
   if (!isValidUrl(urlStore.currentUrl)) {
-    NotificationPlugin.warning({ title: '提示', content: '请输入有效的URL地址' })
+    NotificationPlugin.warning({ title: t('links.notice.title'), content: t('links.notice.invalidUrl') })
     return
   }
 
   if (formatStore.isLoading) return
-  NotificationPlugin.info({ title: '分析中', content: '正在获取视频信息，请稍候...' })
+  NotificationPlugin.info({ title: t('links.notice.analyzing'), content: t('links.notice.analyzingDesc') })
 
   await analyzeVideo(urlStore.currentUrl)
 }
 
 const HQD = () => {
   if (!urlStore.currentUrl || !urlStore.analyzedUrl || urlStore.currentUrl !== urlStore.analyzedUrl) {
-    NotificationPlugin.warning({ title: '提示', content: '请先分析链接后再下载' })
+    NotificationPlugin.warning({ title: t('links.notice.title'), content: t('links.notice.downloadFirst') })
     return
   }
 
-  NotificationPlugin.info({ title: '下载开始', content: '下载任务已启动，请关注终端输出', duration: 5000 })
+  NotificationPlugin.info({ title: t('links.notice.downloadStarted'), content: t('links.notice.downloadStartedDesc'), duration: 5000 })
   void startDownload({ url: urlStore.currentUrl, kind: 'quick' })
 }
 

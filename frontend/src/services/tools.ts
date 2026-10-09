@@ -1,7 +1,8 @@
 ﻿import { invoke, isTauri } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import { useTaskStore } from '@/stores/taskStore'
-import { createToolController, type ToolProfile, type ToolProgress, type ToolStatus } from './toolController'
+import { i18n } from '../i18n'
+import { createToolController, toToolText, type ToolProfile, type ToolProgress, type ToolStatus, type ToolText } from './toolController'
 
 export const tools = createToolController({
   isDesktop: isTauri,
@@ -11,6 +12,11 @@ export const tools = createToolController({
   cancel: () => invoke<void>('cancel_tool_download'),
 })
 export const toolManager = tools.state
+export function toolText(value: ToolText | string): string {
+  if (typeof value === 'string') return value
+  const values = Object.fromEntries(Object.entries(value.values ?? {}).map(([name, item]) => [name, typeof item === 'object' ? toolText(item) : item]))
+  return i18n.global.t(value.key, values)
+}
 let progressStop: UnlistenFn | undefined
 let initialization: Promise<void> | undefined
 export function initializeTools(): Promise<void> {
@@ -23,7 +29,7 @@ export function initializeTools(): Promise<void> {
     initialization = undefined
     progressStop?.()
     progressStop = undefined
-    toolManager.error = String(error)
+    toolManager.error = toToolText(error)
     toolManager.visible = true
     throw error
   })

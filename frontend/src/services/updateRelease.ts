@@ -1,4 +1,8 @@
-import type { UpdateInfo } from './updateController'
+import type { NoticeError, NoticeParams, UpdateInfo } from './updateController'
+
+export function noticeError(key: string, fallback: string, params: NoticeParams = {}): NoticeError {
+  return Object.assign(new Error(fallback), { key, params })
+}
 
 interface ReleaseAsset {
   name?: unknown
@@ -10,10 +14,10 @@ export interface ReleaseData { tag_name?: unknown; html_url?: unknown; body?: un
 
 export function normalizeSha256(value: unknown): string {
   if (value == null || value === '') {
-    throw new Error('该 Release 缺少安装包 SHA-256，已停止自动安装。请到发布页核实后手动安装。')
+    throw noticeError('updates.sha256Missing', '该 Release 缺少安装包 SHA-256，已停止自动安装。请到发布页核实后手动安装。')
   }
   if (typeof value !== 'string' || !/^sha256:[0-9a-f]{64}$/i.test(value)) {
-    throw new Error('安装包 SHA-256 格式无效，已停止自动安装')
+    throw noticeError('updates.sha256Invalid', '安装包 SHA-256 格式无效，已停止自动安装')
   }
   return value.slice(7).toLowerCase()
 }
@@ -31,7 +35,7 @@ export function compareVersions(a: string, b: string): number {
 
 export function parseRelease(data: ReleaseData, currentVersion: string, releasesUrl: string): UpdateInfo {
   const remoteVersion = String(data.tag_name ?? '').replace(/^v/i, '')
-  if (!/^\d+\.\d+\.\d+$/.test(remoteVersion)) throw new Error('最新 Release 的版本号无效')
+  if (!/^\d+\.\d+\.\d+$/.test(remoteVersion)) throw noticeError('updates.releaseVersionInvalid', '最新 Release 的版本号无效')
   if (compareVersions(remoteVersion, currentVersion) <= 0) {
     return { version: currentVersion, available: false }
   }

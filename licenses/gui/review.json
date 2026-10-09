@@ -2643,6 +2643,34 @@
       "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
     },
     {
+      "id": "npm:@intlify/core-base@11.4.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@intlify/devtools-types@11.4.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@intlify/message-compiler@11.4.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@intlify/shared@11.4.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
       "id": "npm:@vue/shared@3.5.43",
       "declared": "MIT",
       "applied": "MIT",
@@ -3746,6 +3774,13 @@
       "declared": "MIT",
       "applied": "MIT",
       "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue-i18n@11.4.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
       "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
     },
     {

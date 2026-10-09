@@ -1,12 +1,12 @@
 <template>
   <BOX
-    title="可用格式"
+    :title="t('content.list.title')"
     width="100%"
     class="box-container"
   >
     <div class="controls-bar">
       <div class="filter-group">
-        <span class="filter-label">类型筛选：</span>
+        <span class="filter-label">{{ t('content.list.typeFilter') }}</span>
         <a-select
           v-model="filterType"
           data-guide="format-filter"
@@ -16,7 +16,7 @@
         />
       </div>
       <div class="sort-group">
-        <span class="sort-label">排序：</span>
+        <span class="sort-label">{{ t('content.list.sort') }}</span>
         <a-select
           v-model="sortBy"
           :options="sortOptions"
@@ -43,6 +43,7 @@
 
 <script lang="ts" setup>
 import { h, computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { type BaseTableProps, Button as TButton } from 'tdesign-vue-next'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
@@ -51,6 +52,7 @@ import { useUrlStore } from '@/stores/urlStore'
 import { startDownload } from '@/services/desktop'
 import { useFormatStore } from '@/stores/formatStore'
 
+const { t } = useI18n()
 const urlStore = useUrlStore()
 const formatStore = useFormatStore()
 const { formats, isLoading } = storeToRefs(formatStore)
@@ -59,19 +61,19 @@ const { formats, isLoading } = storeToRefs(formatStore)
 const filterType = ref('all')
 const sortBy = ref('resolution')
 
-const typeOptions = [
-  { label: '全部', value: 'all' },
-  { label: '仅视频', value: 'video' },
-  { label: '仅音频', value: 'audio' },
-  { label: '视频+音频', value: 'both' },
-]
+const typeOptions = computed(() => [
+  { label: t('content.list.filter.all'), value: 'all' },
+  { label: t('content.list.filter.video'), value: 'video' },
+  { label: t('content.list.filter.audio'), value: 'audio' },
+  { label: t('content.list.filter.both'), value: 'both' },
+])
 
-const sortOptions = [
-  { label: '分辨率（高→低）', value: 'resolution' },
-  { label: '文件大小（大→小）', value: 'filesize' },
-  { label: '总码率（高→低）', value: 'bitrate' },
-  { label: 'ID', value: 'id' },
-]
+const sortOptions = computed(() => [
+  { label: t('content.list.sortBy.resolution'), value: 'resolution' },
+  { label: t('content.list.sortBy.filesize'), value: 'filesize' },
+  { label: t('content.list.sortBy.bitrate'), value: 'bitrate' },
+  { label: t('content.list.sortBy.id'), value: 'id' },
+])
 
 // 计算筛选和排序后的数据
 const filteredAndSortedFormats = computed(() => {
@@ -152,20 +154,20 @@ const handleSortChange = () => {
 }
 
 // 定义表头
-const columns: BaseTableProps['columns'] = [
-  { colKey: 'id', title: 'ID', width: '70px', ellipsis: true },
-  { colKey: 'ext', title: '格式', width: '60px' },
-  { colKey: 'resolution', title: '分辨率', width: '80px' },
-  { colKey: 'fps', title: 'FPS', width: '60px' },
-  { colKey: 'vcodec', title: '视频编码', width: '100px', ellipsis: true },
-  { colKey: 'vbr', title: '视频码率', width: '80px' },
-  { colKey: 'acodec', title: '音频编码', width: '100px', ellipsis: true },
-  { colKey: 'abr', title: '音频码率', width: '80px' },
-  { colKey: 'filesize', title: '大小', width: '70px' },
-  { colKey: 'tbr', title: '总码率', width: '80px' },
+const columns = computed<BaseTableProps['columns']>(() => [
+  { colKey: 'id', title: t('content.list.columns.id'), width: '70px', ellipsis: true },
+  { colKey: 'ext', title: t('content.list.columns.format'), width: '60px' },
+  { colKey: 'resolution', title: t('content.list.columns.resolution'), width: '80px' },
+  { colKey: 'fps', title: t('content.list.columns.fps'), width: '60px' },
+  { colKey: 'vcodec', title: t('content.list.columns.videoCodec'), width: '100px', ellipsis: true },
+  { colKey: 'vbr', title: t('content.list.columns.videoBitrate'), width: '80px' },
+  { colKey: 'acodec', title: t('content.list.columns.audioCodec'), width: '100px', ellipsis: true },
+  { colKey: 'abr', title: t('content.list.columns.audioBitrate'), width: '80px' },
+  { colKey: 'filesize', title: t('content.list.columns.size'), width: '70px' },
+  { colKey: 'tbr', title: t('content.list.columns.totalBitrate'), width: '80px' },
   {
     colKey: 'download',
-    title: '操作',
+    title: t('content.list.columns.action'),
     width: '70px',
     fixed: 'right',
     cell: (_, { row }) => {
@@ -176,25 +178,25 @@ const columns: BaseTableProps['columns'] = [
           size: 'small',
           onClick: () => downloadFormat(row.id),
         },
-        () => '下载',
+        () => t('content.list.columns.download'),
       )
     },
   },
-]
+])
 
 // 下载逻辑
 const downloadFormat = (formatId: string) => {
   if (!urlStore.analyzedUrl) {
-    NotificationPlugin.warning({ title: '操作提示', content: '链接未分析！' })
+    NotificationPlugin.warning({ title: t('content.titles.operation'), content: t('content.list.notAnalyzed') })
     return
   }
 
   if (!formatId) {
-    NotificationPlugin.error({ title: '操作失败', content: '无效的格式ID！' })
+    NotificationPlugin.error({ title: t('content.titles.failed'), content: t('content.list.invalidFormatId') })
     return
   }
 
-  NotificationPlugin.info({ title: '系统提示', content: `正在下载格式 ${formatId}...`, duration: 5000 })
+  NotificationPlugin.info({ title: t('content.titles.system'), content: t('content.list.downloadingFormat', { formatId }), duration: 5000 })
   void startDownload({ url: urlStore.analyzedUrl, kind: 'format', formatId })
 }
 </script>

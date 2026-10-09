@@ -10,47 +10,61 @@ import { useFormatStore } from '@/stores/formatStore'
 import { useSubtitleStore } from '@/stores/subtitleStore'
 import type { DownloadRequest, LogEvent, Settings, TaskEvent, VideoMetadata } from '@/types/desktop'
 import { initializeTools } from '@/services/tools'
+import { i18n } from '../i18n'
+import { errorText, kindName, translateCode } from '../i18n/codes'
+import { APP_VERSION } from '@/config/appInfo'
+
+const t = i18n.global.t
 
 let initialization: Promise<void> | undefined
 const unlisteners: UnlistenFn[] = []
 let saveQueue: Promise<unknown> = Promise.resolve()
 let persistedSettings: Settings | undefined
 
+function logText(payload: LogEvent): string {
+  if (!payload.notice) return payload.line
+  const { code, detail = '' } = payload.notice
+  return translateCode(code, code.startsWith('log.') ? kindName(detail) : detail)
+}
+
 function report(error: unknown) {
-  const message = String(error)
+  const message = errorText(error)
   useTerminalStore().addLine(message)
-  NotificationPlugin.error({ title: '操作失败', content: message })
+  NotificationPlugin.error({ title: t('common.desktop.failed'), content: message })
 }
 
 export function initializeDesktop(): Promise<void> {
   if (initialization) return initialization
   initialization = (async () => {
-    if (!isTauri()) throw new Error('当前仅为界面预览，请使用 npm run desktop:dev 启动桌面端。')
+    if (!isTauri()) throw new Error(t('common.desktop.previewOnly'))
     unlisteners.push(await listen<LogEvent>('terminal-output', ({ payload }) => {
-      useTerminalStore().addLine('[' + payload.taskId + '] ' + payload.line)
+      useTerminalStore().addLine('[' + payload.taskId + '] ' + logText(payload))
     }))
     unlisteners.push(await listen<TaskEvent>('task-status', ({ payload }) => {
       useTaskStore().updateTask(payload)
-      if (payload.title === '链接解析' || payload.status === 'running') return
-      if (payload.status === 'success') NotificationPlugin.success({ title: payload.title, content: payload.message })
-      else if (payload.status === 'error') NotificationPlugin.error({ title: payload.title, content: payload.message })
+      if (payload.kind === 'analyze' || payload.status === 'running') return
+      const title = kindName(payload.kind)
+      const content = errorText(payload.message)
+      if (payload.status === 'success') NotificationPlugin.success({ title, content })
+      else if (payload.status === 'error') NotificationPlugin.error({ title, content })
     }))
     const settings = await invoke<Settings>('get_settings')
     persistedSettings = settings
     useSettingsStore().applySettings(settings)
     useSettingsStore().initialized = true
-    useTerminalStore().addLine('Tauri 桌面端已就绪。下载目录：' + settings.downloadPath)
-    useTerminalStore().addLine(`媒体分片并发：${settings.concurrentFragments}；未设置下载限速。直链/站点限制及代理线路仍会影响实际速度。`)
+    useTerminalStore().addLine(t('common.desktop.ready', { path: settings.downloadPath }))
+    useTerminalStore().addLine(t('common.desktop.concurrency', { count: settings.concurrentFragments }))
     await initializeTools()
   })()
   return initialization
 }
 
 export function startDesktop() {
+  useTerminalStore().addLine(t('common.terminalBanner', { version: APP_VERSION }))
   void initializeDesktop().catch((error: unknown) => {
     for (const stop of unlisteners.splice(0)) stop()
-    useTerminalStore().addLine(String(error))
-    NotificationPlugin.warning({ title: '桌面服务未就绪', content: String(error), duration: 8000 })
+    useTerminalStore().addLine(errorText(error))
+    NotificationPlugin.warning({ title: t('common.desktop.unavailable'), content: errorText(error), duration: 8000 })
   })
 }
 
@@ -79,7 +93,7 @@ export async function analyzeVideo(url: string) {
     if (data.thumbnail) urls.setThumbnailUrl(data.thumbnail)
     urls.analyzedUrl = snapshot
     urls.currentUrl = snapshot
-    NotificationPlugin.success({ title: '解析完成', content: data.title || '视频信息已获取' })
+    NotificationPlugin.success({ title: t('common.desktop.analyzeDone'), content: data.title || t('common.desktop.analyzeDefault') })
   } catch (error) { report(error) }
   finally { formats.isLoading = false; subtitles.isLoading = false }
 }
@@ -96,7 +110,7 @@ export function cancelTask(taskId: number) {
 
 function persist(patch: Partial<Settings>): Promise<Settings> {
   const operation = saveQueue.catch(() => undefined).then(async () => {
-    if (!persistedSettings) throw new Error('设置尚未初始化')
+    if (!persistedSettings) throw new Error(t('common.desktop.settingsNotReady'))
     const settings = { ...persistedSettings, ...patch }
     const saved = await invoke<Settings>('save_settings', { settings })
     persistedSettings = saved
@@ -108,7 +122,7 @@ function persist(patch: Partial<Settings>): Promise<Settings> {
 export function selectDownloadDirectory() {
   return safely(async () => {
     const store = useSettingsStore()
-    const selected = await open({ directory: true, multiple: false, defaultPath: store.downloadPath, title: '选择下载目录' })
+    const selected = await open({ directory: true, multiple: false, defaultPath: store.downloadPath, title: t('common.desktop.chooseDirectory') })
     if (typeof selected === 'string') {
       const saved = await persist({ downloadPath: selected })
       store.downloadPath = saved.downloadPath
@@ -122,7 +136,7 @@ export function saveConcurrentFragments(concurrentFragments: number) {
 }
 // Propagate failures to the form; update the store only after a successful save.
 export async function saveProxySettings(proxyEnabled: boolean, proxyUrl: string): Promise<Settings> {
-  if (!isTauri()) throw new Error('浏览器预览不能保存本地 VPN / 代理设置，请使用桌面端。')
+  if (!isTauri()) throw new Error(t('common.desktop.proxyPreviewOnly'))
   const saved = await persist({ proxyEnabled, proxyUrl: proxyUrl.trim() })
   const store = useSettingsStore()
   store.proxyEnabled = saved.proxyEnabled

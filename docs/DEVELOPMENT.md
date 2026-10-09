@@ -1,3 +1,5 @@
+**简体中文** | [English](DEVELOPMENT.en.md)
+
 # 开发指南
 
 ## 环境

@@ -1,16 +1,16 @@
 <template>
   <aside class="leftbar">
-    <span class="nav-caption">工作空间</span>
+    <span class="nav-caption">{{ $t('common.workspace') }}</span>
     <nav
       class="navigation"
-      aria-label="主导航"
+      :aria-label="$t('common.mainNav')"
     >
       <RouterLink
         v-for="page in workspacePages"
         :key="page.path"
         :to="page.path"
         class="nav-item"
-        :title="page.title"
+        :title="$t(page.titleKey)"
         active-class=""
         exact-active-class="is-active"
       >
@@ -19,7 +19,7 @@
           class="nav-icon"
           aria-hidden="true"
         />
-        <span>{{ page.title }}</span>
+        <span>{{ $t(page.titleKey) }}</span>
         <span
           v-if="page.path === '/page-three' && runningCount"
           class="task-count"
@@ -28,29 +28,38 @@
       </RouterLink>
     </nav>
     <div class="sidebar-footer">
-      <button type="button" class="nav-item guide-button" title="新手教程" @click="openGuide">
-        <IconQuestionCircle class="nav-icon" aria-hidden="true" /><span>新手教程</span>
+      <button type="button" class="nav-item guide-button" :title="$t('common.beginnerGuide')" @click="openGuide">
+        <IconQuestionCircle class="nav-icon" aria-hidden="true" /><span>{{ $t('common.beginnerGuide') }}</span>
       </button>
       <RouterLink
         to="/about"
         class="nav-item"
-        title="关于"
+        :title="$t('common.pages.about.title')"
         active-class=""
         exact-active-class="is-active"
       >
         <IconInfoCircle
           class="nav-icon"
           aria-hidden="true"
-        /><span>关于</span>
+        /><span>{{ $t('common.pages.about.title') }}</span>
       </RouterLink>
+      <button
+        type="button"
+        class="nav-item language-button"
+        :title="$t('common.switchLanguageTitle')"
+        @click="toggleLocale"
+      >
+        <IconLanguage class="nav-icon" aria-hidden="true" /><span>{{ $t('common.switchLanguageLabel') }}</span>
+      </button>
     </div>
   </aside>
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { IconImage, IconVideoCamera, IconDownload, IconCode, IconInfoCircle, IconQuestionCircle } from '@arco-design/web-vue/es/icon'
+import { IconImage, IconVideoCamera, IconDownload, IconCode, IconInfoCircle, IconQuestionCircle, IconLanguage } from '@arco-design/web-vue/es/icon'
 import { APP_PAGES } from '@/config/appInfo'
+import { i18n, setLocale } from '@/i18n'
 import { useTaskStore } from '@/stores/taskStore'
 const icons = {
   image: IconImage,
@@ -64,6 +73,9 @@ const tasks = useTaskStore()
 const runningCount = computed(() => tasks.tasks.filter((task) => task.status === 'running').length)
 function openGuide() {
   window.dispatchEvent(new Event('start-beginner-guide'))
+}
+function toggleLocale() {
+  setLocale(i18n.global.locale.value === 'zh-CN' ? 'en-US' : 'zh-CN')
 }
 </script>
 <style scoped>
@@ -145,7 +157,8 @@ function openGuide() {
   margin-top: auto;
   padding-top: 20px;
 }
-.guide-button { width: 100%; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.guide-button, .language-button { width: 100%; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.language-button { margin-top: 8px; }
 @media (max-width: 1100px) {
   .nav-item {
     padding: 0 10px;

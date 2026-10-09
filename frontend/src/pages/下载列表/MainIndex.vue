@@ -1,12 +1,12 @@
 <template>
   <section class="downloads-page">
     <div class="download-summary surface-card">
-      <div><span class="summary-label">本次运行</span><strong>下载任务</strong></div>
+      <div><span class="summary-label">{{ $t('downloads.summary.label') }}</span><strong>{{ $t('downloads.summary.title') }}</strong></div>
       <div class="summary-stats">
         <span
-          ><b>{{ runningCount }}</b> 运行中</span
+          ><b>{{ runningCount }}</b> {{ $t('downloads.summary.running') }}</span
         ><span
-          ><b>{{ completedCount }}</b> 已结束</span
+          ><b>{{ completedCount }}</b> {{ $t('downloads.summary.finished') }}</span
         >
       </div>
     </div>

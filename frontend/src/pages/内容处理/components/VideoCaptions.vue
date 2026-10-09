@@ -1,8 +1,8 @@
 <template>
-  <BOX title="字幕下载" class="box" data-guide="subtitles">
+  <BOX :title="t('content.captions.title')" class="box" data-guide="subtitles">
     <div class="box-inner">
       <BBB class="btn-sm" @click="download_video_introduction">
-        下载描述
+        {{ t('content.captions.downloadDescription') }}
       </BBB>
       <t-table
         bordered
@@ -19,8 +19,9 @@
 </template>
 
 <script lang="tsx" setup>
-import { h } from 'vue'
+import { computed, h } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { type TableProps, Button as TButton } from 'tdesign-vue-next'
 import BOX from '@/components/BoxStyle.vue'
 import BBB from '@/components/DiyButtom.vue'
@@ -34,23 +35,24 @@ interface SubtitleItem {
   formats: string
 }
 
+const { t } = useI18n()
 const urlStore = useUrlStore()
 const subtitleStore = useSubtitleStore()
 const { subtitles, isLoading } = storeToRefs(subtitleStore)
 
 const download_video_introduction = () => {
   if (urlStore.analyzedUrl) {
-    NotificationPlugin.info({ title: '系统提示', content: '正在下载视频描述...' })
+    NotificationPlugin.info({ title: t('content.titles.system'), content: t('content.captions.descriptionStarted') })
     void startDownload({ url: urlStore.analyzedUrl, kind: 'description' })
   }
 }
 
-const columns: TableProps['columns'] = [
-  { colKey: 'language', title: '语言', width: '25%' },
-  { colKey: 'formats', title: '格式', width: '55%' },
+const columns = computed<TableProps['columns']>(() => [
+  { colKey: 'language', title: t('content.captions.language'), width: '25%' },
+  { colKey: 'formats', title: t('content.captions.format'), width: '55%' },
   {
     colKey: 'Download',
-    title: '操作',
+    title: t('content.captions.action'),
     width: '20%',
     cell: (_, { row: file }) => {
       return h(
@@ -60,11 +62,11 @@ const columns: TableProps['columns'] = [
           size: 'small',
           onClick: () => downloadSubtitle(file as SubtitleItem),
         },
-        () => '下载',
+        () => t('content.captions.download'),
       )
     },
   },
-]
+])
 
 const downloadSubtitle = (row: SubtitleItem) => {
   if (urlStore.analyzedUrl) {

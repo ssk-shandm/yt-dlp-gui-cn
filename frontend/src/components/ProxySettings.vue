@@ -1,30 +1,32 @@
 <template>
-  <form class="proxy-settings" aria-label="本地 VPN / 代理设置" @submit.prevent="save">
+  <form class="proxy-settings" :aria-label="$t('common.proxy.formLabel')" @submit.prevent="save">
     <div class="proxy-heading">
       <div>
-        <h3>本地 VPN / 代理</h3>
-        <p>先启动你的 VPN 客户端，再填写它提供的本地 HTTP / SOCKS5 代理地址。此设置不会安装或启动 VPN，也不会修改系统代理。</p>
+        <h3>{{ $t('common.proxy.title') }}</h3>
+        <p>{{ $t('common.proxy.intro') }}</p>
       </div>
       <label class="proxy-toggle">
-        <input v-model="enabled" type="checkbox" :disabled="saving" aria-label="启用本地 VPN / 代理" />
-        启用
+        <input v-model="enabled" type="checkbox" :disabled="saving" :aria-label="$t('common.proxy.enableLabel')" />
+        {{ $t('common.proxy.enable') }}
       </label>
     </div>
-    <label for="local-proxy-url" class="proxy-label">本地代理地址</label>
+    <label for="local-proxy-url" class="proxy-label">{{ $t('common.proxy.urlLabel') }}</label>
     <div class="proxy-input-row">
       <input id="local-proxy-url" v-model="url" type="text" placeholder="http://127.0.0.1:7890" :disabled="!enabled || saving" :required="enabled" spellcheck="false" autocomplete="off" aria-describedby="proxy-help" />
-      <button type="submit" :disabled="saving" class="proxy-save">{{ saving ? '保存中…' : '保存代理设置' }}</button>
+      <button type="submit" :disabled="saving" class="proxy-save">{{ saving ? $t('common.proxy.saving') : $t('common.proxy.save') }}</button>
     </div>
-    <p id="proxy-help" class="proxy-help">示例：http://127.0.0.1:7890 或 socks5://127.0.0.1:1080。端口以你的客户端为准；仅接受本机地址（localhost / 回环 IP），不支持带账号密码的地址。</p>
-    <p class="proxy-help">保存后用于新发起的链接解析、视频 / 字幕 / 封面下载、工具下载及应用更新；正在运行的任务不受影响。关闭后恢复原有系统 / 环境网络配置。若客户端只提供 TUN 模式，不必启用此项。</p>
+    <p id="proxy-help" class="proxy-help">{{ $t('common.proxy.examples') }}</p>
+    <p class="proxy-help">{{ $t('common.proxy.scope') }}</p>
     <p v-if="message" class="proxy-feedback" :class="{ 'is-error': failed }" :role="failed ? 'alert' : 'status'">{{ message }}</p>
   </form>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { i18n } from '@/i18n'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { saveProxySettings } from '@/services/desktop'
+import { errorText } from '@/i18n/codes'
 
 const settings = useSettingsStore()
 const enabled = ref(settings.proxyEnabled)
@@ -44,10 +46,10 @@ async function save() {
   failed.value = false
   try {
     await saveProxySettings(enabled.value, url.value)
-    message.value = enabled.value ? '已保存，新发起的请求将使用本地代理。请确保 VPN 客户端正在运行。' : '已关闭本地代理覆盖，恢复原有网络配置。'
+    message.value = enabled.value ? i18n.global.t('common.proxy.saved') : i18n.global.t('common.proxy.disabled')
   } catch (error) {
     failed.value = true
-    message.value = error instanceof Error ? error.message : String(error)
+    message.value = errorText(error)
   } finally {
     saving.value = false
   }

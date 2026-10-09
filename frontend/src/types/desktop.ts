@@ -1,3 +1,9 @@
+// Rust AppError payload: `code` is a stable key under `codes.*`, `detail` is raw technical text.
+export interface CodedError {
+  code: string
+  detail?: string
+}
+
 export interface VideoFormat {
   id: string
   ext: string | null
@@ -29,8 +35,8 @@ export interface DownloadRequest {
 }
 export interface TaskEvent {
   taskId: number
-  title: string
+  kind: string
   status: 'running' | 'success' | 'error' | 'cancelled'
-  message: string
+  message: CodedError
 }
-export interface LogEvent { taskId: number; line: string }
+export interface LogEvent { taskId: number; line: string; notice?: CodedError }

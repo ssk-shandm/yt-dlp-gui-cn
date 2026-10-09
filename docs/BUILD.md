@@ -1,3 +1,5 @@
+**简体中文** | [English](BUILD.en.md)
+
 # Windows x64 / NSIS 构建
 
 ## 依赖

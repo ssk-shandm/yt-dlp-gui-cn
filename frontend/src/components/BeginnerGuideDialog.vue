@@ -26,13 +26,13 @@
         :style="cardStyle"
         tabindex="-1"
       >
-        <span class="section-eyebrow">新手教程 · {{ step + 1 }} / {{ steps.length }}</span>
+        <span class="section-eyebrow">{{ $t('guide.progress', { current: step + 1, total: steps.length }) }}</span>
         <div
           aria-live="polite"
           aria-atomic="true"
         >
-          <h2 id="guide-title">{{ current.title }}</h2>
-          <p id="guide-description">{{ current.description }}</p>
+          <h2 id="guide-title">{{ currentTitle }}</h2>
+          <p id="guide-description">{{ currentDescription }}</p>
         </div>
         <div class="guide-actions">
           <button
@@ -40,7 +40,7 @@
             class="skip-action"
             @click="skip"
           >
-            跳过
+            {{ $t('guide.skip') }}
           </button>
           <div class="step-actions">
             <button
@@ -50,7 +50,7 @@
               :disabled="changing"
               @click="previous"
             >
-              上一步
+              {{ $t('guide.previous') }}
             </button>
             <button
               type="button"
@@ -58,7 +58,7 @@
               :disabled="changing"
               @click="next"
             >
-              {{ step === steps.length - 1 ? '完成' : '下一步' }}
+              {{ step === steps.length - 1 ? $t('guide.finish') : $t('guide.next') }}
             </button>
           </div>
         </div>
@@ -70,14 +70,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface GuideStep {
-  title: string
-  description: string
+  key: string
   selector: string
   path: string
 }
 
+const { t } = useI18n()
 const router = useRouter()
 const visible = ref(false)
 const changing = ref(false)
@@ -87,110 +88,26 @@ const card = ref<HTMLElement>()
 const cardHeight = ref(180)
 const viewport = ref({ width: window.innerWidth, height: window.innerHeight })
 const steps: GuideStep[] = [
-  {
-    title: '粘贴视频链接',
-    description: '把视频页面的网址粘贴到这里。支持 http 和 https 视频链接。教程只介绍操作，不会自动下载或更改设置。',
-    selector: '#video-url',
-    path: '/',
-  },
-  {
-    title: '分析链接',
-    description: '点击“分析链接”，程序会读取封面、可用画质和字幕信息。请先填写视频链接，按钮才会启用。',
-    selector: '.analyze-btn',
-    path: '/',
-  },
-  {
-    title: '快速下载',
-    description: '分析完成后，点击“快速下载”即可自动选择最佳视频和音频。尚未分析时，按钮显示为灰色。',
-    selector: '.quick-btn',
-    path: '/',
-  },
-  {
-    title: '自定义下载',
-    description: '需要指定画质、音频或字幕时，打开“内容处理”进行选择。接下来介绍这里的下载设置。',
-    selector: 'a[href="#/page-two"]',
-    path: '/page-two',
-  },
-  {
-    title: '设置下载目录',
-    description: '点击“下载目录”选择文件保存位置，下方会显示当前目录。建议在下载前先确认保存位置。',
-    selector: '[data-guide="download-directory"]',
-    path: '/page-two',
-  },
-  {
-    title: '设置重试次数',
-    description: '下载失败时按这里的设置重试，可选 3 次、5 次、10 次或无限。新手建议先用有限次数，避免反复重试。',
-    selector: '[data-guide="retry-limit"]',
-    path: '/page-two',
-  },
-  {
-    title: '下载字幕',
-    description:
-      '分析完成后，字幕列表会显示可用语言和格式，点击对应行的“下载”即可保存字幕。列表为空时，当前链接没有可用字幕或尚未完成分析。',
-    selector: '[data-guide="subtitles"] .box-heading',
-    path: '/page-two',
-  },
-  {
-    title: '选择视频和音频',
-    description:
-      '在 DIY 下载中分别选择视频画质和音频轨道。选项来自已分析的视频，尚未分析或没有独立轨道时，选项可能为空。',
-    selector: '[data-guide="video-audio-quality"]',
-    path: '/page-two',
-  },
-  {
-    title: '选择输出格式',
-    description: '这里选择合成后文件的封装格式。画质和音频由上一项决定，更换封装格式不会自动提升画质。',
-    selector: '[data-guide="container-format"]',
-    path: '/page-two',
-  },
-  {
-    title: '开始自定义下载',
-    description: '确认视频、音频和格式后，点击“下载”开始合成下载。此操作可能占用较多 CPU；本教程不会触发下载。',
-    selector: '[data-guide="custom-download"]',
-    path: '/page-two',
-  },
-  {
-    title: '筛选可用格式',
-    description:
-      '可用格式列表支持筛选仅视频、仅音频或视频加音频。还可以用旁边的排序查看分辨率、大小或码率，按需下载对应格式。',
-    selector: '[data-guide="format-filter"]',
-    path: '/page-two',
-  },
-  {
-    title: '查看任务',
-    description: '在“下载列表”查看下载中的任务、完成状态和保存结果。',
-    selector: 'a[href="#/page-three"]',
-    path: '/page-three',
-  },
-  {
-    title: '查看详细日志',
-    description: '遇到问题时打开“终端显示”，这里会显示解析和下载的详细信息。',
-    selector: 'a[href="#/page-four"]',
-    path: '/page-four',
-  },
-  {
-    title: '复制日志排查问题',
-    description:
-      '有日志时点击“复制日志”可复制终端内容，便于排查失败原因。分享前请检查链接等私人信息；没有日志时按钮会禁用。',
-    selector: '[data-guide="copy-logs"]',
-    path: '/page-four',
-  },
-  {
-    title: '安装下载工具',
-    description:
-      '解析和下载需要 yt-dlp、FFmpeg 等工具。在“关于”页点击此按钮选择基础版或完整版并安装；首次安装需要网络，教程不会开始安装。',
-    selector: '[data-guide="install-tools"]',
-    path: '/about',
-  },
-  {
-    title: '检查软件更新',
-    description:
-      '点击“检查并安装更新”可手动安装正式版更新，也可在上方设置自动检测。安装成功后会重启程序，建议先完成当前任务。',
-    selector: '[data-guide="check-updates"]',
-    path: '/about',
-  },
+  { key: 'paste', selector: '#video-url', path: '/' },
+  { key: 'analyze', selector: '.analyze-btn', path: '/' },
+  { key: 'quickDownload', selector: '.quick-btn', path: '/' },
+  { key: 'customPage', selector: 'a[href="#/page-two"]', path: '/page-two' },
+  { key: 'directory', selector: '[data-guide="download-directory"]', path: '/page-two' },
+  { key: 'retry', selector: '[data-guide="retry-limit"]', path: '/page-two' },
+  { key: 'subtitles', selector: '[data-guide="subtitles"] .box-heading', path: '/page-two' },
+  { key: 'videoAudio', selector: '[data-guide="video-audio-quality"]', path: '/page-two' },
+  { key: 'container', selector: '[data-guide="container-format"]', path: '/page-two' },
+  { key: 'customStart', selector: '[data-guide="custom-download"]', path: '/page-two' },
+  { key: 'formatFilter', selector: '[data-guide="format-filter"]', path: '/page-two' },
+  { key: 'tasks', selector: 'a[href="#/page-three"]', path: '/page-three' },
+  { key: 'logs', selector: 'a[href="#/page-four"]', path: '/page-four' },
+  { key: 'copyLogs', selector: '[data-guide="copy-logs"]', path: '/page-four' },
+  { key: 'tools', selector: '[data-guide="install-tools"]', path: '/about' },
+  { key: 'updates', selector: '[data-guide="check-updates"]', path: '/about' },
 ]
 const current = computed(() => steps[step.value]!)
+const currentTitle = computed(() => t(`guide.steps.${current.value.key}.title`))
+const currentDescription = computed(() => t(`guide.steps.${current.value.key}.description`))
 const highlightStyle = computed(() =>
   target.value
     ? {

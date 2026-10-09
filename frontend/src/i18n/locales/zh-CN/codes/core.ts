@@ -1,0 +1,67 @@
+export default {
+  task: {
+    analyzing: '正在获取视频信息',
+    analyzed: '链接解析完成',
+    started: '任务已启动',
+    completed: '任务已完成',
+    cancelled: '任务已取消',
+    timeout: '任务超时，请检查网络后重试',
+  },
+  log: {
+    started: '开始：{detail}',
+    completed: '{detail}已完成',
+  },
+  kind: {
+    analyze: '链接解析',
+    quick: '快速下载',
+    format: '指定格式下载',
+    combined: '音视频组合下载',
+    subtitle: '字幕下载',
+    thumbnail: '封面下载',
+    description: '简介下载',
+    sites: '支持网站列表',
+  },
+  settings: {
+    pathNotAbsolute: '下载目录必须是绝对路径',
+    pathInvalid: '下载目录包含非法字符',
+    directoryCreateFailed: '无法创建下载目录：{detail}',
+    saveFailed: '无法保存设置：{detail}',
+    lockUnavailable: '设置暂时不可用',
+    concurrentFragmentsRange: '分片并发数必须在 1–16 之间',
+    retriesInvalid: '重试次数必须是 0–100 的整数或 infinite',
+  },
+  url: {
+    invalid: '请输入有效的视频 URL',
+    unsupportedScheme: '仅支持 HTTP / HTTPS 视频链接',
+    credentials: '视频链接不能包含用户名或密码',
+  },
+  proxy: {
+    invalid: '请输入本地代理地址，例如 http://127.0.0.1:7890 或 socks5://127.0.0.1:1080',
+    initFailed: '无法初始化本地代理',
+  },
+  input: {
+    invalidFormatId: '无效的格式 ID',
+    invalidSubtitleLanguage: '无效的字幕语言',
+  },
+  download: {
+    unsupportedContainer: '不支持的封装格式',
+  },
+  process: {
+    lockUnavailable: '任务状态暂时不可用',
+    closing: '应用正在退出',
+    tooManyTasks: '最多同时运行 4 个任务，请等待或取消已有任务',
+    taskNotFound: '任务已结束或不存在',
+    toolDirectoryFailed: '无法确定工具目录：{detail}',
+    toolDirectoryUnknown: '无法确定主程序目录',
+    readFailed: '读取 yt-dlp 输出失败：{detail}',
+    outputTooLarge: '解析结果超过 16 MB 限制',
+    spawnFailed: '无法启动 yt-dlp：{detail}',
+    stdoutUnavailable: '无法读取标准输出',
+    stderrUnavailable: '无法读取错误输出',
+    waitFailed: '等待 yt-dlp 结束失败：{detail}',
+    failed: 'yt-dlp 执行失败，详情请查看终端日志',
+  },
+  metadata: {
+    parseFailed: '无法解析视频信息 JSON：{detail}',
+  },
+}

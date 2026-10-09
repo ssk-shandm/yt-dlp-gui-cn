@@ -3,8 +3,8 @@
     <section class="about-section">
       <div class="section-heading">
         <div>
-          <span class="section-eyebrow">项目详情</span>
-          <h2>项目基本信息</h2>
+          <span class="section-eyebrow">{{ $t('about.eyebrowDetails') }}</span>
+          <h2>{{ $t('about.basicInfo') }}</h2>
         </div>
         <span
           class="section-mark"
@@ -14,7 +14,7 @@
       </div>
       <dl class="about-list">
         <div>
-          <dt>版本号</dt>
+          <dt>{{ $t('about.version') }}</dt>
           <dd>
             <button
               class="link-btn"
@@ -25,7 +25,7 @@
           </dd>
         </div>
         <div>
-          <dt>版权</dt>
+          <dt>{{ $t('about.copyright') }}</dt>
           <dd>
             <button
               class="link-btn"
@@ -36,7 +36,7 @@
           </dd>
         </div>
         <div>
-          <dt>许可证</dt>
+          <dt>{{ $t('about.license') }}</dt>
           <dd>
             <button
               class="link-btn"
@@ -47,7 +47,7 @@
           </dd>
         </div>
         <div>
-          <dt>项目仓库</dt>
+          <dt>{{ $t('about.repository') }}</dt>
           <dd>
             <button
               class="link-btn repository-link"
@@ -59,10 +59,10 @@
         </div>
       </dl>
       <div class="tool-info">
-        <p>MIT 仅适用于 GUI 自有代码；第三方原始版权通知、许可证及 MPL 组件源码随安装包保留。</p>
-        <p>本应用使用 Microsoft WebView2 Evergreen：缺失时安装器从 Microsoft 下载，运行时由 Microsoft 独立维护和更新，卸载 GUI 不移除共享运行时。</p>
-        <p>WebView2 使用 Microsoft Defender SmartScreen，可能收集并向 Microsoft 发送用户信息；Microsoft 独立条款和隐私说明见随包安装告知。</p>
-        <button type="button" class="link-btn" @click="showGuiLicenses">GUI 版权通知、源码与 WebView2 条款</button>
+        <p>{{ $t('about.licenseNotice') }}</p>
+        <p>{{ $t('about.webview2Notice') }}</p>
+        <p>{{ $t('about.smartScreenNotice') }}</p>
+        <button type="button" class="link-btn" @click="showGuiLicenses">{{ $t('about.guiLicenses') }}</button>
       </div>
       <p
         v-if="openError"
@@ -76,8 +76,8 @@
     <section class="about-section settings-section">
       <div class="section-heading">
         <div>
-          <span class="section-eyebrow">偏好设置</span>
-          <h2>设置</h2>
+          <span class="section-eyebrow">{{ $t('about.eyebrowPreferences') }}</span>
+          <h2>{{ $t('about.settings') }}</h2>
         </div>
         <span
           class="section-mark"
@@ -89,15 +89,15 @@
       <div class="settings-list">
         <div class="setting-row">
           <div class="setting-copy">
-            <h3>自动检测更新</h3>
-            <p>启动时检查项目的 GitHub Releases；发现新正式版后自动下载并安装，有任务运行时会延后安装。</p>
+            <h3>{{ $t('about.autoUpdate.title') }}</h3>
+            <p>{{ $t('about.autoUpdate.description') }}</p>
           </div>
           <label class="switch-control">
-            <span class="sr-only">打开项目自动检测更新</span>
+            <span class="sr-only">{{ $t('about.autoUpdate.switchLabel') }}</span>
             <input
               v-model="updateState.autoCheck"
               type="checkbox"
-              aria-label="打开项目自动检测更新"
+              :aria-label="$t('about.autoUpdate.switchLabel')"
               @change="appUpdater.savePreference"
             />
             <span
@@ -109,17 +109,17 @@
         </div>
         <div class="setting-row">
           <div class="setting-copy">
-            <h3>手动更新</h3>
-            <p>无需打开自动更新，也可以手动检查并安装最新正式版。安装完成后会重新启动。</p>
+            <h3>{{ $t('about.manualUpdate.title') }}</h3>
+            <p>{{ $t('about.manualUpdate.description') }}</p>
           </div>
           <button class="update-action" data-guide="check-updates" type="button" :disabled="updateBusy || toolManager.busy" @click="appUpdater.checkAndInstall()">
-            {{ updateBusy ? '更新处理中…' : '检查并安装更新' }}
+            {{ updateBusy ? $t('about.manualUpdate.busy') : $t('about.manualUpdate.action') }}
           </button>
         </div>
       </div>
       <div v-if="updateState.message" class="update-status" :class="{ 'is-error': updateState.phase === 'error' }" role="status" aria-live="polite">
         <p>{{ updateState.message }}</p>
-        <progress v-if="updateState.phase === 'downloading'" :value="updateState.progress ?? undefined" max="100" aria-label="更新下载进度" />
+        <progress v-if="updateState.phase === 'downloading'" :value="updateState.progress ?? undefined" max="100" :aria-label="$t('about.updateProgress')" />
         <span v-if="updateState.phase === 'downloading' && updateState.progress !== null">{{ updateState.progress }}%</span>
       </div>
       <p
@@ -132,50 +132,60 @@
     </section>
 
     <section class="about-section tools-section">
-      <div class="section-heading"><div><span class="section-eyebrow">第三方工具</span><h2>下载工具</h2></div><span class="section-mark" aria-hidden="true">03</span></div>
+      <div class="section-heading"><div><span class="section-eyebrow">{{ $t('about.eyebrowTools') }}</span><h2>{{ $t('about.downloadTools') }}</h2></div><span class="section-mark" aria-hidden="true">03</span></div>
       <div class="tool-info">
-        <p class="tool-profile">{{ toolManager.checking ? '正在检测工具…' : toolManager.status?.installed ? toolManager.status.profile === 'full' ? '已安装完整版 · FFmpeg GPL' : toolManager.status.profile === 'basic' ? '已安装基础版 · FFmpeg LGPL' : '已检测到现有工具 · 构建类型未标记' : '尚未安装可用工具' }}</p>
-        <p>yt-dlp：{{ toolManager.status?.ytdlpVersion || '未检测到' }}</p>
-        <p>FFmpeg：{{ toolManager.status?.ffmpegVersion || '未检测到' }}</p>
-        <p>ffprobe：{{ toolManager.status?.ffprobeVersion || '未检测到' }}</p>
-        <p>工具目录：<code>{{ toolManager.status?.binPath || '主程序所在目录 / bin' }}</code></p>
-        <p v-if="toolManager.status?.missing.length">缺少文件：{{ toolManager.status.missing.join('、') }}</p>
-        <p>安装后可离线调用工具；解析和视频下载仍需要访问对应网站。</p>
+        <p class="tool-profile">{{ toolProfileText }}</p>
+        <p>{{ $t('about.ytdlpVersion', { version: toolManager.status?.ytdlpVersion || $t('about.notDetected') }) }}</p>
+        <p>{{ $t('about.ffmpegVersion', { version: toolManager.status?.ffmpegVersion || $t('about.notDetected') }) }}</p>
+        <p>{{ $t('about.ffprobeVersion', { version: toolManager.status?.ffprobeVersion || $t('about.notDetected') }) }}</p>
+        <p>{{ $t('about.toolDirectory') }}<code>{{ toolManager.status?.binPath || $t('about.defaultBinPath') }}</code></p>
+        <p v-if="toolManager.status?.missing.length">{{ $t('about.missingFiles', { files: toolManager.status.missing.join($t('about.listSeparator')) }) }}</p>
+        <p>{{ $t('about.offlineNote') }}</p>
       </div>
       <div class="tool-actions">
-        <button type="button" class="update-action" data-guide="install-tools" :disabled="toolManager.checking || toolManager.busy || updateBusy" @click="tools.open()">{{ toolManager.status?.installed ? '重新选择工具版本' : '安装工具' }}</button>
-        <button type="button" class="update-action" :disabled="toolManager.busy || toolManager.checking || updateBusy || toolManager.status?.profile === 'full'" @click="tools.open('full')">{{ toolManager.status?.profile === 'full' ? '完整版已安装' : '下载完整版' }}</button>
-        <button type="button" class="link-btn" :disabled="toolManager.busy || toolManager.checking" @click="tools.refresh()">刷新状态</button>
-        <button type="button" class="link-btn" @click="showLicenses">第三方许可证与安装记录</button>
+        <button type="button" class="update-action" data-guide="install-tools" :disabled="toolManager.checking || toolManager.busy || updateBusy" @click="tools.open()">{{ toolManager.status?.installed ? $t('about.reinstallTools') : $t('about.installTools') }}</button>
+        <button type="button" class="update-action" :disabled="toolManager.busy || toolManager.checking || updateBusy || toolManager.status?.profile === 'full'" @click="tools.open('full')">{{ toolManager.status?.profile === 'full' ? $t('about.fullInstalled') : $t('about.downloadFull') }}</button>
+        <button type="button" class="link-btn" :disabled="toolManager.busy || toolManager.checking" @click="tools.refresh()">{{ $t('about.refreshStatus') }}</button>
+        <button type="button" class="link-btn" @click="showLicenses">{{ $t('about.toolLicenses') }}</button>
       </div>
-      <div class="tool-links"><button class="link-btn" @click="openLink(YTDLP_URL)">yt-dlp 上游</button><button class="link-btn" @click="openLink(FFMPEG_URL)">FFmpeg 上游</button><button class="link-btn" @click="openLink(FFMPEG_BUILDS_URL)">Windows 构建供应方</button></div>
-      <div v-if="toolManager.message" class="update-status" role="status" aria-live="polite"><p>{{ toolManager.message }}</p><progress v-if="toolManager.busy" :value="toolManager.progress ?? undefined" max="100" aria-label="工具安装进度" /></div>
-      <p v-if="toolManager.error" class="open-error" role="alert">{{ toolManager.error }}</p>
+      <div class="tool-links"><button class="link-btn" @click="openLink(YTDLP_URL)">{{ $t('about.upstream.ytdlp') }}</button><button class="link-btn" @click="openLink(FFMPEG_URL)">{{ $t('about.upstream.ffmpeg') }}</button><button class="link-btn" @click="openLink(FFMPEG_BUILDS_URL)">{{ $t('about.upstream.builds') }}</button></div>
+      <div v-if="toolManager.message" class="update-status" role="status" aria-live="polite"><p>{{ toolText(toolManager.message) }}</p><progress v-if="toolManager.busy" :value="toolManager.progress ?? undefined" max="100" :aria-label="$t('about.toolProgress')" /></div>
+      <p v-if="toolManager.error" class="open-error" role="alert">{{ toolText(toolManager.error) }}</p>
     </section>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ProxySettings from '@/components/ProxySettings.vue'
-import { tools, toolManager, openToolLicenses, openGuiLicenses } from '@/services/tools'
+import { tools, toolManager, toolText, openToolLicenses, openGuiLicenses } from '@/services/tools'
 import { appUpdater } from '@/services/updater'
 import { IconLaunch } from '@arco-design/web-vue/es/icon'
 import { APP_VERSION, COPYRIGHT_LINE, LICENSE_NAME, LICENSE_URL, RELEASES_URL, REPOSITORY_URL, YTDLP_URL, FFMPEG_URL, FFMPEG_BUILDS_URL } from '@/config/appInfo'
 import { openExternalUrl } from '@/services/openExternal'
+import { errorText } from '@/i18n/codes'
 
+const { t } = useI18n()
 const updateState = appUpdater.state
 const updateBusy = computed(() => ['checking', 'waiting', 'downloading', 'installing'].includes(updateState.phase))
+const toolProfileText = computed(() => {
+  if (toolManager.checking) return t('about.toolProfile.checking')
+  if (!toolManager.status?.installed) return t('about.toolProfile.none')
+  if (toolManager.status.profile === 'full') return t('about.toolProfile.full')
+  if (toolManager.status.profile === 'basic') return t('about.toolProfile.basic')
+  return t('about.toolProfile.unlabeled')
+})
 const openError = ref('')
 onMounted(() => { appUpdater.initializePreference(); void tools.refresh() })
 async function showGuiLicenses() {
   openError.value = ''
   try { await openGuiLicenses() }
-  catch (error) { openError.value = String(error) }
+  catch (error) { openError.value = errorText(error) }
 }
 async function showLicenses() {
   try { await openToolLicenses() }
-  catch (error) { openError.value = String(error) }
+  catch (error) { openError.value = errorText(error) }
 }
 
 async function openLink(url: string) {
@@ -183,7 +193,7 @@ async function openLink(url: string) {
   try {
     await openExternalUrl(url)
   } catch (error) {
-    openError.value = error instanceof Error ? error.message : '无法打开链接，请稍后重试。'
+    openError.value = error instanceof Error ? error.message : t('about.openFallbackError')
   }
 }
 </script>

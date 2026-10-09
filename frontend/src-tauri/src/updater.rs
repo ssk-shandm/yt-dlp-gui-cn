@@ -1,4 +1,8 @@
-use crate::{process::tool_directory, AppState};
+use crate::{
+    model::{AppError, AppResult},
+    process::tool_directory,
+    AppState,
+};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::{
@@ -25,10 +29,10 @@ impl Drop for Busy<'_> {
 }
 
 impl UpdateState {
-    fn begin(&self) -> Result<Busy<'_>, String> {
+    fn begin(&self) -> AppResult<Busy<'_>> {
         self.busy
             .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
-            .map_err(|_| "更新操作正在进行，请勿重复点击".to_string())?;
+            .map_err(|_| AppError::new("update.busy"))?;
         Ok(Busy(&self.busy))
     }
 }
@@ -42,15 +46,15 @@ struct DownloadProgress {
     file_name: String,
 }
 
-fn validate_update_identity(identifier: &str) -> Result<(), String> {
+fn validate_update_identity(identifier: &str) -> AppResult<()> {
     if identifier != "com.ssk-shandm.ytdlp-gui" {
-        return Err("隔离测试版不允许下载或启动正式版更新安装器".to_string());
+        return Err(AppError::new("update.isolatedBuild"));
     }
     Ok(())
 }
 
-fn validate_update_url(url: &str) -> Result<(), String> {
-    let parsed = reqwest::Url::parse(url).map_err(|_| "Invalid update URL".to_string())?;
+fn validate_update_url(url: &str) -> AppResult<()> {
+    let parsed = reqwest::Url::parse(url).map_err(|_| AppError::new("update.invalidUrl"))?;
     if parsed.scheme() != "https"
         || parsed.host_str() != Some("github.com")
         || !parsed.username().is_empty()
@@ -59,33 +63,31 @@ fn validate_update_url(url: &str) -> Result<(), String> {
         || parsed.query().is_some()
         || parsed.fragment().is_some()
     {
-        return Err("Update URL must use the project's HTTPS GitHub Release endpoint".to_string());
+        return Err(AppError::new("update.urlNotTrusted"));
     }
     let path = parsed
         .path()
         .strip_prefix("/ssk-shandm/yt-dlp-gui-cn/releases/download/")
-        .ok_or_else(|| "Update URL is not a release from this project".to_string())?;
+        .ok_or_else(|| AppError::new("update.urlNotProjectRelease"))?;
     let parts: Vec<_> = path.split('/').collect();
     if parts.len() != 2 || parts.iter().any(|part| part.is_empty()) {
-        return Err("Invalid GitHub Release asset path".to_string());
+        return Err(AppError::new("update.invalidAssetPath"));
     }
     Ok(())
 }
 
-fn validate_update_sha256(value: Option<&str>) -> Result<String, String> {
-    let value = value.ok_or_else(|| {
-        "该 Release 缺少安装包 SHA-256，已停止自动安装。请到发布页核实后手动安装。".to_string()
-    })?;
+fn validate_update_sha256(value: Option<&str>) -> AppResult<String> {
+    let value = value.ok_or_else(|| AppError::new("update.sha256Missing"))?;
     if value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        return Err("安装包 SHA-256 格式无效，已停止自动安装".to_string());
+        return Err(AppError::new("update.sha256Invalid"));
     }
     Ok(value.to_ascii_lowercase())
 }
 
-fn verify_update_sha256(hash: Sha256, expected: &str) -> Result<(), String> {
+fn verify_update_sha256(hash: Sha256, expected: &str) -> AppResult<()> {
     let actual = format!("{:x}", hash.finalize());
     if actual != expected {
-        return Err("更新安装包 SHA-256 校验失败，文件已丢弃；请重试或到发布页核实。".to_string());
+        return Err(AppError::new("update.sha256Mismatch"));
     }
     Ok(())
 }
@@ -99,32 +101,30 @@ impl Drop for PartialDownload {
     }
 }
 
-fn safe_update_file_name(file_name: &str) -> Result<String, String> {
+fn safe_update_file_name(file_name: &str) -> AppResult<String> {
     let name = file_name.trim();
     if name.contains(['/', '\\']) {
-        return Err("Update installer file name contains a path separator".to_string());
+        return Err(AppError::new("update.fileNameSeparator"));
     }
     if name.is_empty()
         || name == "."
         || name == ".."
         || !name.to_ascii_lowercase().ends_with("-setup.exe")
     {
-        return Err("Invalid update installer file name".to_string());
+        return Err(AppError::new("update.fileNameInvalid"));
     }
     if !name
         .chars()
         .all(|character| !character.is_control() && !r#"<>:"/\\|?*"#.contains(character))
     {
-        return Err("Update installer file name contains unsafe characters".to_string());
+        return Err(AppError::new("update.fileNameUnsafe"));
     }
     Ok(name.to_string())
 }
 
 // Load the OS trust store (including user-trusted proxy/enterprise roots), and
 // honor system proxies. Keep TLS verification enabled for executable downloads.
-fn update_http_client(
-    settings: Option<&crate::model::Settings>,
-) -> Result<reqwest::Client, String> {
+fn update_http_client(settings: Option<&crate::model::Settings>) -> AppResult<reqwest::Client> {
     let builder = reqwest::Client::builder();
     let builder = match settings {
         Some(settings) => crate::model::configure_http_proxy(builder, settings)?,
@@ -162,17 +162,17 @@ fn update_http_client(
         // Limit stalled reads, not the total duration of a large installer download.
         .read_timeout(Duration::from_secs(60))
         .build()
-        .map_err(|error| update_network_error("无法初始化更新下载器", &error))
+        .map_err(|error| AppError::with("update.clientInit", error_chain(&error)))
 }
 
 // Fixed endpoint only: the WebView cannot apply a per-request proxy.
 #[tauri::command]
-pub async fn fetch_latest_release(app: AppHandle) -> Result<serde_json::Value, String> {
+pub async fn fetch_latest_release(app: AppHandle) -> AppResult<serde_json::Value> {
     let settings = app
         .state::<AppState>()
         .settings
         .lock()
-        .map_err(|_| "设置锁不可用")?
+        .map_err(|_| AppError::new("update.settingsLocked"))?
         .clone();
     let response = update_http_client(Some(&settings))?
         .get("https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest")
@@ -180,19 +180,22 @@ pub async fn fetch_latest_release(app: AppHandle) -> Result<serde_json::Value, S
         .timeout(Duration::from_secs(20))
         .send()
         .await
-        .map_err(|e| update_network_error("无法检查更新", &e))?;
+        .map_err(|error| update_network_error(&error))?;
     match response.status().as_u16() {
-        403 => return Err("GitHub API 请求受限，请稍后再试".into()),
-        404 => return Err("GitHub 上还没有发布 Release".into()),
+        403 => return Err(AppError::new("update.rateLimited")),
+        404 => return Err(AppError::new("update.noRelease")),
         _ if !response.status().is_success() => {
-            return Err(format!("更新检查失败（HTTP {}）", response.status()))
+            return Err(AppError::with(
+                "update.httpStatus",
+                response.status().as_u16().to_string(),
+            ))
         }
         _ => {}
     }
     response
         .json()
         .await
-        .map_err(|e| update_network_error("无法解析更新信息", &e))
+        .map_err(|error| AppError::with("update.responseInvalid", error_chain(&error)))
 }
 
 fn error_chain(error: &dyn Error) -> String {
@@ -206,19 +209,18 @@ fn error_chain(error: &dyn Error) -> String {
     details
 }
 
-fn update_network_error(context: &str, error: &reqwest::Error) -> String {
+fn update_network_error(error: &reqwest::Error) -> AppError {
     let details = error_chain(error);
     let lower = details.to_ascii_lowercase();
-    let hint = if error.is_timeout() {
-        "连接或读取超时，请检查网络及系统代理后重试。"
+    if error.is_timeout() {
+        AppError::with("update.network.timeout", details)
     } else if lower.contains("certificate") || lower.contains("unknownissuer") {
-        "HTTPS 证书校验失败，请检查系统时间、系统信任证书及代理软件的证书配置；请勿关闭证书校验。"
+        AppError::with("update.network.tls", details)
     } else if error.is_connect() {
-        "无法连接 GitHub 下载服务器，请检查网络及 Windows 系统代理设置。"
+        AppError::with("update.network.connect", details)
     } else {
-        "请检查网络及系统代理，或通过浏览器下载 Release 中的安装包后手动安装。"
-    };
-    format!("{context}：{hint}\n详细原因：{details}")
+        AppError::with("update.network.generic", details)
+    }
 }
 
 #[tauri::command]
@@ -228,11 +230,11 @@ pub async fn download_and_install_update(
     url: String,
     file_name: String,
     sha256: Option<String>,
-) -> Result<(), String> {
+) -> AppResult<()> {
     #[cfg(not(target_os = "windows"))]
     {
         let _ = (app, state, url, file_name, sha256);
-        return Err("自动安装更新目前仅支持 Windows 桌面端".to_string());
+        return Err(AppError::new("update.windowsOnly"));
     }
 
     #[cfg(target_os = "windows")]
@@ -241,13 +243,13 @@ pub async fn download_and_install_update(
         let _busy = state.begin()?;
         validate_update_url(&url)?;
         let safe_name = safe_update_file_name(&file_name)?;
-        let executable =
-            std::env::current_exe().map_err(|error| format!("无法获取当前程序路径：{error}"))?;
+        let executable = std::env::current_exe()
+            .map_err(|error| AppError::with("update.exePath", error.to_string()))?;
         let install_directory = executable
             .parent()
-            .ok_or_else(|| "无法获取当前安装目录".to_string())?;
+            .ok_or_else(|| AppError::new("update.installDirectory"))?;
         if !install_directory.join("uninstall.exe").is_file() {
-            return Err("当前运行的是便携版或开发版，自动安装不会替换此文件。请使用 Release 中的 *-setup.exe 安装版启动。".to_string());
+            return Err(AppError::new("update.portableBuild"));
         }
 
         let expected_sha256 = validate_update_sha256(sha256.as_deref())?;
@@ -269,29 +271,33 @@ async fn download_update_package(
     safe_name: &str,
     install_directory: &Path,
     expected_sha256: &str,
-) -> Result<(), String> {
+) -> AppResult<()> {
     let save_dir = app
         .path()
         .download_dir()
         .or_else(|_| app.path().temp_dir())
-        .map_err(|error| format!("无法获取更新保存目录：{error}"))?;
-    fs::create_dir_all(&save_dir).map_err(|error| format!("无法创建更新保存目录：{error}"))?;
+        .map_err(|error| AppError::with("update.saveDirUnavailable", error.to_string()))?;
+    fs::create_dir_all(&save_dir)
+        .map_err(|error| AppError::with("update.saveDirCreate", error.to_string()))?;
     let target = save_dir.join(safe_name);
     let partial = save_dir.join(format!("{safe_name}.part"));
     let settings = app
         .state::<AppState>()
         .settings
         .lock()
-        .map_err(|_| "设置锁不可用")?
+        .map_err(|_| AppError::new("update.settingsLocked"))?
         .clone();
     let response = update_http_client(Some(&settings))?
         .get(url)
         .header("Accept", "application/octet-stream")
         .send()
         .await
-        .map_err(|error| update_network_error("更新下载失败", &error))?;
+        .map_err(|error| update_network_error(&error))?;
     if !response.status().is_success() {
-        return Err(format!("更新下载失败（HTTP {}）", response.status()));
+        return Err(AppError::with(
+            "update.downloadHttpStatus",
+            response.status().as_u16().to_string(),
+        ));
     }
 
     let total = response.content_length();
@@ -300,7 +306,8 @@ async fn download_update_package(
     let _partial = PartialDownload(partial.clone());
     let mut output = BufWriter::with_capacity(
         1024 * 1024,
-        fs::File::create(&partial).map_err(|error| format!("无法创建更新文件：{error}"))?,
+        fs::File::create(&partial)
+            .map_err(|error| AppError::with("update.fileCreate", error.to_string()))?,
     );
     let emit_progress = |downloaded: u64, percent: Option<u8>| {
         let _ = app.emit(
@@ -320,12 +327,12 @@ async fn download_update_package(
     while let Some(chunk) = response
         .chunk()
         .await
-        .map_err(|error| update_network_error("读取更新数据失败", &error))?
+        .map_err(|error| update_network_error(&error))?
     {
         hash.update(&chunk);
         output
             .write_all(&chunk)
-            .map_err(|error| format!("保存更新文件失败：{error}"))?;
+            .map_err(|error| AppError::with("update.fileWrite", error.to_string()))?;
         downloaded += chunk.len() as u64;
         match total {
             Some(size) => {
@@ -349,11 +356,11 @@ async fn download_update_package(
     }
     output
         .flush()
-        .map_err(|error| format!("写入更新文件失败：{error}"))?;
+        .map_err(|error| AppError::with("update.fileWrite", error.to_string()))?;
     drop(output);
     if downloaded == 0 || total.is_some_and(|size| size != downloaded) {
         let _ = fs::remove_file(&partial);
-        return Err("更新安装包下载不完整，请重试".to_string());
+        return Err(AppError::new("update.incomplete"));
     }
     verify_update_sha256(hash, expected_sha256)?;
     if total.is_none() {
@@ -362,13 +369,16 @@ async fn download_update_package(
     if target.exists() {
         let _ = fs::remove_file(&target);
     }
-    fs::rename(&partial, &target).map_err(|error| format!("无法保存更新安装包：{error}"))?;
-    launch_installer(&target, install_directory).map_err(|error| {
-        format!(
-            "{error}。安装包已保存到：{}，可手动运行安装",
-            target.display()
-        )
-    })?;
+    fs::rename(&partial, &target)
+        .map_err(|error| AppError::with("update.saveFailed", error.to_string()))?;
+    if let Err(code) = launch_installer(&target, install_directory) {
+        let path = target.display().to_string();
+        return Err(if code == 5 {
+            AppError::with("update.installerCancelled", path)
+        } else {
+            AppError::with("update.installerLaunch", path)
+        });
+    }
     let _ = app.emit(
         "update-install-starting",
         target.to_string_lossy().into_owned(),
@@ -378,7 +388,7 @@ async fn download_update_package(
 }
 
 #[cfg(target_os = "windows")]
-fn launch_installer(path: &Path, install_directory: &Path) -> Result<(), String> {
+fn launch_installer(path: &Path, install_directory: &Path) -> Result<(), isize> {
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::UI::Shell::ShellExecuteW;
     use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
@@ -408,10 +418,8 @@ fn launch_installer(path: &Path, install_directory: &Path) -> Result<(), String>
     let code = result as isize;
     if code > 32 {
         Ok(())
-    } else if code == 5 {
-        Err("已取消管理员授权，更新未安装".to_string())
     } else {
-        Err(format!("无法启动更新安装程序（错误码 {code}）"))
+        Err(code)
     }
 }
 
@@ -419,11 +427,11 @@ fn launch_installer(path: &Path, install_directory: &Path) -> Result<(), String>
 #[serde(rename_all = "camelCase")]
 pub struct ToolInfo {
     bin_path: String,
-    ffmpeg_version: String,
+    ffmpeg_version: Option<String>,
 }
 
 #[tauri::command]
-pub async fn get_tool_info(app: AppHandle) -> Result<ToolInfo, String> {
+pub async fn get_tool_info(app: AppHandle) -> AppResult<ToolInfo> {
     let dir = tool_directory(&app)?;
     tauri::async_runtime::spawn_blocking(move || {
         let mut cmd = std::process::Command::new(dir.join("ffmpeg.exe"));
@@ -435,21 +443,20 @@ pub async fn get_tool_info(app: AppHandle) -> Result<ToolInfo, String> {
         }
         let output = cmd
             .output()
-            .map_err(|error| format!("无法读取 FFmpeg 版本：{error}"))?;
+            .map_err(|error| AppError::with("update.ffmpegVersionRead", error.to_string()))?;
         if !output.status.success() {
-            return Err("FFmpeg 版本读取失败".into());
+            return Err(AppError::new("update.ffmpegVersionFailed"));
         }
         Ok(ToolInfo {
             bin_path: dir.to_string_lossy().into_owned(),
             ffmpeg_version: String::from_utf8_lossy(&output.stdout)
                 .lines()
                 .next()
-                .unwrap_or("未知版本")
-                .to_string(),
+                .map(str::to_string),
         })
     })
     .await
-    .map_err(|error| error.to_string())?
+    .map_err(|error| AppError::with("update.ffmpegVersionRead", error.to_string()))?
 }
 
 #[cfg(test)]
@@ -468,8 +475,8 @@ mod tests {
             .header("Accept", "application/octet-stream")
             .send()
             .await;
-        let response = result
-            .unwrap_or_else(|error| panic!("{}", update_network_error("更新下载失败", &error)));
+        let response =
+            result.unwrap_or_else(|error| panic!("{}", update_network_error(&error)));
         assert!(response.status().is_success(), "{}", response.status());
         let expected_length = response.content_length();
         let mut response = response;
@@ -479,7 +486,7 @@ mod tests {
         while let Some(chunk) = response
             .chunk()
             .await
-            .unwrap_or_else(|error| panic!("{}", update_network_error("读取更新数据失败", &error)))
+            .unwrap_or_else(|error| panic!("{}", update_network_error(&error)))
         {
             hash.update(&chunk);
             signature.extend(chunk.iter().copied().take(2 - signature.len()));
@@ -525,8 +532,11 @@ mod tests {
             validate_update_sha256(Some(&expected.to_uppercase())).unwrap(),
             expected
         );
+        assert_eq!(
+            validate_update_sha256(None).unwrap_err().code,
+            "update.sha256Missing"
+        );
         for value in [
-            None,
             Some(""),
             Some("sha256:bad"),
             Some("xyz"),
@@ -604,7 +614,7 @@ mod tests {
     fn update_operations_are_serialized() {
         let state = UpdateState::default();
         let busy = state.begin().unwrap();
-        assert!(state.begin().is_err());
+        assert_eq!(state.begin().err().map(|error| error.code), Some("update.busy"));
         drop(busy);
         assert!(state.begin().is_ok());
     }

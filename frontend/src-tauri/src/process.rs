@@ -1,4 +1,4 @@
-use crate::model::{LogEvent, TaskEvent};
+use crate::model::{AppError, AppResult, LogEvent, TaskEvent};
 use std::{
     collections::HashMap,
     path::{Path, PathBuf},
@@ -29,16 +29,16 @@ pub struct TaskRegistry {
     tasks: Mutex<HashMap<u64, Arc<TaskControl>>>,
 }
 impl TaskRegistry {
-    pub fn reserve(&self) -> Result<(u64, Arc<TaskControl>), String> {
-        let mut tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
+    pub fn reserve(&self) -> AppResult<(u64, Arc<TaskControl>)> {
+        let mut tasks = self.tasks.lock().map_err(|_| lock_error())?;
         if self.closing.load(Ordering::SeqCst) {
-            return Err("应用正在退出".into());
+            return Err(AppError::new("process.closing"));
         }
         if self.tools_installing.load(Ordering::SeqCst) {
-            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+            return Err(AppError::new("tools.busy"));
         }
         if tasks.len() >= 4 {
-            return Err("最多同时运行 4 个任务，请等待或取消已有任务".into());
+            return Err(AppError::new("process.tooManyTasks"));
         }
         let id = self.next_id.fetch_add(1, Ordering::Relaxed) + 1;
         let control = Arc::new(TaskControl::default());
@@ -50,21 +50,23 @@ impl TaskRegistry {
             tasks.remove(&id);
         }
     }
-    pub fn cancel(&self, id: u64) -> Result<(), String> {
-        let tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
-        let task = tasks.get(&id).ok_or("任务已结束或不存在")?;
+    pub fn cancel(&self, id: u64) -> AppResult<()> {
+        let tasks = self.tasks.lock().map_err(|_| lock_error())?;
+        let task = tasks
+            .get(&id)
+            .ok_or_else(|| AppError::new("process.taskNotFound"))?;
         task.cancelled.store(true, Ordering::SeqCst);
         task.notify.notify_one();
         kill_tree(task.pid.load(Ordering::SeqCst));
         Ok(())
     }
-    pub fn begin_tools_install(&self) -> Result<(), String> {
-        let tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
+    pub fn begin_tools_install(&self) -> AppResult<()> {
+        let tasks = self.tasks.lock().map_err(|_| lock_error())?;
         if self.closing.load(Ordering::SeqCst) || self.tools_installing.load(Ordering::SeqCst) {
-            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+            return Err(AppError::new("tools.busy"));
         }
         if !tasks.is_empty() {
-            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+            return Err(AppError::new("tools.busy"));
         }
         self.tools_installing.store(true, Ordering::SeqCst);
         Ok(())
@@ -72,13 +74,13 @@ impl TaskRegistry {
     pub fn end_tools_install(&self) {
         self.tools_installing.store(false, Ordering::SeqCst);
     }
-    pub fn begin_update(&self) -> Result<(), String> {
-        let tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
+    pub fn begin_update(&self) -> AppResult<()> {
+        let tasks = self.tasks.lock().map_err(|_| lock_error())?;
         if self.closing.load(Ordering::SeqCst) || self.tools_installing.load(Ordering::SeqCst) {
-            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+            return Err(AppError::new("tools.busy"));
         }
         if !tasks.is_empty() {
-            return Err("仍有下载或解析任务，请等待任务结束后安装更新".into());
+            return Err(AppError::new("update.tasksActive"));
         }
         self.closing.store(true, Ordering::SeqCst);
         Ok(())
@@ -96,6 +98,10 @@ impl TaskRegistry {
             }
         }
     }
+}
+
+fn lock_error() -> AppError {
+    AppError::new("process.lockUnavailable")
 }
 
 pub fn kill_tree(pid: u32) {
@@ -118,7 +124,7 @@ pub struct Tools {
     pub ytdlp: PathBuf,
     pub ffmpeg_dir: PathBuf,
 }
-pub fn tool_directory(app: &AppHandle) -> Result<PathBuf, String> {
+pub fn tool_directory(app: &AppHandle) -> AppResult<PathBuf> {
     let development = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../bin");
     if cfg!(debug_assertions) {
         return Ok(development);
@@ -126,24 +132,24 @@ pub fn tool_directory(app: &AppHandle) -> Result<PathBuf, String> {
     // NSIS places resources at the install root. Keep a resource_dir fallback for
     // bundles that choose a nested resources directory.
     let exe_bin = std::env::current_exe()
-        .map_err(|e| e.to_string())?
+        .map_err(|e| AppError::with("process.toolDirectoryFailed", e.to_string()))?
         .parent()
         .map(|dir| dir.join("bin"))
-        .ok_or("无法确定主程序目录")?;
+        .ok_or_else(|| AppError::new("process.toolDirectoryUnknown"))?;
     if exe_bin.is_dir() {
         return Ok(exe_bin);
     }
     let resource_bin = app
         .path()
         .resource_dir()
-        .map_err(|e| e.to_string())?
+        .map_err(|e| AppError::with("process.toolDirectoryFailed", e.to_string()))?
         .join("bin");
     if resource_bin.is_dir() {
         return Ok(resource_bin);
     }
     Ok(exe_bin)
 }
-pub fn resolve_tools(app: &AppHandle) -> Result<Tools, String> {
+pub fn resolve_tools(app: &AppHandle) -> AppResult<Tools> {
     let dir = tool_directory(app)?;
     if dir.join("yt-dlp.exe").is_file()
         && dir.join("ffmpeg.exe").is_file()
@@ -154,7 +160,7 @@ pub fn resolve_tools(app: &AppHandle) -> Result<Tools, String> {
             ffmpeg_dir: dir,
         });
     }
-    Err("缺少下载工具。开发时请将 yt-dlp.exe、ffmpeg.exe 和 ffprobe.exe 放入根目录 bin/；安装版请在“关于”页下载安装工具。".into())
+    Err(AppError::new("tools.missing"))
 }
 
 fn command(executable: &Path, args: &[String]) -> Command {
@@ -181,17 +187,28 @@ pub fn log(app: &AppHandle, id: u64, line: impl Into<String>) {
         LogEvent {
             task_id: id,
             line: line.into(),
+            notice: None,
         },
     );
 }
-pub fn task_event(app: &AppHandle, id: u64, title: &str, status: &str, message: &str) {
+pub fn log_notice(app: &AppHandle, id: u64, notice: AppError) {
+    let _ = app.emit(
+        "terminal-output",
+        LogEvent {
+            task_id: id,
+            line: String::new(),
+            notice: Some(notice),
+        },
+    );
+}
+pub fn task_event(app: &AppHandle, id: u64, kind: &'static str, status: &str, message: AppError) {
     let _ = app.emit(
         "task-status",
         TaskEvent {
             task_id: id,
-            title: title.into(),
+            kind,
             status: status.into(),
-            message: message.into(),
+            message,
         },
     );
 }
@@ -200,18 +217,21 @@ async fn read_stream<R: AsyncRead + Unpin>(
     mut stream: R,
     capture: bool,
     mut emit: impl FnMut(String),
-) -> Result<Vec<u8>, String> {
+) -> AppResult<Vec<u8>> {
     let mut all = Vec::new();
     let mut pending = Vec::new();
     let mut buffer = [0u8; 8192];
     loop {
-        let n = stream.read(&mut buffer).await.map_err(|e| e.to_string())?;
+        let n = stream
+            .read(&mut buffer)
+            .await
+            .map_err(|e| AppError::with("process.readFailed", e.to_string()))?;
         if n == 0 {
             break;
         }
         if capture {
             if all.len() + n > 16 * 1024 * 1024 {
-                return Err("解析结果超过 16 MB 限制".into());
+                return Err(AppError::new("process.outputTooLarge"));
             }
             all.extend_from_slice(&buffer[..n]);
         } else {
@@ -242,21 +262,27 @@ pub async fn execute(
     id: u64,
     control: Arc<TaskControl>,
     capture: bool,
-) -> Result<Vec<u8>, String> {
+) -> AppResult<Vec<u8>> {
     if control.cancelled.load(Ordering::SeqCst) {
-        return Err("任务已取消".into());
+        return Err(AppError::new("task.cancelled"));
     }
     let mut child = command(executable, args)
         .spawn()
-        .map_err(|e| format!("无法启动 yt-dlp: {e}"))?;
+        .map_err(|e| AppError::with("process.spawnFailed", e.to_string()))?;
     control
         .pid
         .store(child.id().unwrap_or_default(), Ordering::SeqCst);
     if control.cancelled.load(Ordering::SeqCst) {
         kill_tree(control.pid.load(Ordering::SeqCst));
     }
-    let stdout = child.stdout.take().ok_or("无法读取标准输出")?;
-    let stderr = child.stderr.take().ok_or("无法读取错误输出")?;
+    let stdout = child
+        .stdout
+        .take()
+        .ok_or_else(|| AppError::new("process.stdoutUnavailable"))?;
+    let stderr = child
+        .stderr
+        .take()
+        .ok_or_else(|| AppError::new("process.stderrUnavailable"))?;
     let timeout = if capture {
         Duration::from_secs(180)
     } else {
@@ -264,16 +290,16 @@ pub async fn execute(
     };
     let result = tokio::select! {
         biased;
-        _=control.notify.notified()=>Err("任务已取消".to_string()),
-        _=tokio::time::sleep(timeout)=>Err("任务超时，请检查网络后重试".to_string()),
+        _=control.notify.notified()=>Err(AppError::new("task.cancelled")),
+        _=tokio::time::sleep(timeout)=>Err(AppError::new("task.timeout")),
         result=async {
             // Drain both pipes while waiting; any reader failure immediately terminates the child.
             let (status,bytes,_)=tokio::try_join!(
-                async { child.wait().await.map_err(|e|e.to_string()) },
+                async { child.wait().await.map_err(|e| AppError::with("process.waitFailed", e.to_string())) },
                 read_stream(stdout,capture,|line|log(app,id,line)),
                 read_stream(stderr,false,|line|log(app,id,line)),
             )?;
-            if !status.success() { return Err("yt-dlp 执行失败，详情请查看终端日志".to_string()); }
+            if !status.success() { return Err(AppError::new("process.failed")); }
             Ok(bytes)
         }=>result,
     };
@@ -284,7 +310,7 @@ pub async fn execute(
     }
     control.pid.store(0, Ordering::SeqCst);
     if control.cancelled.load(Ordering::SeqCst) {
-        return Err("任务已取消".into());
+        return Err(AppError::new("task.cancelled"));
     }
     result
 }

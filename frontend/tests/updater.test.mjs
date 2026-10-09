@@ -127,8 +127,8 @@ test('update downloader honors system trust/proxies without disabling TLS verifi
   assert.match(rust, /connect_timeout/)
   assert.match(rust, /read_timeout/)
   assert.match(rust, /error\.source\(\)/)
-  assert.match(rust, /update_network_error\("更新下载失败"/)
-  assert.match(rust, /update_network_error\("读取更新数据失败"/)
+  assert.match(rust, /update_network_error\(&error\)/)
+  assert.doesNotMatch(rust, /update_network_error\("/)
   assert.doesNotMatch(rust, /danger_accept_invalid_(?:certs|hostnames)/)
 })
 

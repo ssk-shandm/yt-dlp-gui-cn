@@ -1,3 +1,5 @@
+**简体中文** | [English](README.en.md)
+
 # 项目文档
 
 本目录保留当前 **Vue 3 + Tauri 2 / Rust** 版本的有效文档。旧 Python/Eel、Docker、迁移记录和一次性更新计划不再作为项目说明保留。

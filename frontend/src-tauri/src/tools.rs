@@ -1,4 +1,8 @@
-use crate::{process::tool_directory, AppState};
+use crate::{
+    model::{AppError, AppResult},
+    process::tool_directory,
+    AppState,
+};
 use serde::{Deserialize, Serialize};
 use std::{
     fs::{self, File},
@@ -18,6 +22,7 @@ mod transfer;
 const YTDLP_REPOSITORY: &str = "yt-dlp/yt-dlp";
 const FFMPEG_REPOSITORY: &str = "BtbN/FFmpeg-Builds";
 const FILE_NAMES: [&str; 3] = ["yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe"];
+const REDIRECT_REJECTED: &str = "redirect rejected";
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -47,10 +52,10 @@ impl Drop for Busy<'_> {
     }
 }
 impl ToolInstallState {
-    fn begin(&self) -> Result<Busy<'_>, String> {
+    fn begin(&self) -> AppResult<Busy<'_>> {
         self.busy
             .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
-            .map_err(|_| "工具安装正在进行，请勿重复点击".to_string())?;
+            .map_err(|_| AppError::new("tools.installing"))?;
         self.cancelled.store(false, Ordering::SeqCst);
         Ok(Busy(self))
     }
@@ -59,13 +64,13 @@ impl ToolInstallState {
         self.notify.notify_waiters();
         self.notify.notify_one();
     }
-    fn check(&self) -> Result<(), String> {
+    fn check(&self) -> AppResult<()> {
         check_cancelled(&self.cancelled)
     }
     async fn wait<T>(
         &self,
-        future: impl std::future::Future<Output = Result<T, String>>,
-    ) -> Result<T, String> {
+        future: impl std::future::Future<Output = AppResult<T>>,
+    ) -> AppResult<T> {
         self.check()?;
         tokio::select! {
             biased;
@@ -75,14 +80,14 @@ impl ToolInstallState {
                 notified.as_mut().enable();
                 if self.cancelled.load(Ordering::SeqCst) { break; }
                 notified.await;
-            } } => Err("工具安装已取消".into()),
+            } } => Err(AppError::new("tools.cancelled")),
             result = future => { self.check()?; result }
         }
     }
 }
-fn check_cancelled(cancelled: &AtomicBool) -> Result<(), String> {
+fn check_cancelled(cancelled: &AtomicBool) -> AppResult<()> {
     if cancelled.load(Ordering::SeqCst) {
-        Err("工具安装已取消".into())
+        Err(AppError::new("tools.cancelled"))
     } else {
         Ok(())
     }
@@ -110,13 +115,13 @@ pub struct ToolStatus {
     pub ffmpeg_version: Option<String>,
     pub ffprobe_version: Option<String>,
     pub missing: Vec<String>,
-    pub error: Option<String>,
+    pub error: Option<AppError>,
 }
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct Progress {
     profile: ToolProfile,
-    stage: String,
+    stage: &'static str,
     downloaded: u64,
     total: Option<u64>,
     percent: Option<u8>,
@@ -124,7 +129,7 @@ struct Progress {
 fn emit_progress(
     app: &AppHandle,
     profile: ToolProfile,
-    stage: &str,
+    stage: &'static str,
     downloaded: u64,
     total: Option<u64>,
 ) {
@@ -139,7 +144,7 @@ fn emit_progress(
         "tool-download-progress",
         Progress {
             profile,
-            stage: stage.into(),
+            stage,
             downloaded,
             total,
             percent,
@@ -178,14 +183,14 @@ fn read_marker(dir: &Path) -> Option<ToolMarker> {
         .filter(|m| m.schema_version == 1)
 }
 
-fn validate_download_url(value: &str) -> Result<(), String> {
-    let url = url::Url::parse(value).map_err(|_| "工具下载地址无效".to_string())?;
+fn validate_download_url(value: &str) -> AppResult<()> {
+    let url = url::Url::parse(value).map_err(|_| AppError::new("tools.downloadUrlInvalid"))?;
     if url.scheme() != "https"
         || !url.username().is_empty()
         || url.password().is_some()
         || url.port().is_some_and(|p| p != 443)
     {
-        return Err("工具下载地址必须使用无凭据的标准 HTTPS".into());
+        return Err(AppError::new("tools.downloadUrlNotHttps"));
     }
     if !matches!(
         url.host_str(),
@@ -197,11 +202,11 @@ fn validate_download_url(value: &str) -> Result<(), String> {
                 | "github-releases.githubusercontent.com"
         )
     ) {
-        return Err("不支持的工具下载域名".into());
+        return Err(AppError::new("tools.downloadHostUnsupported"));
     }
     Ok(())
 }
-fn client(settings: &crate::model::Settings) -> Result<reqwest::Client, String> {
+fn client(settings: &crate::model::Settings) -> AppResult<reqwest::Client> {
     crate::model::configure_http_proxy(reqwest::Client::builder(), settings)?
         // Range workers need independent TCP connections. HTTP/2 multiplexing
         // can otherwise put all four requests on one throttled connection.
@@ -212,57 +217,63 @@ fn client(settings: &crate::model::Settings) -> Result<reqwest::Client, String> 
         .read_timeout(Duration::from_secs(60))
         .redirect(reqwest::redirect::Policy::custom(|attempt| {
             if attempt.previous().len() >= 5 {
-                attempt.error("工具下载重定向过多")
+                attempt.error(REDIRECT_REJECTED)
             } else if validate_download_url(attempt.url().as_str()).is_err() {
-                attempt.error("工具下载重定向到不支持的域名或协议")
+                attempt.error(REDIRECT_REJECTED)
             } else {
                 attempt.follow()
             }
         }))
         .build()
-        .map_err(|e| network_error("无法初始化工具下载器", &e))
+        .map_err(|e| network_error("tools.clientInit", &e))
 }
-fn network_error(context: &str, error: &reqwest::Error) -> String {
+fn io_error(error: std::io::Error) -> AppError {
+    AppError::with("tools.ioFailed", error.to_string())
+}
+fn network_error(code: &'static str, error: &reqwest::Error) -> AppError {
     use std::error::Error;
+    if error.is_redirect() {
+        return AppError::new("tools.redirectRejected");
+    }
     let mut detail = error.to_string();
     let mut source = error.source();
     while let Some(cause) = source {
         detail.push_str(&format!(" → {cause}"));
         source = cause.source();
     }
-    format!("{context}：请检查网络、系统代理、系统时间及受信任证书后重试；不要关闭 HTTPS 证书校验。\n{detail}")
+    AppError::with(code, detail)
 }
 fn asset_from_metadata(
     repository: &str,
     name: &str,
     metadata: &serde_json::Value,
-) -> Result<Asset, String> {
+) -> AppResult<Asset> {
     let asset = metadata["assets"]
         .as_array()
         .and_then(|list| list.iter().find(|a| a["name"].as_str() == Some(name)))
-        .ok_or_else(|| format!("上游发布缺少 {name}"))?;
+        .ok_or_else(|| AppError::with("tools.assetMissing", name))?;
     let url = asset["browser_download_url"]
         .as_str()
-        .ok_or("上游缺少下载地址")?;
+        .ok_or_else(|| AppError::new("tools.downloadUrlMissing"))?;
     validate_download_url(url)?;
     let prefix = format!("https://github.com/{repository}/releases/download/");
     if !url.starts_with(&prefix) {
-        return Err("工具资产不属于指定上游项目".into());
+        return Err(AppError::new("tools.assetNotProject"));
     }
     let sha256 = asset["digest"]
         .as_str()
         .and_then(|s| s.strip_prefix("sha256:"))
         .filter(|s| s.len() == 64 && s.bytes().all(|c| c.is_ascii_hexdigit()))
-        .ok_or("上游未提供有效 SHA-256 摘要，无法安全安装，请稍后重试")?;
+        .ok_or_else(|| AppError::new("tools.digestMissing"))?;
     let size = asset["size"]
         .as_u64()
         .filter(|size| *size > 0 && *size <= 512 * 1024 * 1024)
-        .ok_or("工具资产大小无效或超过 512 MB 限制")?;
+        .ok_or_else(|| AppError::new("tools.assetSizeInvalid"))?;
     Ok(Asset {
         repository: repository.into(),
         release_tag: metadata["tag_name"]
             .as_str()
-            .ok_or("上游缺少版本信息")?
+            .ok_or_else(|| AppError::new("tools.releaseTagMissing"))?
             .into(),
         published_at: metadata["published_at"].as_str().unwrap_or_default().into(),
         name: name.into(),
@@ -271,8 +282,10 @@ fn asset_from_metadata(
         sha256: sha256.to_ascii_lowercase(),
     })
 }
-fn ffmpeg_asset_name(profile: ToolProfile, metadata: &serde_json::Value) -> Result<&str, String> {
-    let assets = metadata["assets"].as_array().ok_or("上游缺少资产列表")?;
+fn ffmpeg_asset_name(profile: ToolProfile, metadata: &serde_json::Value) -> AppResult<&str> {
+    let assets = metadata["assets"]
+        .as_array()
+        .ok_or_else(|| AppError::new("tools.assetListMissing"))?;
     // The rolling `latest` tag has aliases, but /releases/latest normally returns
     // an immutable daily release with versioned master builds. Never select a
     // shared, nonfree, other-architecture or stable-branch archive by accident.
@@ -301,17 +314,18 @@ fn ffmpeg_asset_name(profile: ToolProfile, metadata: &serde_json::Value) -> Resu
         .collect();
     match candidates.as_slice() {
         [name] => Ok(name),
-        [] => Err(format!(
-            "上游发布缺少 Windows x64 静态 {profile:?} FFmpeg 构建"
+        [] => Err(AppError::with(
+            "tools.ffmpegBuildMissing",
+            format!("{profile:?}"),
         )),
-        _ => Err("上游 FFmpeg 构建匹配不唯一，拒绝自动选择".into()),
+        _ => Err(AppError::new("tools.ffmpegBuildAmbiguous")),
     }
 }
 async fn resolve_release(
     client: &reqwest::Client,
     state: &ToolInstallState,
     repository: &str,
-) -> Result<serde_json::Value, String> {
+) -> AppResult<serde_json::Value> {
     let url = format!("https://api.github.com/repos/{repository}/releases/latest");
     let mut response = state
         .wait(async {
@@ -319,13 +333,13 @@ async fn resolve_release(
                 .get(&url)
                 .send()
                 .await
-                .map_err(|e| network_error("读取上游版本失败", &e))
+                .map_err(|e| network_error("tools.upstreamUnreachable", &e))
         })
         .await?;
     if !response.status().is_success() {
-        return Err(format!(
-            "读取上游版本失败（HTTP {}），可能达到 GitHub 请求限额，请稍后重试",
-            response.status()
+        return Err(AppError::with(
+            "tools.upstreamHttp",
+            response.status().as_u16().to_string(),
         ));
     }
     let mut bytes = Vec::new();
@@ -334,23 +348,24 @@ async fn resolve_release(
             response
                 .chunk()
                 .await
-                .map_err(|e| network_error("读取上游版本失败", &e))
+                .map_err(|e| network_error("tools.upstreamUnreachable", &e))
         })
         .await?
     {
         if bytes.len() + chunk.len() > 2 * 1024 * 1024 {
-            return Err("上游版本响应过大".into());
+            return Err(AppError::new("tools.upstreamTooLarge"));
         }
         bytes.extend_from_slice(&chunk);
     }
-    serde_json::from_slice(&bytes).map_err(|e| format!("上游版本响应无效：{e}"))
+    serde_json::from_slice(&bytes)
+        .map_err(|e| AppError::with("tools.upstreamInvalid", e.to_string()))
 }
 async fn resolve_asset(
     client: &reqwest::Client,
     state: &ToolInstallState,
     repository: &str,
     name: &str,
-) -> Result<Asset, String> {
+) -> AppResult<Asset> {
     let metadata = resolve_release(client, state, repository).await?;
     let name = if repository == FFMPEG_REPOSITORY {
         let profile = if name == ToolProfile::Basic.asset_name() {
@@ -358,7 +373,7 @@ async fn resolve_asset(
         } else if name == ToolProfile::Full.asset_name() {
             ToolProfile::Full
         } else {
-            return Err("不支持的 FFmpeg 配置".into());
+            return Err(AppError::new("tools.ffmpegConfigUnsupported"));
         };
         ffmpeg_asset_name(profile, &metadata)?
     } else {
@@ -373,10 +388,16 @@ async fn download_file(
     state: &ToolInstallState,
     asset: &Asset,
     target: &Path,
-) -> Result<(), String> {
+) -> AppResult<()> {
     validate_download_url(&asset.url)?;
     transfer::download(client, state, asset, target, |downloaded| {
-        emit_progress(app, profile, &asset.name, downloaded, Some(asset.size));
+        emit_progress(
+            app,
+            profile,
+            "tools.stage.download",
+            downloaded,
+            Some(asset.size),
+        );
     })
     .await
 }
@@ -391,44 +412,47 @@ fn is_safe_archive_name(name: &str) -> bool {
             .split('/')
             .any(|part| part == ".." || part.ends_with(' ') || part.ends_with('.'))
 }
-fn validate_pe(path: &Path) -> Result<(), String> {
-    let mut file = File::open(path).map_err(|e| format!("无法读取 {}：{e}", path.display()))?;
+fn validate_pe(path: &Path) -> AppResult<()> {
+    let mut file = File::open(path)
+        .map_err(|e| AppError::with("tools.fileRead", format!("{}: {e}", path.display())))?;
     let mut header = [0u8; 64];
     file.read_exact(&mut header)
-        .map_err(|_| "工具文件不完整".to_string())?;
+        .map_err(|_| AppError::new("tools.fileIncomplete"))?;
     if &header[..2] != b"MZ" {
-        return Err("工具不是 Windows EXE".into());
+        return Err(AppError::new("tools.notExe"));
     }
     use std::io::{Seek, SeekFrom};
     let offset = u32::from_le_bytes(header[60..64].try_into().unwrap()) as u64;
-    file.seek(SeekFrom::Start(offset))
-        .map_err(|e| e.to_string())?;
+    file.seek(SeekFrom::Start(offset)).map_err(io_error)?;
     let mut signature = [0u8; 6];
     file.read_exact(&mut signature)
-        .map_err(|_| "工具 PE 头不完整".to_string())?;
+        .map_err(|_| AppError::new("tools.peHeaderIncomplete"))?;
     if &signature[..4] != b"PE\0\0" || signature[4..6] != [0x64, 0x86] {
-        return Err("工具不是 Windows x64 EXE".into());
+        return Err(AppError::new("tools.notX64Exe"));
     }
     Ok(())
 }
-fn extract_ffmpeg(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> Result<(), String> {
-    let mut archive = zip::ZipArchive::new(File::open(zip_path).map_err(|e| e.to_string())?)
-        .map_err(|e| format!("FFmpeg 压缩包损坏：{e}"))?;
+fn archive_error(error: zip::result::ZipError) -> AppError {
+    AppError::with("tools.archiveCorrupt", error.to_string())
+}
+fn extract_ffmpeg(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> AppResult<()> {
+    let mut archive =
+        zip::ZipArchive::new(File::open(zip_path).map_err(io_error)?).map_err(archive_error)?;
     if archive.len() > 20_000 {
-        return Err("FFmpeg 压缩包条目过多".into());
+        return Err(AppError::new("tools.archiveTooManyEntries"));
     }
     let mut found = [false, false];
     let materials = dir.join("licenses/ffmpeg");
-    fs::create_dir_all(&materials).map_err(|e| e.to_string())?;
+    fs::create_dir_all(&materials).map_err(io_error)?;
     let mut expanded = 0u64;
     for index in 0..archive.len() {
         check_cancelled(cancelled)?;
-        let mut entry = archive.by_index(index).map_err(|e| e.to_string())?;
+        let mut entry = archive.by_index(index).map_err(archive_error)?;
         let name = entry.name().to_string();
         if !is_safe_archive_name(&name)
             || entry.unix_mode().is_some_and(|m| m & 0o170000 == 0o120000)
         {
-            return Err("FFmpeg 压缩包包含不安全路径或符号链接".into());
+            return Err(AppError::new("tools.archiveUnsafePath"));
         }
         if entry.is_dir() {
             continue;
@@ -443,7 +467,7 @@ fn extract_ffmpeg(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> Result
             "ffmpeg.exe" | "ffprobe.exe" => {
                 let i = usize::from(leaf == "ffprobe.exe");
                 if found[i] {
-                    return Err("FFmpeg 压缩包包含重复工具".into());
+                    return Err(AppError::new("tools.archiveDuplicate"));
                 }
                 found[i] = true;
                 (dir.join(&leaf), 512 * 1024 * 1024)
@@ -454,30 +478,30 @@ fn extract_ffmpeg(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> Result
             _ => continue,
         };
         if entry.size() > max_size {
-            return Err("FFmpeg 解压文件过大".into());
+            return Err(AppError::new("tools.extractTooLarge"));
         }
-        let mut output = File::create(&target).map_err(|e| e.to_string())?;
+        let mut output = File::create(&target).map_err(io_error)?;
         let mut buffer = [0u8; 65536];
         let mut written = 0u64;
         loop {
             check_cancelled(cancelled)?;
             let n = entry
                 .read(&mut buffer)
-                .map_err(|e| format!("FFmpeg 解压失败：{e}"))?;
+                .map_err(|e| AppError::with("tools.extractFailed", e.to_string()))?;
             if n == 0 {
                 break;
             }
             written += n as u64;
             expanded += n as u64;
             if written > max_size || expanded > 1100 * 1024 * 1024 {
-                return Err("FFmpeg 解压超过大小限制".into());
+                return Err(AppError::new("tools.extractTooLarge"));
             }
-            output.write_all(&buffer[..n]).map_err(|e| e.to_string())?;
+            output.write_all(&buffer[..n]).map_err(io_error)?;
         }
-        output.sync_all().map_err(|e| e.to_string())?;
+        output.sync_all().map_err(io_error)?;
     }
     if !found.into_iter().all(|v| v) {
-        return Err("压缩包缺少 ffmpeg.exe 或 ffprobe.exe".into());
+        return Err(AppError::new("tools.archiveMissingTools"));
     }
     for name in ["ffmpeg.exe", "ffprobe.exe"] {
         validate_pe(&dir.join(name))?;
@@ -485,28 +509,24 @@ fn extract_ffmpeg(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> Result
     Ok(())
 }
 
-fn extract_ytdlp_notices(
-    zip_path: &Path,
-    dir: &Path,
-    cancelled: &AtomicBool,
-) -> Result<(), String> {
-    let mut archive = zip::ZipArchive::new(File::open(zip_path).map_err(|e| e.to_string())?)
-        .map_err(|e| format!("yt-dlp 许可压缩包损坏：{e}"))?;
+fn extract_ytdlp_notices(zip_path: &Path, dir: &Path, cancelled: &AtomicBool) -> AppResult<()> {
+    let mut archive =
+        zip::ZipArchive::new(File::open(zip_path).map_err(io_error)?).map_err(archive_error)?;
     if archive.len() > 20_000 {
-        return Err("yt-dlp 许可压缩包条目过多".into());
+        return Err(AppError::new("tools.archiveTooManyEntries"));
     }
     let materials = dir.join("licenses/yt-dlp");
-    fs::create_dir_all(&materials).map_err(|e| e.to_string())?;
+    fs::create_dir_all(&materials).map_err(io_error)?;
     let mut found = false;
     let mut total = 0u64;
     for index in 0..archive.len() {
         check_cancelled(cancelled)?;
-        let mut entry = archive.by_index(index).map_err(|e| e.to_string())?;
+        let mut entry = archive.by_index(index).map_err(archive_error)?;
         let name = entry.name().replace('\\', "/");
         if !is_safe_archive_name(&name)
             || entry.unix_mode().is_some_and(|m| m & 0o170000 == 0o120000)
         {
-            return Err("yt-dlp 许可压缩包包含不安全路径".into());
+            return Err(AppError::new("tools.archiveUnsafePath"));
         }
         if entry.is_dir() {
             continue;
@@ -518,7 +538,7 @@ fn extract_ytdlp_notices(
             .to_ascii_lowercase();
         let target = if leaf == "third_party_licenses.txt" {
             if found {
-                return Err("yt-dlp 许可压缩包包含重复通知".into());
+                return Err(AppError::new("tools.archiveDuplicate"));
             }
             found = true;
             materials.join("THIRD_PARTY_LICENSES.txt")
@@ -531,31 +551,31 @@ fn extract_ytdlp_notices(
             continue;
         };
         if entry.size() > 4 * 1024 * 1024 {
-            return Err("yt-dlp 许可文件过大".into());
+            return Err(AppError::new("tools.extractTooLarge"));
         }
         let mut bytes = Vec::new();
         (&mut entry)
             .take(4 * 1024 * 1024 + 1)
             .read_to_end(&mut bytes)
-            .map_err(|e| e.to_string())?;
+            .map_err(io_error)?;
         total += bytes.len() as u64;
         if bytes.len() > 4 * 1024 * 1024 || total > 16 * 1024 * 1024 {
-            return Err("yt-dlp 许可文件超出大小限制".into());
+            return Err(AppError::new("tools.extractTooLarge"));
         }
-        fs::write(target, bytes).map_err(|e| e.to_string())?;
+        fs::write(target, bytes).map_err(io_error)?;
     }
     if !found {
-        return Err("yt-dlp 上游归档缺少第三方许可通知，拒绝安装".into());
+        return Err(AppError::new("tools.noticesMissing"));
     }
     fs::write(
         materials.join("UNLICENSE.txt"),
         include_str!("../../../licenses/yt-dlp/UNLICENSE.txt"),
     )
-    .map_err(|e| e.to_string())?;
+    .map_err(io_error)?;
     Ok(())
 }
 
-async fn version(dir: &Path, name: &str, argument: &str) -> Result<String, String> {
+async fn version(dir: &Path, name: &str, argument: &str) -> AppResult<String> {
     let mut command = tokio::process::Command::new(dir.join(name));
     command
         .arg(argument)
@@ -565,10 +585,10 @@ async fn version(dir: &Path, name: &str, argument: &str) -> Result<String, Strin
     command.creation_flags(0x08000000);
     let output = tokio::time::timeout(Duration::from_secs(15), command.output())
         .await
-        .map_err(|_| format!("{name} 版本检查超时"))?
-        .map_err(|e| format!("无法启动 {name}：{e}"))?;
+        .map_err(|_| AppError::with("tools.versionTimeout", name))?
+        .map_err(|e| AppError::with("tools.versionStart", format!("{name}: {e}")))?;
     if !output.status.success() {
-        return Err(format!("{name} 版本检查失败"));
+        return Err(AppError::with("tools.versionFailed", name));
     }
     let text = String::from_utf8_lossy(&output.stdout)
         .lines()
@@ -577,11 +597,11 @@ async fn version(dir: &Path, name: &str, argument: &str) -> Result<String, Strin
         .trim()
         .to_string();
     if text.is_empty() {
-        return Err(format!("{name} 缺少版本输出"));
+        return Err(AppError::with("tools.versionEmpty", name));
     }
     Ok(text)
 }
-async fn probe_versions(dir: &Path) -> Result<Vec<String>, String> {
+async fn probe_versions(dir: &Path) -> AppResult<Vec<String>> {
     for name in FILE_NAMES {
         validate_pe(&dir.join(name))?;
     }
@@ -625,37 +645,39 @@ async fn status_at(dir: PathBuf) -> ToolStatus {
     }
     result
 }
-fn replace_install(stage: &Path, target: &Path) -> Result<(), String> {
+fn replace_install(stage: &Path, target: &Path) -> AppResult<()> {
     for name in FILE_NAMES.into_iter().chain(["tool-profile.json"]) {
         if !stage.join(name).is_file() {
-            return Err(format!("安装文件缺失：{name}"));
+            return Err(AppError::with("tools.fileMissing", name));
         }
     }
-    let parent = target.parent().ok_or("无法确定工具目录")?;
+    let parent = target
+        .parent()
+        .ok_or_else(|| AppError::new("tools.directoryUnknown"))?;
     let backup = parent.join(".ytdlp-gui-bin-backup");
     if backup.exists() {
-        return Err(format!(
-            "发现未清理的工具备份 {}，请恢复或移开后重试",
-            backup.display()
+        return Err(AppError::with(
+            "tools.backupLeftover",
+            backup.display().to_string(),
         ));
     }
     if target.exists() {
         if target.is_symlink() || !target.is_dir() {
-            return Err("工具目录不是普通目录，拒绝替换".into());
+            return Err(AppError::new("tools.targetNotDirectory"));
         }
         fs::rename(target, &backup)
-            .map_err(|e| format!("无法准备替换工具（请关闭外部 FFmpeg 进程）：{e}"))?;
+            .map_err(|e| AppError::with("tools.replacePrepareFailed", e.to_string()))?;
     }
     if let Err(error) = fs::rename(stage, target) {
         if backup.exists() {
             fs::rename(&backup, target).map_err(|rollback| {
-                format!(
-                    "安装失败：{error}；旧工具恢复失败：{rollback}。备份保留在 {}",
-                    backup.display()
+                AppError::with(
+                    "tools.rollbackFailed",
+                    format!("{error}; {rollback}; {}", backup.display()),
                 )
             })?;
         }
-        return Err(format!("无法安装工具，旧工具已保留：{error}"));
+        return Err(AppError::with("tools.installKeptOld", error.to_string()));
     }
     // A failed backup cleanup must not falsely report an already committed install as failed.
     if backup.exists() {
@@ -663,21 +685,22 @@ fn replace_install(stage: &Path, target: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-fn recover_backup(target: &Path) -> Result<(), String> {
+fn recover_backup(target: &Path) -> AppResult<()> {
     let backup = target
         .parent()
-        .ok_or("无法确定工具目录")?
+        .ok_or_else(|| AppError::new("tools.directoryUnknown"))?
         .join(".ytdlp-gui-bin-backup");
     if !target.exists() && backup.is_dir() && FILE_NAMES.iter().all(|n| backup.join(n).is_file()) {
-        fs::rename(&backup, target).map_err(|e| format!("无法恢复旧工具：{e}"))?;
+        fs::rename(&backup, target)
+            .map_err(|e| AppError::with("tools.recoverFailed", e.to_string()))?;
     }
     Ok(())
 }
 #[tauri::command]
-pub async fn get_tool_status(app: AppHandle) -> Result<ToolStatus, String> {
+pub async fn get_tool_status(app: AppHandle) -> AppResult<ToolStatus> {
     let dir = tool_directory(&app)?;
     if app.state::<ToolInstallState>().busy.load(Ordering::SeqCst) {
-        return Err("工具安装正在进行，请等待安装结束后刷新".into());
+        return Err(AppError::new("tools.installing"));
     }
     recover_backup(&dir)?;
     Ok(status_at(dir).await)
@@ -694,32 +717,35 @@ pub async fn download_tools(
     app: AppHandle,
     state: State<'_, ToolInstallState>,
     profile: ToolProfile,
-) -> Result<ToolStatus, String> {
+) -> AppResult<ToolStatus> {
     let _busy = state.begin()?;
     let app_state = app.state::<AppState>();
     app_state.tasks.begin_tools_install()?;
     let _paused = TaskPause(&app_state.tasks);
     let dir = tool_directory(&app)?;
-    let parent = dir.parent().ok_or("无法确定工具目录")?;
-    fs::create_dir_all(parent).map_err(|e| format!("无法创建工具目录：{e}"))?;
-    let parent = fs::canonicalize(parent).map_err(|e| e.to_string())?;
+    let parent = dir
+        .parent()
+        .ok_or_else(|| AppError::new("tools.directoryUnknown"))?;
+    fs::create_dir_all(parent)
+        .map_err(|e| AppError::with("tools.directoryCreate", e.to_string()))?;
+    let parent = fs::canonicalize(parent).map_err(io_error)?;
     let target = parent.join("bin");
     recover_backup(&target)?;
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| AppError::with("tools.ioFailed", e.to_string()))?;
     let staging = Staging(parent.join(format!(
         ".ytdlp-gui-install-{}-{}",
         std::process::id(),
         stamp.as_nanos()
     )));
-    fs::create_dir(&staging.0).map_err(|e| format!("无法创建临时目录：{e}"))?;
-    emit_progress(&app, profile, "读取上游版本", 0, None);
+    fs::create_dir(&staging.0).map_err(|e| AppError::with("tools.stagingCreate", e.to_string()))?;
+    emit_progress(&app, profile, "tools.stage.readUpstream", 0, None);
     let settings = app
         .state::<AppState>()
         .settings
         .lock()
-        .map_err(|_| "设置锁不可用")?
+        .map_err(|_| AppError::new("tools.settingsLocked"))?
         .clone();
     let client = client(&settings)?;
     // EXE and notices must come from one immutable release snapshot, not two
@@ -755,7 +781,7 @@ pub async fn download_tools(
         &staging.0.join("yt-dlp-notices.zip"),
     )
     .await?;
-    emit_progress(&app, profile, "安全解压", 0, None);
+    emit_progress(&app, profile, "tools.stage.extract", 0, None);
     let extract_dir = staging.0.clone();
     let cancelled = state.cancelled.clone();
     // Always join extraction before dropping staging; cancellation cannot leave a writer behind.
@@ -768,10 +794,10 @@ pub async fn download_tools(
         )
     })
     .await
-    .map_err(|e| e.to_string())??;
-    fs::remove_file(staging.0.join("ffmpeg.zip")).map_err(|e| e.to_string())?;
-    fs::remove_file(staging.0.join("yt-dlp-notices.zip")).map_err(|e| e.to_string())?;
-    emit_progress(&app, profile, "验证工具与许可证", 0, None);
+    .map_err(|e| AppError::with("tools.extractFailed", e.to_string()))??;
+    fs::remove_file(staging.0.join("ffmpeg.zip")).map_err(io_error)?;
+    fs::remove_file(staging.0.join("yt-dlp-notices.zip")).map_err(io_error)?;
+    emit_progress(&app, profile, "tools.stage.verify", 0, None);
     let versions = state.wait(probe_versions(&staging.0)).await?;
     for (name, args) in [
         ("license-output.txt", vec!["-L"]),
@@ -788,12 +814,12 @@ pub async fn download_tools(
             .wait(async {
                 tokio::time::timeout(Duration::from_secs(15), command.output())
                     .await
-                    .map_err(|_| "构建信息检查超时".to_string())?
-                    .map_err(|e| e.to_string())
+                    .map_err(|_| AppError::new("tools.buildInfoTimeout"))?
+                    .map_err(|e| AppError::with("tools.buildInfoFailed", e.to_string()))
             })
             .await?;
         if !output.status.success() {
-            return Err("FFmpeg 构建信息读取失败".into());
+            return Err(AppError::new("tools.buildInfoFailed"));
         }
         let text = format!(
             "{}\n{}",
@@ -803,10 +829,10 @@ pub async fn download_tools(
         if name == "buildconf-output.txt" {
             let gpl = text.contains("--enable-gpl");
             if text.contains("--enable-nonfree") || gpl != (profile == ToolProfile::Full) {
-                return Err("FFmpeg 实际构建与所选 LGPL/GPL 配置不符，拒绝安装".into());
+                return Err(AppError::new("tools.ffmpegLicenseMismatch"));
             }
         }
-        fs::write(staging.0.join("licenses/ffmpeg").join(name), text).map_err(|e| e.to_string())?;
+        fs::write(staging.0.join("licenses/ffmpeg").join(name), text).map_err(io_error)?;
     }
     let marker = ToolMarker {
         schema_version: 1,
@@ -817,19 +843,20 @@ pub async fn download_tools(
         ytdlp_notices,
         versions: versions.clone(),
     };
-    let marker_bytes = serde_json::to_vec_pretty(&marker).map_err(|e| e.to_string())?;
-    fs::write(marker_path(&staging.0), &marker_bytes).map_err(|e| e.to_string())?;
+    let marker_bytes = serde_json::to_vec_pretty(&marker)
+        .map_err(|e| AppError::with("tools.ioFailed", e.to_string()))?;
+    fs::write(marker_path(&staging.0), &marker_bytes).map_err(io_error)?;
     fs::write(
         staging.0.join("licenses/installed-tools.json"),
         marker_bytes,
     )
-    .map_err(|e| e.to_string())?;
-    fs::write(staging.0.join("licenses/NOTICE.txt"), format!("Tools downloaded directly by this application from upstream GitHub Releases.\nProfile: {profile:?}; FFmpeg provider: BtbN/FFmpeg-Builds.\nActual versions and SHA-256 verification records: installed-tools.json.\nFFmpeg license and build configuration: ffmpeg/license-output.txt and ffmpeg/buildconf-output.txt.\nUpstream: https://github.com/yt-dlp/yt-dlp and https://github.com/BtbN/FFmpeg-Builds.\nSource leads: https://github.com/yt-dlp/yt-dlp/tree/{} and https://github.com/BtbN/FFmpeg-Builds/tree/master/scripts.d.\nThese source leads are NOT a complete Corresponding Source or written source offer.\nDo not redistribute these binaries before a separate licensing review.\n", marker.ytdlp.release_tag)).map_err(|e| e.to_string())?;
+    .map_err(io_error)?;
+    fs::write(staging.0.join("licenses/NOTICE.txt"), format!("Tools downloaded directly by this application from upstream GitHub Releases.\nProfile: {profile:?}; FFmpeg provider: BtbN/FFmpeg-Builds.\nActual versions and SHA-256 verification records: installed-tools.json.\nFFmpeg license and build configuration: ffmpeg/license-output.txt and ffmpeg/buildconf-output.txt.\nUpstream: https://github.com/yt-dlp/yt-dlp and https://github.com/BtbN/FFmpeg-Builds.\nSource leads: https://github.com/yt-dlp/yt-dlp/tree/{} and https://github.com/BtbN/FFmpeg-Builds/tree/master/scripts.d.\nThese source leads are NOT a complete Corresponding Source or written source offer.\nDo not redistribute these binaries before a separate licensing review.\n", marker.ytdlp.release_tag)).map_err(io_error)?;
     state.check()?;
-    emit_progress(&app, profile, "安装工具", 0, None);
+    emit_progress(&app, profile, "tools.stage.install", 0, None);
     // No await between final cancellation check and directory transaction.
     replace_install(&staging.0, &target)?;
-    emit_progress(&app, profile, "安装完成", 1, Some(1));
+    emit_progress(&app, profile, "tools.stage.done", 1, Some(1));
     Ok(ToolStatus {
         installed: true,
         profile: Some(profile),
@@ -1061,7 +1088,7 @@ mod tests {
 }
 
 #[tauri::command]
-pub fn open_tool_licenses(app: AppHandle) -> Result<(), String> {
+pub fn open_tool_licenses(app: AppHandle) -> AppResult<()> {
     use tauri_plugin_opener::OpenerExt;
     let installed = tool_directory(&app)?.join("licenses");
     let directory = if installed.is_dir() {
@@ -1069,31 +1096,31 @@ pub fn open_tool_licenses(app: AppHandle) -> Result<(), String> {
     } else {
         app.path()
             .resource_dir()
-            .map_err(|e| e.to_string())?
+            .map_err(|e| AppError::with("tools.resourceDirFailed", e.to_string()))?
             .join("licenses")
     };
     if !directory.is_dir() {
-        return Err("未找到许可材料，请先安装工具或查看项目 licenses/ 目录".into());
+        return Err(AppError::new("tools.licensesMissing"));
     }
     app.opener()
         .open_path(directory.to_string_lossy(), None::<&str>)
-        .map_err(|e| format!("无法打开许可目录：{e}"))
+        .map_err(|e| AppError::with("tools.openFailed", e.to_string()))
 }
 
 // A separate fixed resource path: installed tool licenses must not hide GUI notices.
 #[tauri::command]
-pub fn open_gui_licenses(app: AppHandle) -> Result<(), String> {
+pub fn open_gui_licenses(app: AppHandle) -> AppResult<()> {
     use tauri_plugin_opener::OpenerExt;
     let directory = app
         .path()
         .resource_dir()
-        .map_err(|e| e.to_string())?
+        .map_err(|e| AppError::with("tools.resourceDirFailed", e.to_string()))?
         .join("licenses")
         .join("gui");
     if !directory.is_dir() {
-        return Err("未找到 GUI 许可材料，请使用完整安装包或查看项目 licenses/gui/ 目录".into());
+        return Err(AppError::new("tools.guiLicensesMissing"));
     }
     app.opener()
         .open_path(directory.to_string_lossy(), None::<&str>)
-        .map_err(|e| format!("无法打开 GUI 许可目录：{e}"))
+        .map_err(|e| AppError::with("tools.openFailed", e.to_string()))
 }

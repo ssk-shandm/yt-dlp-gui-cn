@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T05:37:06.952Z",
-  "inventorySha256": "1e90cbedd96e541551a86b8c602bad32b671bc0dfbc4fc8d520237e393122115",
+  "checkedAt": "2026-10-09T09:33:49.147Z",
+  "inventorySha256": "5ad377a41cf1c457e2cf20fe0dee29817edd70df670800509a62bf0514a257a2",
   "sources": [
     {
       "id": "cargo:brotli@9.0.0",
@@ -134,7 +134,7 @@
     },
     {
       "file": "gui/review.json",
-      "sha256": "2a0b2ba5691edd605b7b10e09d9eb77bdd3b480cab8cce67f26cc1532daf5c72"
+      "sha256": "503f2cf1cbc4f1e2f01e147d4fd5edcbfd3f039bba478d5fa198c717c11f00f0"
     }
   ]
 }

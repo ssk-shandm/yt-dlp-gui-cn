@@ -125,12 +125,14 @@ try {
   }
   assert.ok(browser, 'WebView2 CDP unavailable')
   page = browser.contexts()[0].pages()[0]
+  await page.evaluate(() => localStorage.setItem('grabmeta.locale', 'zh-CN'))
+  await page.reload()
   page.setDefaultTimeout(180000)
   page.on('pageerror', error => results.pageErrors.push(error.message))
   await page.locator('.tool-dialog[open]').waitFor()
   assert.equal((await invoke('get_tool_status')).installed, false)
-  const updateRejection = await invoke('download_and_install_update', { url: 'https://github.com/unused/test-setup.exe', fileName: 'test-setup.exe' }).then(() => '', String)
-  assert.match(updateRejection, /隔离测试版/)
+  const updateRejection = await invoke('download_and_install_update', { url: 'https://github.com/unused/test-setup.exe', fileName: 'test-setup.exe' }).then(() => undefined, (error) => error)
+  assert.equal(updateRejection?.code, 'update.isolatedBuild')
   await page.evaluate(async () => {
     window.__toolProgress = []; window.__toolHistory = []
     const handler = window.__TAURI_INTERNALS__.transformCallback(event => window.__toolProgress.push(event.payload))
@@ -146,8 +148,8 @@ try {
     if (key !== lastProgress) { lastProgress = key; console.log('DOWNLOAD', last.profile, last.stage, last.percent, Math.round(last.downloaded / 1024 / 1024), 'MiB') }
   }, 10000)
   await begin('basic'); await transferring()
-  const duplicate = await invoke('download_tools', { profile: 'basic' }).then(() => '', String)
-  assert.match(duplicate, /正在进行/)
+  const duplicate = await invoke('download_tools', { profile: 'basic' }).then(() => undefined, (error) => error)
+  assert.equal(duplicate?.code, 'tools.busy')
   await page.getByRole('button', { name: '取消安装', exact: true }).click()
   await settled()
   assert.match(await page.locator('.tool-dialog .install-error').textContent(), /取消/)

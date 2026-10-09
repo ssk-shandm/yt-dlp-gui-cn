@@ -1,5 +1,4 @@
 import { version } from '../../package.json'
-export const APP_NAME = 'yt-dlp GUI 中文版'
 export const APP_VERSION = version
 export const COPYRIGHT_LINE = 'Copyright © 2025 ssk-shandm'
 export const LICENSE_NAME = 'MIT License'
@@ -13,37 +12,37 @@ export const ABOUT_URLS = [REPOSITORY_URL, RELEASES_URL, LICENSE_URL, YTDLP_URL,
 export const APP_PAGES = [
   {
     path: '/',
-    title: '图片链接',
-    eyebrow: '开始下载',
-    description: '从一个链接开始，分析视频并获取最佳画质。',
+    titleKey: 'common.pages.links.title',
+    eyebrowKey: 'common.pages.links.eyebrow',
+    descriptionKey: 'common.pages.links.description',
     icon: 'image',
   },
   {
     path: '/page-two',
-    title: '内容处理',
-    eyebrow: '自定义下载',
-    description: '选择视频、音频与字幕，让下载更符合你的需要。',
+    titleKey: 'common.pages.content.title',
+    eyebrowKey: 'common.pages.content.eyebrow',
+    descriptionKey: 'common.pages.content.description',
     icon: 'video',
   },
   {
     path: '/page-three',
-    title: '下载列表',
-    eyebrow: '任务管理',
-    description: '查看本次运行的下载任务与完成状态。',
+    titleKey: 'common.pages.downloads.title',
+    eyebrowKey: 'common.pages.downloads.eyebrow',
+    descriptionKey: 'common.pages.downloads.description',
     icon: 'download',
   },
   {
     path: '/page-four',
-    title: '终端显示',
-    eyebrow: '运行日志',
-    description: '实时查看工具输出，定位分析与下载过程中的问题。',
+    titleKey: 'common.pages.terminal.title',
+    eyebrowKey: 'common.pages.terminal.eyebrow',
+    descriptionKey: 'common.pages.terminal.description',
     icon: 'terminal',
   },
   {
     path: '/about',
-    title: '关于',
-    eyebrow: '项目说明',
-    description: '了解应用、开源许可与项目相关信息。',
+    titleKey: 'common.pages.about.title',
+    eyebrowKey: 'common.pages.about.eyebrow',
+    descriptionKey: 'common.pages.about.description',
     icon: 'info',
   },
 ] as const

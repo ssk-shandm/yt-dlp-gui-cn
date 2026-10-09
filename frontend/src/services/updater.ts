@@ -7,6 +7,9 @@ import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import { watch } from 'vue'
 import { useTaskStore } from '@/stores/taskStore'
 import { createUpdateController, UPDATE_STORAGE_KEY, type UpdateInfo } from './updateController'
+import { noticeError } from './updateRelease'
+import { i18n } from '../i18n'
+import { errorText } from '../i18n/codes'
 
 const GITHUB_API_URL = 'https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest'
 
@@ -15,9 +18,9 @@ async function fetchReleaseInWebView(signal: AbortSignal): Promise<ReleaseData> 
     headers: { Accept: 'application/vnd.github+json' }, signal, cache: 'no-store',
   })
   if (!response.ok) {
-    if (response.status === 403) throw new Error('GitHub API 请求受限，请稍后再试')
-    if (response.status === 404) throw new Error('GitHub 上还没有发布 Release')
-    throw new Error('更新检查失败（HTTP ' + response.status + '）')
+    if (response.status === 403) throw noticeError('updates.rateLimited', 'GitHub API 请求受限，请稍后再试')
+    if (response.status === 404) throw noticeError('updates.noRelease', 'GitHub 上还没有发布 Release')
+    throw noticeError('updates.httpFailed', '更新检查失败（HTTP ' + response.status + '）', { status: response.status })
   }
   return response.json() as Promise<ReleaseData>
 }
@@ -35,11 +38,11 @@ async function fetchLatestRelease(): Promise<UpdateInfo> {
     return parseRelease(data, APP_VERSION, RELEASES_URL)
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new Error("无法连接 GitHub 检查更新：请求超时")
+      throw noticeError('updates.timeout', '无法连接 GitHub 检查更新：请求超时')
     }
     const message = error instanceof Error ? error.message : String(error)
     if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
-      throw new Error("无法连接 GitHub 检查更新：请检查网络或系统代理设置")
+      throw noticeError('updates.networkFailed', '无法连接 GitHub 检查更新：请检查网络或系统代理设置')
     }
     throw error
   } finally {
@@ -48,13 +51,14 @@ async function fetchLatestRelease(): Promise<UpdateInfo> {
 }
 
 export const appUpdater = createUpdateController({
+  translate: (key, params) => i18n.global.t(key, params),
   isDesktop: isTauri,
   activeTasks: () => toolManager.busy || useTaskStore().tasks.some((task) => task.status === 'running'),
   // Desktop checks and downloads share the native network path.
   check: fetchLatestRelease,
   install: (update) => {
     if (!update.installerUrl || !update.installerName) {
-      return Promise.reject(new Error('该 Release 没有可自动安装的 Windows NSIS 安装包。'))
+      return Promise.reject(noticeError('updates.noInstallerAsset', '该 Release 没有可自动安装的 Windows NSIS 安装包。'))
     }
     return invoke('download_and_install_update', {
       url: update.installerUrl,
@@ -90,8 +94,7 @@ export async function startAppUpdates() {
     )
     if (appUpdater.state.autoCheck) await appUpdater.checkAndInstall('automatic')
   } catch (error) {
-    appUpdater.state.phase = 'error'
-    appUpdater.state.message = '更新服务初始化失败：' + String(error)
+    appUpdater.fail(noticeError('updates.initFailed', errorText(error), { error: errorText(error) }))
   }
 }
 

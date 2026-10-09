@@ -3,8 +3,8 @@ mod process;
 mod tools;
 mod updater;
 
-use model::{DownloadKind, DownloadRequest, Settings};
-use process::{execute, log, resolve_tools, task_event, TaskRegistry};
+use model::{AppError, AppResult, DownloadKind, DownloadRequest, Settings};
+use process::{execute, log_notice, resolve_tools, task_event, TaskRegistry};
 use std::{path::PathBuf, sync::Mutex};
 use tauri::{AppHandle, Manager, State};
 
@@ -14,36 +14,42 @@ pub struct AppState {
     tasks: TaskRegistry,
 }
 
-fn validate_settings(settings: &Settings) -> Result<(), String> {
+fn validate_settings(settings: &Settings) -> AppResult<()> {
     model::validate_retries(&settings.retry_times)?;
     model::validate_concurrent_fragments(settings.concurrent_fragments)?;
     if settings.proxy_enabled {
         model::validate_proxy_url(&settings.proxy_url)?;
     }
     if !PathBuf::from(&settings.download_path).is_absolute() {
-        return Err("下载目录必须是绝对路径".into());
+        return Err(AppError::new("settings.pathNotAbsolute"));
     }
     if settings.download_path.contains('\0') {
-        return Err("下载目录包含非法字符".into());
+        return Err(AppError::new("settings.pathInvalid"));
     }
     Ok(())
 }
 #[tauri::command]
-fn get_settings(state: State<AppState>) -> Result<Settings, String> {
+fn get_settings(state: State<AppState>) -> AppResult<Settings> {
     state
         .settings
         .lock()
         .map(|s| s.clone())
-        .map_err(|_| "设置锁不可用".into())
+        .map_err(|_| AppError::new("settings.lockUnavailable"))
 }
 #[tauri::command]
-fn save_settings(settings: Settings, state: State<AppState>) -> Result<Settings, String> {
+fn save_settings(settings: Settings, state: State<AppState>) -> AppResult<Settings> {
     validate_settings(&settings)?;
-    std::fs::create_dir_all(&settings.download_path)
-        .map_err(|e| format!("无法创建下载目录: {e}"))?;
-    let mut current = state.settings.lock().map_err(|_| "设置锁不可用")?;
-    let json = serde_json::to_vec_pretty(&settings).map_err(|e| e.to_string())?;
-    std::fs::write(&state.settings_file, json).map_err(|e| format!("无法保存设置: {e}"))?;
+    std::fs::create_dir_all(&settings.download_path).map_err(|e| {
+        AppError::with("settings.directoryCreateFailed", e.to_string())
+    })?;
+    let mut current = state
+        .settings
+        .lock()
+        .map_err(|_| AppError::new("settings.lockUnavailable"))?;
+    let json = serde_json::to_vec_pretty(&settings)
+        .map_err(|e| AppError::with("settings.saveFailed", e.to_string()))?;
+    std::fs::write(&state.settings_file, json)
+        .map_err(|e| AppError::with("settings.saveFailed", e.to_string()))?;
     *current = settings.clone();
     Ok(settings)
 }
@@ -52,10 +58,14 @@ async fn analyze_url(
     url: String,
     app: AppHandle,
     state: State<'_, AppState>,
-) -> Result<serde_json::Value, String> {
+) -> AppResult<serde_json::Value> {
     let url = model::validate_url(&url)?;
     let tools = resolve_tools(&app)?;
-    let settings = state.settings.lock().map_err(|_| "设置锁不可用")?.clone();
+    let settings = state
+        .settings
+        .lock()
+        .map_err(|_| AppError::new("settings.lockUnavailable"))?
+        .clone();
     let mut args = model::proxy_args(&settings)?;
     args.extend(
         [
@@ -77,31 +87,25 @@ async fn analyze_url(
         .map(str::to_string),
     );
     let (id, control) = state.tasks.reserve()?;
-    let title = "链接解析";
-    task_event(&app, id, title, "running", "正在获取视频信息");
+    task_event(&app, id, "analyze", "running", AppError::new("task.analyzing"));
     let result = execute(&app, &tools.ytdlp, &args, id, control, true)
         .await
         .and_then(|bytes| {
             serde_json::from_slice(&bytes)
                 .map(model::normalize_metadata)
-                .map_err(|e| format!("无法解析视频信息 JSON: {e}"))
+                .map_err(|e| AppError::with("metadata.parseFailed", e.to_string()))
         });
     state.tasks.finish(id);
     match &result {
-        Ok(_) => task_event(&app, id, title, "success", "链接解析完成"),
+        Ok(_) => task_event(&app, id, "analyze", "success", AppError::new("task.analyzed")),
         Err(e) => {
-            log(&app, id, e);
-            task_event(
-                &app,
-                id,
-                title,
-                if e == "任务已取消" {
-                    "cancelled"
-                } else {
-                    "error"
-                },
-                e,
-            );
+            log_notice(&app, id, e.clone());
+            let status = if e.code == "task.cancelled" {
+                "cancelled"
+            } else {
+                "error"
+            };
+            task_event(&app, id, "analyze", status, e.clone());
         }
     }
     result
@@ -111,34 +115,29 @@ fn launch(
     app: AppHandle,
     executable: PathBuf,
     args: Vec<String>,
-    title: String,
-) -> Result<u64, String> {
+    kind: &'static str,
+) -> AppResult<u64> {
     let state = app.state::<AppState>();
     let (id, control) = state.tasks.reserve()?;
-    task_event(&app, id, &title, "running", "任务已启动");
-    log(&app, id, format!("开始：{title}"));
+    task_event(&app, id, kind, "running", AppError::new("task.started"));
+    log_notice(&app, id, AppError::with("log.started", kind));
     let worker_app = app.clone();
     tauri::async_runtime::spawn(async move {
         let result = execute(&worker_app, &executable, &args, id, control, false).await;
         worker_app.state::<AppState>().tasks.finish(id);
         match result {
             Ok(_) => {
-                log(&worker_app, id, format!("{title}已完成"));
-                task_event(&worker_app, id, &title, "success", "任务已完成");
+                log_notice(&worker_app, id, AppError::with("log.completed", kind));
+                task_event(&worker_app, id, kind, "success", AppError::new("task.completed"));
             }
             Err(e) => {
-                log(&worker_app, id, &e);
-                task_event(
-                    &worker_app,
-                    id,
-                    &title,
-                    if e == "任务已取消" {
-                        "cancelled"
-                    } else {
-                        "error"
-                    },
-                    &e,
-                );
+                let status = if e.code == "task.cancelled" {
+                    "cancelled"
+                } else {
+                    "error"
+                };
+                log_notice(&worker_app, id, e.clone());
+                task_event(&worker_app, id, kind, status, e);
             }
         }
     });
@@ -149,24 +148,29 @@ fn start_download(
     request: DownloadRequest,
     app: AppHandle,
     state: State<AppState>,
-) -> Result<u64, String> {
+) -> AppResult<u64> {
     let tools = resolve_tools(&app)?;
-    let settings = state.settings.lock().map_err(|_| "设置锁不可用")?.clone();
-    std::fs::create_dir_all(&settings.download_path)
-        .map_err(|e| format!("无法创建下载目录: {e}"))?;
+    let settings = state
+        .settings
+        .lock()
+        .map_err(|_| AppError::new("settings.lockUnavailable"))?
+        .clone();
+    std::fs::create_dir_all(&settings.download_path).map_err(|e| {
+        AppError::with("settings.directoryCreateFailed", e.to_string())
+    })?;
     let args = model::download_args(&request, &settings, &tools.ffmpeg_dir.to_string_lossy())?;
-    let title = match request.kind {
-        DownloadKind::Quick => "快速下载",
-        DownloadKind::Format => "指定格式下载",
-        DownloadKind::Combined => "音视频组合下载",
-        DownloadKind::Subtitle => "字幕下载",
-        DownloadKind::Thumbnail => "封面下载",
-        DownloadKind::Description => "简介下载",
+    let kind = match request.kind {
+        DownloadKind::Quick => "quick",
+        DownloadKind::Format => "format",
+        DownloadKind::Combined => "combined",
+        DownloadKind::Subtitle => "subtitle",
+        DownloadKind::Thumbnail => "thumbnail",
+        DownloadKind::Description => "description",
     };
-    launch(app, tools.ytdlp, args, title.into())
+    launch(app, tools.ytdlp, args, kind)
 }
 #[tauri::command]
-fn list_supported_sites(app: AppHandle) -> Result<u64, String> {
+fn list_supported_sites(app: AppHandle) -> AppResult<u64> {
     let tools = resolve_tools(&app)?;
     launch(
         app,
@@ -178,11 +182,11 @@ fn list_supported_sites(app: AppHandle) -> Result<u64, String> {
             "--no-color".into(),
             "--list-extractors".into(),
         ],
-        "支持网站列表".into(),
+        "sites",
     )
 }
 #[tauri::command]
-fn cancel_task(task_id: u64, state: State<AppState>) -> Result<(), String> {
+fn cancel_task(task_id: u64, state: State<AppState>) -> AppResult<()> {
     state.tasks.cancel(task_id)
 }
 
@@ -237,7 +241,7 @@ pub fn run() {
             tools::open_gui_licenses
         ])
         .build(tauri::generate_context!())
-        .expect("无法启动 yt-dlp GUI");
+        .expect("failed to start yt-dlp GUI");
     app.run(|app, event| {
         if matches!(
             event,

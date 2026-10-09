@@ -1,3 +1,5 @@
+**简体中文** | [English](ARCHITECTURE.en.md)
+
 # 架构与 IPC
 
 ## 数据流

@@ -3,47 +3,47 @@
     <dialog ref="dialog" class="tool-dialog" aria-labelledby="tool-dialog-title" @cancel.prevent="tools.close()">
       <form @submit.prevent="tools.install()">
         <header class="dialog-header">
-          <span class="section-eyebrow">下载工具 · 从上游获取</span>
-          <h2 id="tool-dialog-title">{{ state.status?.installed ? '管理下载工具' : '准备你的下载工具' }}</h2>
-          <p>应用不会捆绑第三方 EXE。请选择 FFmpeg 构建，程序将校验下载文件后安装到本地 bin 目录。</p>
+          <span class="section-eyebrow">{{ $t('tools.eyebrow') }}</span>
+          <h2 id="tool-dialog-title">{{ state.status?.installed ? $t('tools.heading.manage') : $t('tools.heading.setup') }}</h2>
+          <p>{{ $t('tools.intro') }}</p>
         </header>
         <fieldset :disabled="state.busy || state.checking" class="profile-options">
-          <legend class="sr-only">选择工具版本</legend>
+          <legend class="sr-only">{{ $t('tools.profileLegend') }}</legend>
           <label class="profile-card" :class="{ selected: state.profile === 'basic' }">
             <input v-model="state.profile" type="radio" value="basic" name="tool-profile" />
-            <span class="profile-title">基础版 <span class="profile-tag">推荐</span></span>
-            <span class="profile-license">FFmpeg LGPL 静态构建</span>
-            <span>用于常见下载、音视频合并和转封装。不包含 libx264 / libx265 等 GPL 编码库。</span>
-            <small>较小 · 总下载约 200 MB 起</small>
+            <span class="profile-title">{{ $t('tools.profile.basic.title') }} <span class="profile-tag">{{ $t('tools.profile.basic.tag') }}</span></span>
+            <span class="profile-license">{{ $t('tools.profile.basic.license') }}</span>
+            <span>{{ $t('tools.profile.basic.description') }}</span>
+            <small>{{ $t('tools.profile.basic.size') }}</small>
           </label>
           <label class="profile-card" :class="{ selected: state.profile === 'full' }">
             <input v-model="state.profile" type="radio" value="full" name="tool-profile" />
-            <span class="profile-title">完整版</span>
-            <span class="profile-license">FFmpeg GPL 静态构建</span>
-            <span>增加 GPL 编码库，适合需要更多编码、滤镜及后处理能力的用户。</span>
-            <small>功能更全 · 总下载约 230 MB 起</small>
+            <span class="profile-title">{{ $t('tools.profile.full.title') }}</span>
+            <span class="profile-license">{{ $t('tools.profile.full.license') }}</span>
+            <span>{{ $t('tools.profile.full.description') }}</span>
+            <small>{{ $t('tools.profile.full.size') }}</small>
           </label>
         </fieldset>
-        <p class="profile-note">两种配置使用相同的 yt-dlp。体积随上游版本变化；基础版也可随时在“关于”页升级为完整版。上游工具适用各自许可证。</p>
+        <p class="profile-note">{{ $t('tools.note') }}</p>
         <div v-if="state.message" class="install-status" role="status" aria-live="polite">
-          <p>{{ state.message }}</p>
-          <p v-if="state.busy && state.speed" class="transfer-speed">{{ state.speed }}<span v-if="state.remaining"> · {{ state.remaining }}</span></p>
-          <progress v-if="state.busy" :value="state.progress ?? undefined" max="100" aria-label="工具下载进度" />
+          <p>{{ toolText(state.message) }}</p>
+          <p v-if="state.busy && state.speed" class="transfer-speed">{{ state.speed }}<span v-if="state.remaining"> · {{ toolText(state.remaining) }}</span></p>
+          <progress v-if="state.busy" :value="state.progress ?? undefined" max="100" :aria-label="$t('tools.progressLabel')" />
         </div>
-        <p v-if="state.error" class="install-error" role="alert">{{ state.error }}</p>
+        <p v-if="state.error" class="install-error" role="alert">{{ toolText(state.error) }}</p>
         <footer class="dialog-actions">
-          <button v-if="state.busy" type="button" class="secondary-action" :disabled="state.cancelling" @click="tools.cancel()">{{ state.cancelling ? '正在取消…' : '取消安装' }}</button>
-          <button v-else type="button" class="secondary-action" @click="tools.close()">{{ state.status?.installed ? '关闭' : '稍后安装' }}</button>
-          <button class="primary-action" type="submit" :disabled="state.busy || state.checking">{{ state.busy ? '正在安装…' : state.error ? '重试安装' : '下载并安装' }}</button>
+          <button v-if="state.busy" type="button" class="secondary-action" :disabled="state.cancelling" @click="tools.cancel()">{{ state.cancelling ? $t('tools.cancelling') : $t('tools.cancel') }}</button>
+          <button v-else type="button" class="secondary-action" @click="tools.close()">{{ state.status?.installed ? $t('tools.close') : $t('tools.later') }}</button>
+          <button class="primary-action" type="submit" :disabled="state.busy || state.checking">{{ state.busy ? $t('tools.installing') : state.error ? $t('tools.retry') : $t('tools.install') }}</button>
         </footer>
-        <p class="offline-note">首次安装需要网络；大文件支持最多 4 路连接，线路较慢时可取消后重试。下载失败或取消不会替换已安装的工具；无工具时不能解析或下载视频。</p>
+        <p class="offline-note">{{ $t('tools.offlineNote') }}</p>
       </form>
     </dialog>
   </Teleport>
 </template>
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { tools } from '@/services/tools'
+import { tools, toolText } from '@/services/tools'
 const state = tools.state
 const dialog = ref<HTMLDialogElement>()
 watchEffect(() => {

@@ -1653,6 +1653,26 @@ Declared license: Apache-2.0
 Source: https://registry.npmjs.org/@humanwhocodes/retry/-/retry-0.4.3.tgz
 Notices: gui/packages/npm__humanwhocodes_retry_0.4.3/LICENSE
 
+npm: @intlify/core-base 11.4.13
+Declared license: MIT
+Source: https://registry.npmjs.org/@intlify/core-base/-/core-base-11.4.13.tgz
+Notices: gui/packages/npm__intlify_core-base_11.4.13/LICENSE
+
+npm: @intlify/devtools-types 11.4.13
+Declared license: MIT
+Source: https://registry.npmjs.org/@intlify/devtools-types/-/devtools-types-11.4.13.tgz
+Notices: gui/packages/npm__intlify_devtools-types_11.4.13/LICENSE
+
+npm: @intlify/message-compiler 11.4.13
+Declared license: MIT
+Source: https://registry.npmjs.org/@intlify/message-compiler/-/message-compiler-11.4.13.tgz
+Notices: gui/packages/npm__intlify_message-compiler_11.4.13/LICENSE
+
+npm: @intlify/shared 11.4.13
+Declared license: MIT
+Source: https://registry.npmjs.org/@intlify/shared/-/shared-11.4.13.tgz
+Notices: gui/packages/npm__intlify_shared_11.4.13/LICENSE
+
 npm: @jridgewell/sourcemap-codec 1.6.0
 Declared license: MIT
 Source: https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz
@@ -2677,6 +2697,11 @@ npm: vue-eslint-parser 10.4.1
 Declared license: MIT
 Source: https://registry.npmjs.org/vue-eslint-parser/-/vue-eslint-parser-10.4.1.tgz
 Notices: gui/packages/npm_vue-eslint-parser_10.4.1/LICENSE
+
+npm: vue-i18n 11.4.13
+Declared license: MIT
+Source: https://registry.npmjs.org/vue-i18n/-/vue-i18n-11.4.13.tgz
+Notices: gui/packages/npm_vue-i18n_11.4.13/LICENSE
 
 npm: vue-router 4.3.3
 Declared license: MIT

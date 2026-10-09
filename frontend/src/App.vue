@@ -1,54 +1,61 @@
 <template>
-  <div class="page-container">
-    <Tabs class="sidebar" />
-    <main
-      class="main-content"
-      aria-label="页面内容"
-    >
-      <header class="page-heading">
-        <div>
-          <span class="section-eyebrow">{{ currentPage.eyebrow }}</span>
-          <h1>{{ currentPage.title }}</h1>
-          <p>{{ currentPage.description }}</p>
+  <t-config-provider :global-config="tdesignConfig">
+    <div class="page-container">
+      <Tabs class="sidebar" />
+      <main
+        class="main-content"
+        :aria-label="$t('common.pageContent')"
+      >
+        <header class="page-heading">
+          <div>
+            <span class="section-eyebrow">{{ $t(currentPage.eyebrowKey) }}</span>
+            <h1>{{ $t(currentPage.titleKey) }}</h1>
+            <p>{{ $t(currentPage.descriptionKey) }}</p>
+          </div>
+        </header>
+        <aside v-if="updater.message && route.path !== '/about'" class="update-notice" role="status" aria-live="polite">
+          <span>{{ updater.message }}<template v-if="updater.phase === 'downloading' && updater.progress !== null"> {{ updater.progress }}%</template></span>
+        </aside>
+        <aside v-if="!toolManager.checking && toolManager.status && !toolManager.status.installed && !toolManager.visible" class="update-notice" role="status">
+          <span>{{ $t('common.toolMissing') }}</span>
+          <button type="button" @click="tools.open()">{{ $t('common.installTools') }}</button>
+        </aside>
+        <div class="page-body">
+          <router-view v-slot="{ Component }">
+            <Transition
+              name="page"
+              mode="out-in"
+            >
+              <KeepAlive>
+                <component
+                  :is="Component"
+                  :key="route.path"
+                />
+              </KeepAlive>
+            </Transition>
+          </router-view>
         </div>
-      </header>
-      <aside v-if="updater.message && route.path !== '/about'" class="update-notice" role="status" aria-live="polite">
-        <span>{{ updater.message }}<template v-if="updater.phase === 'downloading' && updater.progress !== null"> {{ updater.progress }}%</template></span>
-      </aside>
-      <aside v-if="!toolManager.checking && toolManager.status && !toolManager.status.installed && !toolManager.visible" class="update-notice" role="status">
-        <span>尚未安装可用的下载工具，解析和下载前请先安装。</span>
-        <button type="button" @click="tools.open()">安装工具</button>
-      </aside>
-      <div class="page-body">
-        <router-view v-slot="{ Component }">
-          <Transition
-            name="page"
-            mode="out-in"
-          >
-            <KeepAlive>
-              <component
-                :is="Component"
-                :key="route.path"
-              />
-            </KeepAlive>
-          </Transition>
-        </router-view>
-      </div>
-    </main>
-  </div>
-  <ToolSetupDialog />
-  <BeginnerGuideDialog />
+      </main>
+    </div>
+    <ToolSetupDialog />
+    <BeginnerGuideDialog />
+  </t-config-provider>
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { tdesignGlobalConfig } from './i18n/uiLibraries'
+import type { Locale } from './i18n'
 import Tabs from './components/PageTabs.vue'
 import ToolSetupDialog from './components/ToolSetupDialog.vue'
 import BeginnerGuideDialog from './components/BeginnerGuideDialog.vue'
 import { tools, toolManager } from './services/tools'
 import { appUpdater } from './services/updater'
-const updater = appUpdater.state
 import { APP_PAGES } from './config/appInfo'
+const { locale } = useI18n()
+const tdesignConfig = computed(() => tdesignGlobalConfig(locale.value as Locale))
+const updater = appUpdater.state
 const route = useRoute()
 const currentPage = computed(() => APP_PAGES.find((page) => page.path === route.path) ?? APP_PAGES[0]!)
 </script>

@@ -1,8 +1,8 @@
 <template>
-  <BOX title="主要用法" class="box">
+  <BOX :title="t('content.control.title')" class="box">
     <div class="box-inner">
       <div class="row-group">
-        <BBB @click="selectPath" class="btn-sm" data-guide="download-directory">下载目录</BBB>
+        <BBB @click="selectPath" class="btn-sm" data-guide="download-directory">{{ t('content.control.downloadDirectory') }}</BBB>
         <DiySelect
           v-model="settingsStore.retryTimes"
           data-guide="retry-limit"
@@ -13,21 +13,21 @@
       <t-input
         disabled
         v-model="settingsStore.downloadPath"
-        placeholder="默认目录"
+        :placeholder="t('content.control.defaultDirectory')"
         size="small"
       />
       <div class="row-group">
-        <BBB @click="get_cover_image" class="btn-sm">获取封面</BBB>
-        <BBB @click="get_all_supported_sites" class="btn-sm">支持网站</BBB>
+        <BBB @click="get_cover_image" class="btn-sm">{{ t('content.control.fetchCover') }}</BBB>
+        <BBB @click="get_all_supported_sites" class="btn-sm">{{ t('content.control.supportedSites') }}</BBB>
       </div>
       <label class="fragment-setting">
-        <span>分片并发</span>
-        <select v-model.number="settingsStore.concurrentFragments" aria-label="分片并发数">
-          <option v-for="count in [1, 4, 8, 16]" :key="count" :value="count">{{ count }} 路{{ count === 8 ? '（推荐）' : '' }}</option>
+        <span>{{ t('content.control.concurrentFragments') }}</span>
+        <select v-model.number="settingsStore.concurrentFragments" :aria-label="t('content.control.concurrentFragmentsAria')">
+          <option v-for="count in [1, 4, 8, 16]" :key="count" :value="count">{{ fragmentLabel(count) }}</option>
         </select>
       </label>
-      <p class="tip-text">加速 DASH / HLS 分片；直链不变。频繁限流时调低并发。</p>
-      <p class="tip-text">下载境外视频请自行使用梯子</p>
+      <p class="tip-text">{{ t('content.control.fragmentTip') }}</p>
+      <p class="tip-text">{{ t('content.control.overseasTip') }}</p>
     </div>
   </BOX>
 </template>
@@ -36,13 +36,15 @@
 import { useUrlStore } from '@/stores/urlStore'
 import { selectDownloadDirectory, startDownload, listSupportedSites, saveRetryTimes, saveConcurrentFragments } from '@/services/desktop'
 import { useSettingsStore } from '@/stores/settingsStore'
-import { ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import BBB from '@/components/DiyButtom.vue'
 import BOX from '@/components/BoxStyle.vue'
 import DiySelect from '@/components/TxSelect.vue'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const settingsStore = useSettingsStore()
 const urlStore = useUrlStore()
 const router = useRouter()
@@ -51,26 +53,29 @@ const selectPath = () => {
   void selectDownloadDirectory()
 }
 
+const fragmentLabel = (count: number) =>
+  count === 8 ? t('content.control.fragmentRecommended', { count }) : t('content.control.fragment', { count })
+
 const get_cover_image = () => {
   if (!urlStore.analyzedUrl) {
-    NotificationPlugin.warning({ title: '操作提示', content: '请先分析视频链接' })
+    NotificationPlugin.warning({ title: t('content.titles.operation'), content: t('content.control.analyzeFirst') })
     return
   }
-  NotificationPlugin.info({ title: '系统提示', content: '已请求获取封面...' })
+  NotificationPlugin.info({ title: t('content.titles.system'), content: t('content.control.coverRequested') })
   void startDownload({ url: urlStore.analyzedUrl, kind: 'thumbnail' })
 }
 
 const get_all_supported_sites = async () => {
-  NotificationPlugin.info({ title: '系统提示', content: '正在获取列表，请稍后在终端查看...' })
+  NotificationPlugin.info({ title: t('content.titles.system'), content: t('content.control.fetchingSites') })
   await listSupportedSites()
   await router.push('/page-four')
 }
 
-const timeOptions = ref([
-  { label: '3次', value: '3' },
-  { label: '5次', value: '5' },
-  { label: '10次', value: '10' },
-  { label: '无限', value: 'infinite' },
+const timeOptions = computed(() => [
+  { label: t('content.control.retryOptions.three'), value: '3' },
+  { label: t('content.control.retryOptions.five'), value: '5' },
+  { label: t('content.control.retryOptions.ten'), value: '10' },
+  { label: t('content.control.retryOptions.infinite'), value: 'infinite' },
 ])
 
 watch(

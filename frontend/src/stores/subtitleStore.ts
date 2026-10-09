@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
 import { startDownload } from '@/services/desktop'
 import type { Subtitle } from '@/types/desktop'
+import { i18n } from '../i18n'
 
 export const useSubtitleStore = defineStore('subtitle', () => {
   const subtitles = ref<Subtitle[]>([])
@@ -11,7 +12,7 @@ export const useSubtitleStore = defineStore('subtitle', () => {
   function startLoading() { subtitles.value = []; isLoading.value = true }
   function downloadSubtitle(url: string, language: string) {
     if (!url || !language) {
-      NotificationPlugin.warning({ title: '操作提示', content: 'URL 或语言代码无效' })
+      NotificationPlugin.warning({ title: i18n.global.t('common.desktop.operationHint'), content: i18n.global.t('common.desktop.invalidSubtitle') })
       return
     }
     void startDownload({ url, kind: 'subtitle', language })

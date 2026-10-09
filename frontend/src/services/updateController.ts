@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import type { CodedError } from '@/types/desktop'
 
 export type UpdatePhase = 'idle' | 'checking' | 'latest' | 'waiting' | 'downloading' | 'installing' | 'error'
 export interface UpdateInfo {
@@ -10,6 +11,7 @@ export interface UpdateInfo {
   installerName?: string | null
   installerSha256?: string | null
 }
+export type NoticeParams = Record<string, string | number>
 export interface UpdateDependencies {
   isDesktop: () => boolean
   activeTasks: () => boolean
@@ -17,23 +19,58 @@ export interface UpdateDependencies {
   install: (update: UpdateInfo) => Promise<void>
   readPreference: () => string | null
   savePreference: (value: string) => void
+  translate?: (key: string, params: NoticeParams) => string
+}
+export interface NoticeError extends Error {
+  key: string
+  params: NoticeParams
 }
 export const UPDATE_STORAGE_KEY = 'ytdlp.auto-update-check'
 
+function isNoticeError(error: unknown): error is NoticeError {
+  return error instanceof Error && typeof (error as Partial<NoticeError>).key === 'string'
+}
+
+function isCodedError(error: unknown): error is CodedError {
+  return typeof error === 'object' && error !== null && typeof (error as Partial<CodedError>).code === 'string'
+}
+
 export function createUpdateController(deps: UpdateDependencies) {
+  const translate = deps.translate ?? ((key: string) => key)
   const state = reactive({
     autoCheck: true,
     phase: 'idle' as UpdatePhase,
-    message: '',
+    notice: { key: '', params: {} as NoticeParams, raw: '' },
+    preferenceErrorKey: '',
     version: '',
     progress: null as number | null,
-    preferenceError: '',
+    get message(): string {
+      return this.notice.key ? translate(this.notice.key, this.notice.params) : this.notice.raw
+    },
+    get preferenceError(): string {
+      return this.preferenceErrorKey ? translate(this.preferenceErrorKey, {}) : ''
+    },
   })
   let busy = false
   let initialized = false
   let pendingUpdate: UpdateInfo | null = null
   let automatic = false
   let latestMessageTimer: ReturnType<typeof setTimeout> | undefined
+
+  function notify(key: string, params: NoticeParams = {}) {
+    state.notice = { key, params, raw: '' }
+  }
+
+  function notifyRaw(text: string) {
+    state.notice = { key: '', params: {}, raw: text }
+  }
+
+  function fail(error: unknown) {
+    state.phase = 'error'
+    if (isNoticeError(error)) notify(error.key, error.params)
+    else if (isCodedError(error)) notify('codes.' + error.code, { detail: error.detail ?? '' })
+    else notifyRaw(String(error))
+  }
 
   function clearLatestMessageTimer() {
     if (latestMessageTimer) {
@@ -49,21 +86,21 @@ export function createUpdateController(deps: UpdateDependencies) {
       const saved = deps.readPreference()
       state.autoCheck = saved === null ? true : saved === 'true'
     } catch {
-      state.preferenceError = '无法读取本地偏好，自动更新默认开启。'
+      state.preferenceErrorKey = 'updates.prefReadError'
     }
   }
 
   function savePreference() {
-    state.preferenceError = ''
+    state.preferenceErrorKey = ''
     try {
       deps.savePreference(String(state.autoCheck))
     } catch {
-      state.preferenceError = '无法保存本地偏好，当前选择仅在本次运行中有效。'
+      state.preferenceErrorKey = 'updates.prefSaveError'
     }
     if (!state.autoCheck && automatic && pendingUpdate) {
       pendingUpdate = null
       state.phase = 'idle'
-      state.message = '已关闭自动更新。需要更新时可手动检查并安装。'
+      notify('updates.autoDisabled')
     }
   }
 
@@ -73,23 +110,21 @@ export function createUpdateController(deps: UpdateDependencies) {
     if (automatic && !state.autoCheck) return
     if (deps.activeTasks()) {
       state.phase = 'waiting'
-      state.message = '发现 v' + state.version + '，将在下载或解析任务结束后自动安装。'
+      notify('updates.waitingForTasks', { version: state.version })
       return
     }
     busy = true
     pendingUpdate = null
     state.progress = null
     state.phase = 'downloading'
-    state.message = update.installerName
-      ? '正在下载 v' + state.version + ' 更新安装包…'
-      : '发现 v' + state.version + '，但该 Release 没有 Windows 安装包。'
+    if (update.installerName) notify('updates.downloadingInstaller', { version: state.version })
+    else notify('updates.noInstaller', { version: state.version })
     try {
       await deps.install(update)
       state.phase = 'installing'
-      state.message = '安装程序已启动，应用将退出并在安装完成后重新启动。'
+      notify('updates.installerStarted')
     } catch (error) {
-      state.phase = 'error'
-      state.message = String(error)
+      fail(error)
     } finally {
       busy = false
     }
@@ -99,7 +134,7 @@ export function createUpdateController(deps: UpdateDependencies) {
     if (busy || pendingUpdate || state.phase === 'installing') return
     if (!deps.isDesktop()) {
       state.phase = 'error'
-      state.message = '浏览器界面预览不支持安装更新，请在桌面程序中使用。'
+      notify('updates.browserPreview')
       return
     }
     automatic = source === 'automatic'
@@ -107,17 +142,17 @@ export function createUpdateController(deps: UpdateDependencies) {
     busy = true
     state.phase = 'checking'
     state.progress = null
-    state.message = '正在检查 GitHub Releases…'
+    notify('updates.checking')
     try {
       const update = await deps.check()
       state.version = update.version
       if (!update.available) {
         state.phase = 'latest'
-        state.message = '当前已是最新正式版本。'
+        notify('updates.latest')
         latestMessageTimer = setTimeout(() => {
-          if (state.phase === 'latest' && state.message === '当前已是最新正式版本。') {
+          if (state.phase === 'latest' && state.notice.key === 'updates.latest') {
             state.phase = 'idle'
-            state.message = ''
+            notifyRaw('')
           }
           latestMessageTimer = undefined
         }, 3000)
@@ -125,11 +160,10 @@ export function createUpdateController(deps: UpdateDependencies) {
         pendingUpdate = update
       } else {
         state.phase = 'idle'
-        state.message = '已关闭自动更新，本次未下载安装。'
+        notify('updates.autoDisabledSkipped')
       }
     } catch (error) {
-      state.phase = 'error'
-      state.message = String(error)
+      fail(error)
     } finally {
       busy = false
     }
@@ -139,14 +173,14 @@ export function createUpdateController(deps: UpdateDependencies) {
   function progress(event: { downloaded: number; total?: number | null; percent?: number | null }) {
     state.phase = 'downloading'
     state.progress = event.percent ?? (event.total ? Math.min(100, Math.round(event.downloaded / event.total * 100)) : null)
-    state.message = state.progress === null ? '正在下载更新安装包…' : '正在下载更新安装包…'
+    notify('updates.downloadingProgress')
   }
 
   function installing() {
     state.phase = 'installing'
     state.progress = 100
-    state.message = '安装程序已启动，应用将退出并在安装完成后重新启动。'
+    notify('updates.installerStarted')
   }
 
-  return { state, initializePreference, savePreference, checkAndInstall, installPending, progress, installing }
+  return { state, initializePreference, savePreference, checkAndInstall, installPending, progress, installing, fail }
 }

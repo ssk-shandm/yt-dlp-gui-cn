@@ -2,6 +2,36 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 
+// Stable machine-readable code; the frontend translates `codes.<code>` and interpolates `detail`.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AppError {
+    pub code: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub detail: Option<String>,
+}
+
+impl AppError {
+    pub fn new(code: &'static str) -> Self {
+        Self { code, detail: None }
+    }
+
+    pub fn with(code: &'static str, detail: impl Into<String>) -> Self {
+        Self { code, detail: Some(detail.into()) }
+    }
+}
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.detail {
+            Some(detail) => write!(f, "{}: {detail}", self.code),
+            None => f.write_str(self.code),
+        }
+    }
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Settings {
@@ -20,9 +50,8 @@ pub fn default_proxy_url() -> String {
 }
 
 // Only local client endpoints are accepted; input is never shell-expanded.
-pub fn validate_proxy_url(input: &str) -> Result<String, String> {
-    let invalid =
-        || "请输入本地代理地址，例如 http://127.0.0.1:7890 或 socks5://127.0.0.1:1080".to_string();
+pub fn validate_proxy_url(input: &str) -> AppResult<String> {
+    let invalid = || AppError::new("proxy.invalid");
     let input = input.trim();
     if input.len() > 512 || input.chars().any(|c| c.is_control() || c.is_whitespace()) {
         return Err(invalid());
@@ -53,7 +82,7 @@ pub fn validate_proxy_url(input: &str) -> Result<String, String> {
     Ok(proxy.to_string())
 }
 
-pub fn proxy_args(settings: &Settings) -> Result<Vec<String>, String> {
+pub fn proxy_args(settings: &Settings) -> AppResult<Vec<String>> {
     if settings.proxy_enabled {
         Ok(vec![
             "--proxy".into(),
@@ -68,23 +97,23 @@ pub fn proxy_args(settings: &Settings) -> Result<Vec<String>, String> {
 pub fn configure_http_proxy(
     builder: reqwest::ClientBuilder,
     settings: &Settings,
-) -> Result<reqwest::ClientBuilder, String> {
+) -> AppResult<reqwest::ClientBuilder> {
     if !settings.proxy_enabled {
         return Ok(builder);
     }
     let proxy = reqwest::Proxy::all(validate_proxy_url(&settings.proxy_url)?)
-        .map_err(|_| "无法初始化本地代理".to_string())?;
+        .map_err(|_| AppError::new("proxy.initFailed"))?;
     // Explicit settings override OS/env proxies; do not fall back to direct.
     Ok(builder.no_proxy().proxy(proxy))
 }
 pub fn default_concurrent_fragments() -> u8 {
     8
 }
-pub fn validate_concurrent_fragments(value: u8) -> Result<(), String> {
+pub fn validate_concurrent_fragments(value: u8) -> AppResult<()> {
     if (1..=16).contains(&value) {
         Ok(())
     } else {
-        Err("分片并发数必须在 1–16 之间".into())
+        Err(AppError::new("settings.concurrentFragmentsRange"))
     }
 }
 fn default_retries() -> String {
@@ -118,9 +147,9 @@ pub struct DownloadRequest {
 #[serde(rename_all = "camelCase")]
 pub struct TaskEvent {
     pub task_id: u64,
-    pub title: String,
+    pub kind: &'static str,
     pub status: String,
-    pub message: String,
+    pub message: AppError,
 }
 
 #[derive(Clone, Serialize)]
@@ -128,28 +157,30 @@ pub struct TaskEvent {
 pub struct LogEvent {
     pub task_id: u64,
     pub line: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notice: Option<AppError>,
 }
 
-pub fn validate_url(input: &str) -> Result<String, String> {
-    let url = url::Url::parse(input.trim()).map_err(|_| "请输入有效的视频 URL".to_string())?;
+pub fn validate_url(input: &str) -> AppResult<String> {
+    let url = url::Url::parse(input.trim()).map_err(|_| AppError::new("url.invalid"))?;
     if !matches!(url.scheme(), "http" | "https") || url.host_str().is_none() {
-        return Err("仅支持 HTTP / HTTPS 视频链接".into());
+        return Err(AppError::new("url.unsupportedScheme"));
     }
     if !url.username().is_empty() || url.password().is_some() {
-        return Err("视频链接不能包含用户名或密码".into());
+        return Err(AppError::new("url.credentials"));
     }
     Ok(url.to_string())
 }
 
-pub fn validate_retries(input: &str) -> Result<(), String> {
+pub fn validate_retries(input: &str) -> AppResult<()> {
     if input == "infinite" || input.parse::<u32>().is_ok_and(|n| n <= 100) {
         Ok(())
     } else {
-        Err("重试次数必须是 0–100 的整数或 infinite".into())
+        Err(AppError::new("settings.retriesInvalid"))
     }
 }
 
-fn identifier(value: &Option<String>, name: &str) -> Result<String, String> {
+fn identifier(value: &Option<String>) -> Option<String> {
     let value = value.as_deref().unwrap_or_default();
     if value.is_empty()
         || value.len() > 128
@@ -158,16 +189,16 @@ fn identifier(value: &Option<String>, name: &str) -> Result<String, String> {
             .chars()
             .all(|c| c.is_ascii_alphanumeric() || "-_.".contains(c))
     {
-        return Err(format!("无效的{name}"));
+        return None;
     }
-    Ok(value.into())
+    Some(value.into())
 }
 
 pub fn download_args(
     request: &DownloadRequest,
     settings: &Settings,
     ffmpeg_dir: &str,
-) -> Result<Vec<String>, String> {
+) -> AppResult<Vec<String>> {
     validate_retries(&settings.retry_times)?;
     validate_concurrent_fragments(settings.concurrent_fragments)?;
     let mut args: Vec<String> = [
@@ -208,20 +239,23 @@ pub fn download_args(
     }
     match request.kind {
         DownloadKind::Quick => {}
-        DownloadKind::Format => {
-            args.extend(["-f".into(), identifier(&request.format_id, "格式 ID")?])
-        }
+        DownloadKind::Format => args.extend([
+            "-f".into(),
+            identifier(&request.format_id).ok_or_else(|| AppError::new("input.invalidFormatId"))?,
+        ]),
         DownloadKind::Combined => {
             let container = request.container_format.as_deref().unwrap_or("mp4");
             if !matches!(container, "mp4" | "mkv" | "webm") {
-                return Err("不支持的封装格式".into());
+                return Err(AppError::new("download.unsupportedContainer"));
             }
             args.extend([
                 "-f".into(),
                 format!(
                     "{}+{}",
-                    identifier(&request.video_id, "格式 ID")?,
-                    identifier(&request.audio_id, "格式 ID")?
+                    identifier(&request.video_id)
+                        .ok_or_else(|| AppError::new("input.invalidFormatId"))?,
+                    identifier(&request.audio_id)
+                        .ok_or_else(|| AppError::new("input.invalidFormatId"))?
                 ),
                 "--merge-output-format".into(),
                 container.into(),
@@ -231,7 +265,8 @@ pub fn download_args(
             "--skip-download".into(),
             "--write-subs".into(),
             "--sub-langs".into(),
-            identifier(&request.language, "字幕语言")?,
+            identifier(&request.language)
+                .ok_or_else(|| AppError::new("input.invalidSubtitleLanguage"))?,
         ]),
         DownloadKind::Thumbnail => {
             args.extend(["--skip-download".into(), "--write-all-thumbnails".into()])
@@ -555,6 +590,10 @@ mod tests {
         for v in ["-1", "101", "字幕语言", "--exec", ""] {
             assert!(validate_retries(v).is_err());
         }
+        assert_eq!(
+            validate_retries("-1").unwrap_err().code,
+            "settings.retriesInvalid"
+        );
     }
     #[test]
     fn all_download_modes_and_unicode_paths() {

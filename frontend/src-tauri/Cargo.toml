@@ -1,6 +1,6 @@
 [package]
 name = "yt-dlp-gui-cn"
-version = "2.1.0"
+version = "2.2.0"
 description = "Vue and Tauri desktop interface for yt-dlp"
 authors = ["yt-dlp GUI contributors"]
 edition = "2021"

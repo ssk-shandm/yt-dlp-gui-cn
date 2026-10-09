@@ -47,6 +47,7 @@ try {
   assert.ok(ready, 'Vite did not become ready: ' + serverOutput)
   browser = await chromium.launch({ executablePath: browserPath, headless: true })
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  await context.addInitScript(() => localStorage.setItem('grabmeta.locale', 'zh-CN'))
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))

@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T05:36:59.245Z",
+  "checkedAt": "2026-10-09T09:33:29.559Z",
   "target": "x86_64-pc-windows-msvc",
   "scope": "Installed npm runtime and build packages; Windows-filtered Cargo graph (conservative superset). Does not certify native SDK components or license compliance.",
   "lockfiles": {
-    "frontend/package-lock.json": "ae34397378f60875a07b14aae07acbb990623358e7c84e5d866048e4c0285ce0",
-    "frontend/src-tauri/Cargo.lock": "3d6ac263cc19a5d7e5ceb58303b0527865c3bc2f27ad68927c49641b56af857a"
+    "frontend/package-lock.json": "3f6e8db80c78de2fb512f80f0bf878d3a5158bc4b83bad9393b7ff04fdea34e0",
+    "frontend/src-tauri/Cargo.lock": "3fc81ee41b30532d5c064a1e1d1b29641a43e6bfb0769368d9eaa8252dd9b460"
   },
   "packages": [
     {
@@ -6246,6 +6246,78 @@
     },
     {
       "ecosystem": "npm",
+      "name": "@intlify/core-base",
+      "version": "11.4.13",
+      "license": "MIT",
+      "developmentOnly": false,
+      "lockPath": "node_modules/@intlify/core-base",
+      "integrity": "sha512-3qGv1/j0fl6ZSeehGaznE78A4i3hCaOeOyDh7jq7SV6ch/XGoy96xIrYuALTV3xhIqj2rktsIKcwlLZ3CbOhkA==",
+      "repository": "git+https://github.com/intlify/vue-i18n.git",
+      "source": "https://registry.npmjs.org/@intlify/core-base/-/core-base-11.4.13.tgz",
+      "materials": [
+        {
+          "file": "gui/packages/npm__intlify_core-base_11.4.13/LICENSE",
+          "sourcePath": "LICENSE",
+          "sha256": "403a4d6f9815ae33bd7a613202529f0805045c642f92a169fa673d7fa07dd568"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@intlify/devtools-types",
+      "version": "11.4.13",
+      "license": "MIT",
+      "developmentOnly": false,
+      "lockPath": "node_modules/@intlify/devtools-types",
+      "integrity": "sha512-f38d2yvjNc1/c+BnTLsxTB0729clTtyy7kTxHu4FFlvI6FpmBOp7b9sLYtsKJpXSZ70kIEexvNwDSzLkIlYnlQ==",
+      "repository": "git+https://github.com/intlify/vue-i18n.git",
+      "source": "https://registry.npmjs.org/@intlify/devtools-types/-/devtools-types-11.4.13.tgz",
+      "materials": [
+        {
+          "file": "gui/packages/npm__intlify_devtools-types_11.4.13/LICENSE",
+          "sourcePath": "LICENSE",
+          "sha256": "8f431e584baf8dc943c4188a9e3c27cf4b6a5b540b2d0801468023db86345e7d"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@intlify/message-compiler",
+      "version": "11.4.13",
+      "license": "MIT",
+      "developmentOnly": false,
+      "lockPath": "node_modules/@intlify/message-compiler",
+      "integrity": "sha512-cjKsDeWUD/i3mj0QtC8hydLCFP5mgZtTU1xZZaN9/O3FG94EXc0rTbecYpifglp26rpoJoIjSlW137VejLKsZw==",
+      "repository": "git+https://github.com/intlify/vue-i18n.git",
+      "source": "https://registry.npmjs.org/@intlify/message-compiler/-/message-compiler-11.4.13.tgz",
+      "materials": [
+        {
+          "file": "gui/packages/npm__intlify_message-compiler_11.4.13/LICENSE",
+          "sourcePath": "LICENSE",
+          "sha256": "403a4d6f9815ae33bd7a613202529f0805045c642f92a169fa673d7fa07dd568"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@intlify/shared",
+      "version": "11.4.13",
+      "license": "MIT",
+      "developmentOnly": false,
+      "lockPath": "node_modules/@intlify/shared",
+      "integrity": "sha512-ZjcNgEED1FtTCFb+ohWBdR21k5kvleKtM9peobQtLB83mNIfEhJK86dEbhfk+OcUrybrEbc4eDeE9UbFUVHsjQ==",
+      "repository": "git+https://github.com/intlify/vue-i18n.git",
+      "source": "https://registry.npmjs.org/@intlify/shared/-/shared-11.4.13.tgz",
+      "materials": [
+        {
+          "file": "gui/packages/npm__intlify_shared_11.4.13/LICENSE",
+          "sourcePath": "LICENSE",
+          "sha256": "403a4d6f9815ae33bd7a613202529f0805045c642f92a169fa673d7fa07dd568"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
       "name": "@jridgewell/sourcemap-codec",
       "version": "1.6.0",
       "license": "MIT",
@@ -10098,6 +10170,24 @@
           "file": "gui/packages/npm_vue-eslint-parser_10.4.1/LICENSE",
           "sourcePath": "LICENSE",
           "sha256": "fb58f56a8dab39ce70d61c7ff0179549bdd292cf3b4c564259feb30609cc670d"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "vue-i18n",
+      "version": "11.4.13",
+      "license": "MIT",
+      "developmentOnly": false,
+      "lockPath": "node_modules/vue-i18n",
+      "integrity": "sha512-2G7LC9XcdZ0IljFib7lKGHNiBBOTv6HO+2bnBaOiQgDYZ+uUnqSpuED5DbBo1t7su50o/WRGn+ZfDQTGd26xEw==",
+      "repository": "git+https://github.com/intlify/vue-i18n.git",
+      "source": "https://registry.npmjs.org/vue-i18n/-/vue-i18n-11.4.13.tgz",
+      "materials": [
+        {
+          "file": "gui/packages/npm_vue-i18n_11.4.13/LICENSE",
+          "sourcePath": "LICENSE",
+          "sha256": "403a4d6f9815ae33bd7a613202529f0805045c642f92a169fa673d7fa07dd568"
         }
       ]
     },

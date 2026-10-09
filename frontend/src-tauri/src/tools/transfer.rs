@@ -1,4 +1,5 @@
-use super::{network_error, Asset, ToolInstallState};
+use super::{io_error, network_error, Asset, ToolInstallState};
+use crate::model::{AppError, AppResult};
 use sha2::{Digest, Sha256};
 use std::{
     path::{Path, PathBuf},
@@ -43,7 +44,7 @@ fn validate_response(
     response: &reqwest::Response,
     range: Option<(u64, u64)>,
     size: u64,
-) -> Result<(), String> {
+) -> AppResult<()> {
     let expected = if let Some((start, end)) = range {
         let expected_header = format!("bytes {start}-{end}/{size}");
         if response.status() != reqwest::StatusCode::PARTIAL_CONTENT
@@ -53,12 +54,15 @@ fn validate_response(
                 .and_then(|h| h.to_str().ok())
                 != Some(expected_header.as_str())
         {
-            return Err("工具分段响应不匹配，已停止下载，请重试".into());
+            return Err(AppError::new("tools.rangeMismatch"));
         }
         end - start + 1
     } else {
         if response.status() != reqwest::StatusCode::OK {
-            return Err(format!("工具下载失败（HTTP {}）", response.status()));
+            return Err(AppError::with(
+                "tools.downloadHttp",
+                response.status().as_u16().to_string(),
+            ));
         }
         size
     };
@@ -68,7 +72,7 @@ fn validate_response(
             .get(reqwest::header::CONTENT_ENCODING)
             .is_some_and(|v| v != "identity")
     {
-        return Err("上游工具大小或编码发生变化，请重试以重新读取版本".into());
+        return Err(AppError::new("tools.upstreamChanged"));
     }
     Ok(())
 }
@@ -77,7 +81,7 @@ async fn request(
     state: &ToolInstallState,
     asset: &Asset,
     range: Option<(u64, u64)>,
-) -> Result<reqwest::Response, String> {
+) -> AppResult<reqwest::Response> {
     state
         .wait(async {
             let mut request = client
@@ -89,7 +93,7 @@ async fn request(
             request
                 .send()
                 .await
-                .map_err(|e| network_error("工具下载失败", &e))
+                .map_err(|e| network_error("tools.downloadFailed", &e))
         })
         .await
 }
@@ -99,10 +103,8 @@ async fn write_response<F: Fn(u64)>(
     path: &Path,
     expected: u64,
     progress: &Progress<F>,
-) -> Result<(), String> {
-    let file = tokio::fs::File::create(path)
-        .await
-        .map_err(|e| format!("无法创建临时文件：{e}"))?;
+) -> AppResult<()> {
+    let file = tokio::fs::File::create(path).await.map_err(io_error)?;
     let mut output = BufWriter::with_capacity(BUFFER_SIZE, file);
     let mut written = 0u64;
     while let Some(chunk) = state
@@ -110,28 +112,22 @@ async fn write_response<F: Fn(u64)>(
             response
                 .chunk()
                 .await
-                .map_err(|e| network_error("读取工具失败", &e))
+                .map_err(|e| network_error("tools.readFailed", &e))
         })
         .await?
     {
         written += chunk.len() as u64;
         if written > expected {
-            return Err("工具下载超出预期大小".into());
+            return Err(AppError::new("tools.downloadTooLarge"));
         }
         state.check()?;
-        output
-            .write_all(&chunk)
-            .await
-            .map_err(|e| format!("保存工具失败：{e}"))?;
+        output.write_all(&chunk).await.map_err(io_error)?;
         progress.add(chunk.len() as u64);
     }
     if written != expected {
-        return Err("工具下载不完整，请重试".into());
+        return Err(AppError::new("tools.downloadIncomplete"));
     }
-    output
-        .flush()
-        .await
-        .map_err(|e| format!("写入工具失败：{e}"))?;
+    output.flush().await.map_err(io_error)?;
     state.check()
 }
 async fn download_part<F: Fn(u64)>(
@@ -141,21 +137,19 @@ async fn download_part<F: Fn(u64)>(
     range: (u64, u64),
     path: &Path,
     progress: &Progress<F>,
-) -> Result<(), String> {
+) -> AppResult<()> {
     let response = request(client, state, asset, Some(range)).await?;
     validate_response(&response, Some(range), asset.size)?;
     write_response(response, state, path, range.1 - range.0 + 1, progress).await
 }
-async fn verify(state: &ToolInstallState, asset: &Asset, target: &Path) -> Result<(), String> {
-    let mut input = tokio::fs::File::open(target)
-        .await
-        .map_err(|e| e.to_string())?;
+async fn verify(state: &ToolInstallState, asset: &Asset, target: &Path) -> AppResult<()> {
+    let mut input = tokio::fs::File::open(target).await.map_err(io_error)?;
     let mut buffer = vec![0; BUFFER_SIZE];
     let mut hash = Sha256::new();
     let mut size = 0;
     loop {
         state.check()?;
-        let count = input.read(&mut buffer).await.map_err(|e| e.to_string())?;
+        let count = input.read(&mut buffer).await.map_err(io_error)?;
         if count == 0 {
             break;
         }
@@ -163,7 +157,7 @@ async fn verify(state: &ToolInstallState, asset: &Asset, target: &Path) -> Resul
         hash.update(&buffer[..count]);
     }
     if size != asset.size || format!("{:x}", hash.finalize()) != asset.sha256 {
-        return Err("工具下载不完整或校验失败；上游可能正在更新，请重试".into());
+        return Err(AppError::new("tools.verifyFailed"));
     }
     state.check()
 }
@@ -177,7 +171,7 @@ pub(super) async fn download<F: Fn(u64)>(
     asset: &Asset,
     target: &Path,
     report: F,
-) -> Result<(), String> {
+) -> AppResult<()> {
     let parts: Vec<PathBuf> = (0..CONNECTIONS)
         .map(|i| target.with_extension(format!("part-{i}")))
         .collect();
@@ -197,7 +191,8 @@ pub(super) async fn download<F: Fn(u64)>(
             validate_response(&response, None, asset.size)?;
             write_response(response, state, target, asset.size, &progress).await?;
         } else {
-            let range = first_range.ok_or("工具下载响应无效")?;
+            let range =
+                first_range.ok_or_else(|| AppError::new("tools.downloadResponseInvalid"))?;
             validate_response(&response, Some(range), asset.size)?;
             tokio::try_join!(
                 write_response(response, state, &parts[0], range.1 - range.0 + 1, &progress),
@@ -206,38 +201,29 @@ pub(super) async fn download<F: Fn(u64)>(
                 download_part(client, state, asset, ranges[3], &parts[3], &progress),
             )?;
             state.check()?;
-            let file = tokio::fs::File::create(target)
-                .await
-                .map_err(|e| e.to_string())?;
+            let file = tokio::fs::File::create(target).await.map_err(io_error)?;
             let mut output = BufWriter::with_capacity(BUFFER_SIZE, file);
             let mut buffer = vec![0; BUFFER_SIZE];
             for part in &parts {
-                let mut input = tokio::fs::File::open(part)
-                    .await
-                    .map_err(|e| e.to_string())?;
+                let mut input = tokio::fs::File::open(part).await.map_err(io_error)?;
                 loop {
                     state.check()?;
-                    let count = input.read(&mut buffer).await.map_err(|e| e.to_string())?;
+                    let count = input.read(&mut buffer).await.map_err(io_error)?;
                     if count == 0 {
                         break;
                     }
-                    output
-                        .write_all(&buffer[..count])
-                        .await
-                        .map_err(|e| e.to_string())?;
+                    output.write_all(&buffer[..count]).await.map_err(io_error)?;
                 }
             }
-            output.flush().await.map_err(|e| e.to_string())?;
+            output.flush().await.map_err(io_error)?;
         }
         verify(state, asset, target).await?;
         let file = tokio::fs::OpenOptions::new()
             .write(true)
             .open(target)
             .await
-            .map_err(|e| e.to_string())?;
-        file.sync_all()
-            .await
-            .map_err(|e| format!("写入工具失败：{e}"))?;
+            .map_err(io_error)?;
+        file.sync_all().await.map_err(io_error)?;
         state.check()?;
         (progress.report)(asset.size);
         Ok(())
@@ -494,7 +480,7 @@ mod tests {
         .await
         .expect("must fail without waiting for stalled peers")
         .unwrap_err();
-        assert!(!error.is_empty());
+        assert!(error.code.starts_with("tools."));
         temp.assert_empty();
     }
     #[tokio::test(flavor = "current_thread")]
@@ -518,7 +504,7 @@ mod tests {
         })
         .await
         .unwrap();
-        assert!(result.unwrap_err().contains("取消"));
+        assert_eq!(result.unwrap_err().code, "tools.cancelled");
         temp.assert_empty();
         drop(busy);
         let _busy = state.begin().unwrap();
@@ -533,14 +519,14 @@ mod tests {
         let state = ToolInstallState::default();
         for _ in 0..2 {
             let busy = state.begin().unwrap();
-            let wait = || state.wait(std::future::pending::<Result<(), String>>());
+            let wait = || state.wait(std::future::pending::<AppResult<()>>());
             tokio::time::timeout(Duration::from_secs(1), async {
                 let results = tokio::join!(wait(), wait(), wait(), wait(), async {
                     tokio::task::yield_now().await;
                     state.cancel();
                 });
                 for result in [results.0, results.1, results.2, results.3] {
-                    assert!(result.unwrap_err().contains("取消"));
+                    assert_eq!(result.unwrap_err().code, "tools.cancelled");
                 }
             })
             .await

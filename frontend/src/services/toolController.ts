@@ -1,6 +1,8 @@
 ﻿import { reactive } from 'vue'
+import type { CodedError } from '@/types/desktop'
 
 export type ToolProfile = 'basic' | 'full'
+export interface ToolText { key: string; values?: Record<string, string | number | ToolText> }
 export interface ToolStatus {
   installed: boolean
   profile: ToolProfile | null
@@ -9,8 +11,14 @@ export interface ToolStatus {
   ffmpegVersion: string | null
   ffprobeVersion: string | null
   missing: string[]
-  error: string | null
+  error: CodedError | null
 }
+export function toToolText(error: unknown): ToolText | string {
+  const coded = typeof error === 'object' && error !== null && typeof (error as CodedError).code === 'string' ? error as CodedError : undefined
+  if (coded) return { key: 'codes.' + coded.code, values: { detail: coded.detail ?? '' } }
+  return String(error)
+}
+const stageText = (stage: string): ToolText => ({ key: 'codes.' + stage })
 export interface ToolProgress { profile: ToolProfile; stage: string; downloaded: number; total: number | null; percent: number | null }
 export interface ToolDependencies {
   isDesktop: () => boolean
@@ -30,9 +38,9 @@ export function createToolController(deps: ToolDependencies) {
     stage: '',
     progress: null as number | null,
     speed: '',
-    remaining: '',
-    message: '',
-    error: '',
+    remaining: '' as ToolText | string,
+    message: '' as ToolText | string,
+    error: '' as ToolText | string,
   })
   let cancellation: Promise<void> | undefined
   let sample: { stage: string; bytes: number; time: number } | undefined
@@ -41,10 +49,10 @@ export function createToolController(deps: ToolDependencies) {
     state.checking = true
     try {
       state.status = await deps.getStatus()
-      state.error = state.status.error || ''
+      state.error = state.status.error ? toToolText(state.status.error) : ''
       if (firstRun && !state.status.installed) state.visible = true
     } catch (error) {
-      state.error = String(error)
+      state.error = toToolText(error)
       if (firstRun) state.visible = true
     } finally { state.checking = false }
   }
@@ -66,17 +74,31 @@ export function createToolController(deps: ToolDependencies) {
       const rate = (payload.downloaded - sample.bytes) * 1000 / (now - sample.time)
       state.speed = rate >= 1024 * 1024 ? (rate / 1024 / 1024).toFixed(2) + ' MiB/s' : (rate / 1024).toFixed(1) + ' KiB/s'
       const seconds = rate > 0 && payload.total !== null ? Math.ceil((payload.total - payload.downloaded) / rate) : null
-      state.remaining = seconds === null ? '' : seconds < 60 ? '预计剩余 ' + seconds + ' 秒' : '预计剩余 ' + Math.ceil(seconds / 60) + ' 分钟'
+      state.remaining = seconds === null ? '' : seconds < 60
+        ? { key: 'tools.remaining.seconds', values: { n: seconds } }
+        : { key: 'tools.remaining.minutes', values: { n: Math.ceil(seconds / 60) } }
       sample = { stage: payload.stage, bytes: payload.downloaded, time: now }
     }
     state.stage = payload.stage
     state.progress = payload.percent
-    state.message = payload.total === null ? payload.stage : `${payload.stage}：${payload.percent ?? 0}%（${(payload.downloaded / 1024 / 1024).toFixed(1)} / ${(payload.total / 1024 / 1024).toFixed(1)} MiB）`
+    state.message = payload.total === null ? stageText(payload.stage) : {
+      key: 'tools.progress.detail',
+      values: {
+        stage: stageText(payload.stage),
+        percent: payload.percent ?? 0,
+        downloaded: (payload.downloaded / 1024 / 1024).toFixed(1),
+        total: (payload.total / 1024 / 1024).toFixed(1),
+      },
+    }
+  }
+  function reportFailure(error: ToolText | string) {
+    state.error = error
+    state.message = { key: state.cancelling ? 'tools.status.cancelled' : 'tools.status.failed' }
   }
   async function install(profile: ToolProfile = state.profile) {
     if (state.busy || state.checking) return
-    if (!deps.isDesktop()) { state.error = '浏览器预览不能下载安装工具，请使用桌面程序。'; return }
-    if (deps.activeTasks()) { state.error = '仍有下载或解析任务，请等待任务结束后安装工具。'; return }
+    if (!deps.isDesktop()) { state.error = { key: 'tools.errors.browserPreview' }; return }
+    if (deps.activeTasks()) { state.error = { key: 'tools.errors.activeTasks' }; return }
     state.busy = true
     state.cancelling = false
     sample = undefined
@@ -85,19 +107,18 @@ export function createToolController(deps: ToolDependencies) {
     state.error = ''
     state.profile = profile
     state.progress = null
-    state.stage = '读取上游版本'
-    state.message = '正在读取上游版本并准备下载…'
+    state.stage = ''
+    state.message = { key: 'tools.status.reading' }
     try {
       const status = await deps.install(profile)
-      if (!status.installed) throw new Error('工具安装结果不完整，请重试。')
+      if (!status.installed) return reportFailure({ key: 'tools.errors.incomplete' })
       const firstInstall = !state.status?.installed
       state.status = status
       state.visible = false
-      state.message = `${profile === 'basic' ? '基础版' : '完整版'}工具安装成功。`
+      state.message = { key: profile === 'basic' ? 'tools.status.installedBasic' : 'tools.status.installedFull' }
       if (firstInstall && typeof window !== 'undefined') window.dispatchEvent(new Event('start-beginner-guide'))
     } catch (error) {
-      state.error = String(error)
-      state.message = state.cancelling ? '已取消工具安装，原有工具保持不变。' : '安装未成功，原有工具保持不变；可检查网络后重试。'
+      reportFailure(toToolText(error))
     } finally {
       // A download may reject before the cancellation IPC response arrives.
       // Do not enable retry until both finish: a late cancel must never hit
@@ -110,9 +131,9 @@ export function createToolController(deps: ToolDependencies) {
   async function cancel() {
     if (!state.busy || state.cancelling) return
     state.cancelling = true
-    state.message = '正在取消并清理临时文件…'
+    state.message = { key: 'tools.status.cancelling' }
     const pending = Promise.resolve().then(() => deps.cancel()).catch(error => {
-      state.error = String(error)
+      state.error = toToolText(error)
       state.cancelling = false
     })
     cancellation = pending

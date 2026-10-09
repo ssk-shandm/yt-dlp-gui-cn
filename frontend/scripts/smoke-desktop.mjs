@@ -118,6 +118,8 @@ try {
     await wait(500)
   }
   assert.ok(page, 'No application page found')
+  await page.evaluate(() => localStorage.setItem('grabmeta.locale', 'zh-CN'))
+  await page.reload()
   page.on('pageerror', (error) => failures.push(String(error)))
   await page.waitForFunction(() => !!window.__TAURI_INTERNALS__)
   await page.waitForTimeout(1000)
@@ -126,7 +128,7 @@ try {
   assert.deepEqual([...missingTools.missing].sort(), ['ffmpeg.exe', 'ffprobe.exe', 'yt-dlp.exe'])
   const toolDialog = page.getByRole('dialog', { name: '准备你的下载工具', exact: true })
   await toolDialog.waitFor()
-  await assert.rejects(invoke('analyze_url', { url: base + '/watch.html' }), /缺少下载工具/)
+  await assert.rejects(invoke('analyze_url', { url: base + '/watch.html' }), (error) => error?.code === 'tools.missing')
   const installedBin = join(appDirectory, 'bin')
   await mkdir(installedBin)
   for (const name of ['yt-dlp.exe', 'ffmpeg.exe', 'ffprobe.exe']) {
@@ -198,7 +200,7 @@ try {
   const slowIds = []
   for (let i = 0; i < 4; i++) slowIds.push(await invoke('start_download', { request: { url: base + '/slow-' + i + '.mp4', kind: 'quick' } }))
   await waitForRequests(4)
-  await assert.rejects(invoke('start_download', { request: { url: base + '/slow-5.mp4', kind: 'quick' } }), /4/)
+  await assert.rejects(invoke('start_download', { request: { url: base + '/slow-5.mp4', kind: 'quick' } }), (error) => error?.code === 'process.tooManyTasks')
   const cancelledPids = await ownedProcesses()
   assert.ok(cancelledPids.length >= 4)
   for (const taskId of slowIds) await invoke('cancel_task', { taskId })

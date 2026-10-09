@@ -7,7 +7,7 @@
     >
       <t-tab-panel
         :value="1"
-        label="下载中"
+        :label="$t('downloads.tabs.downloading')"
       >
         <div style="margin: 20px">
           <DownloadFile />
@@ -15,7 +15,7 @@
       </t-tab-panel>
       <t-tab-panel
         :value="2"
-        label="已结束"
+        :label="$t('downloads.tabs.finished')"
       >
         <div style="margin: 20px">
           <FinishedFile />
