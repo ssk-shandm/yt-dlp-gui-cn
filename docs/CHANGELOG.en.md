@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2.3.0] — 2026-10-09
+
+### Rename
+
+- The application is now named GrabMeta everywhere: window title, installer file name (`GrabMeta_2.3.0_x64-setup.exe`), executable name, repository links, and the update source.
+- The app identifier and the user configuration directory are unchanged, so settings and download folder configuration are preserved.
+- Upstream tools yt-dlp and FFmpeg keep their names and licenses.
+
 ## [2.2.0] — 2026-10-09
 
 ### Interface language

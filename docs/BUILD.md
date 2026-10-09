@@ -38,10 +38,10 @@ npm run desktop:build:install-test
 
 | 项目 | 测试值 |
 | --- | --- |
-| 产品名 / NSIS 注册表子项 | `yt-dlp GUI Install Test` |
+| 产品名 / NSIS 注册表子项 | `GrabMeta Install Test` |
 | 应用标识 / 配置目录名 | `com.ssk-shandm.ytdlp-gui.install-test` |
-| 主 EXE | `yt-dlp-gui-cn-install-test.exe` |
-| 开始菜单目录 | `yt-dlp GUI Install Test` |
+| 主 EXE | `grabmeta-install-test.exe` |
+| 开始菜单目录 | `GrabMeta Install Test` |
 | WebView2 安装模式 | `skip`，不安装、卸载或升级现有运行时 |
 
 安装到新建的独立测试目录（可含中文和空格），不要选择正式安装目录。先检查生成的 `target/release/nsis/x64/installer.nsi`：产品名、主 EXE、应用标识必须都是测试值；`INSTALLWEBVIEW2MODE` 与 `MINIMUMWEBVIEW2VERSION` 应为空。生成模板将配置中的 `skip` 表示为空模式。
@@ -56,7 +56,7 @@ npm run desktop:build:install-test
 
 ## 当前安装配置
 
-- 产品名称：`yt-dlp GUI`；窗口标题为中文版名称。
+- 产品名称：`GrabMeta`；窗口标题为中文版名称。
 - 应用标识：`com.ssk-shandm.ytdlp-gui`。
 - NSIS：当前用户安装，简体中文/英文安装界面，可选择语言。
 - 安装包只含 GUI、项目 LICENSE 和文档。第三方工具在首次启动后下载到当前用户的应用工具目录（`bin/`），主 EXE 不内嵌 FFmpeg。

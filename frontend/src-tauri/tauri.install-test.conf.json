@@ -1,13 +1,13 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "yt-dlp GUI Install Test",
+  "productName": "GrabMeta Install Test",
   "identifier": "com.ssk-shandm.ytdlp-gui.install-test",
-  "mainBinaryName": "yt-dlp-gui-cn-install-test",
+  "mainBinaryName": "grabmeta-install-test",
   "app": {
     "windows": [
       {
         "label": "main",
-        "title": "yt-dlp GUI 安装测试（非正式版）",
+        "title": "GrabMeta 安装测试（非正式版）",
         "width": 1280,
         "height": 800,
         "minWidth": 960,
@@ -22,7 +22,7 @@
         "silent": null
       },
       "nsis": {
-        "startMenuFolder": "yt-dlp GUI Install Test"
+        "startMenuFolder": "GrabMeta Install Test"
       }
     }
   }

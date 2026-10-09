@@ -14,14 +14,14 @@ import { chromium } from 'playwright-core'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const full = process.argv.includes('--full')
-const executable = resolve(process.argv.slice(2).find(arg => !arg.startsWith('--')) || join(root, 'frontend/src-tauri/target/release/yt-dlp-gui-cn-install-test.exe'))
-assert.equal(executable.endsWith('yt-dlp-gui-cn-install-test.exe'), true, 'Only the isolated release test executable is allowed')
+const executable = resolve(process.argv.slice(2).find(arg => !arg.startsWith('--')) || join(root, 'frontend/src-tauri/target/release/grabmeta-install-test.exe'))
+assert.equal(executable.endsWith('grabmeta-install-test.exe'), true, 'Only the isolated release test executable is allowed')
 const artifact = join(root, '.ytdlp-gui-install-tools-' + new Date().toISOString().replaceAll(/[:.]/g, '-'))
 const appDir = join(artifact, '中文 空格 程序')
 const settingsPath = join(process.env.APPDATA, 'com.ssk-shandm.ytdlp-gui.install-test', 'settings.json')
 const savedSettings = await readFile(settingsPath).catch(error => { if (error.code !== 'ENOENT') throw error; return null })
 await mkdir(appDir, { recursive: true })
-await copyFile(executable, join(appDir, 'yt-dlp-gui-cn-install-test.exe'))
+await copyFile(executable, join(appDir, 'grabmeta-install-test.exe'))
 await copyFile(join(root, 'LICENSE'), join(appDir, 'LICENSE'))
 await cp(join(root, 'licenses'), join(appDir, 'licenses'), { recursive: true })
 const results = { mode: full ? 'full-install' : 'transfer-only', testedAt: new Date().toISOString(), artifact, checks: [], profiles: {}, pageErrors: [] }
@@ -113,7 +113,7 @@ async function installed(profile) {
 }
 try {
   const proxyUrl = 'http://127.0.0.1:' + proxy.address().port
-  app = spawn(join(appDir, 'yt-dlp-gui-cn-install-test.exe'), [], {
+  app = spawn(join(appDir, 'grabmeta-install-test.exe'), [], {
     cwd: artifact, stdio: 'ignore', windowsHide: true,
     env: { ...process.env, HTTPS_PROXY: 'http://127.0.0.1:1', HTTP_PROXY: 'http://127.0.0.1:1', ALL_PROXY: 'http://127.0.0.1:1', NO_PROXY: 'localhost,127.0.0.1',
       WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: '--remote-debugging-port=' + port,

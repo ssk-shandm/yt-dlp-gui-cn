@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T09:33:49.147Z",
-  "inventorySha256": "5ad377a41cf1c457e2cf20fe0dee29817edd70df670800509a62bf0514a257a2",
+  "checkedAt": "2026-10-09T10:02:32.869Z",
+  "inventorySha256": "fea3b0a2774fb5652964beb4831dc254ae0dac6ded92448fc13319e5666f8cff",
   "sources": [
     {
       "id": "cargo:brotli@9.0.0",
@@ -126,7 +126,7 @@
   "materials": [
     {
       "file": "gui/INSTALLER-NOTICE.txt",
-      "sha256": "0aac800b86430a0869b79361bc89758205e0ad93a5cf81b567e63f8bbd4e99fb"
+      "sha256": "954ec836f022ab52072fd2fa8dfe36503d41110eaa5d9cac269c3d3ddba33014"
     },
     {
       "file": "gui/SOURCE-NOTICE.txt",

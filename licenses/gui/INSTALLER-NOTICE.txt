@@ -1,6 +1,6 @@
 安装前告知 / INSTALLATION NOTICE
 
-yt-dlp GUI 自有代码采用 MIT License，版权通知及原文见下文；第三方组件不受本项目 MIT 许可证覆盖。
+GrabMeta 自有代码采用 MIT License，版权通知及原文见下文；第三方组件不受本项目 MIT 许可证覆盖。
 
 本安装器采用 Microsoft WebView2 Evergreen downloadBootstrapper 模式。已有满足要求的运行时会被复用；缺失时从 Microsoft 下载引导程序并安装运行时，需要联网，不提供完整离线运行时。WebView2 由 Microsoft 独立维护及自动更新，卸载 GUI 不会移除共享运行时。
 

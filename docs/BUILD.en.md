@@ -38,10 +38,10 @@ This command merges `src-tauri/tauri.install-test.conf.json` and does not modify
 
 | Item | Test value |
 | --- | --- |
-| Product name / NSIS registry subkey | `yt-dlp GUI Install Test` |
+| Product name / NSIS registry subkey | `GrabMeta Install Test` |
 | App identifier / config directory name | `com.ssk-shandm.ytdlp-gui.install-test` |
-| Main EXE | `yt-dlp-gui-cn-install-test.exe` |
-| Start menu folder | `yt-dlp GUI Install Test` |
+| Main EXE | `grabmeta-install-test.exe` |
+| Start menu folder | `GrabMeta Install Test` |
 | WebView2 install mode | `skip`, which does not install, uninstall, or upgrade the existing runtime |
 
 Install into a newly created, separate test directory (it may contain Chinese characters and spaces). Do not choose the official installation directory. First inspect the generated `target/release/nsis/x64/installer.nsi`: the product name, main EXE, and app identifier must all be the test values, and `INSTALLWEBVIEW2MODE` and `MINIMUMWEBVIEW2VERSION` should be empty. The generator template represents the `skip` mode in the configuration as an empty mode.
@@ -56,7 +56,7 @@ The isolated configuration's `silent: null` is a JSON merge patch. When the type
 
 ## Current installation configuration
 
-- Product name: `yt-dlp GUI`; the window title is the Chinese edition name (`yt-dlp GUI 中文版`).
+- Product name: `GrabMeta`; the window title is the Chinese edition name (`GrabMeta 中文版`).
 - App identifier: `com.ssk-shandm.ytdlp-gui`.
 - NSIS: per-user installation, with Simplified Chinese or English installer UI, selectable at install time.
 - The installer contains only the GUI, the project LICENSE, and the documentation. Third-party tools are downloaded after first launch into the current user's app tools directory (`bin/`). The main EXE does not embed FFmpeg.

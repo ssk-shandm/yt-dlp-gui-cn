@@ -99,7 +99,7 @@ test('release updates use the GitHub Release NSIS installer directly', () => {
   assert.equal(config.plugins, undefined)
   const rust = read('../src-tauri/src/updater.rs')
   const frontend = read('../src/services/updater.ts')
-  assert.match(frontend, /api\.github\.com\/repos\/ssk-shandm\/yt-dlp-gui-cn\/releases\/latest/)
+  assert.match(frontend, /api\.github\.com\/repos\/ssk-shandm\/grabmeta\/releases\/latest/)
   assert.match(frontend, /fetch\(GITHUB_API_URL/)
   assert.match(frontend, /isTauri\(\)[\s\S]*?invoke<ReleaseData>\('fetch_latest_release'\)/)
   assert.match(frontend, /await initializeDesktop\(\)/)

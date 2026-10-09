@@ -61,7 +61,7 @@ npm run test:desktop
 - **Network smoke test**: read the NSIS asset of GitHub's latest release (v2.0.1) and fully read 115,571,498 bytes. MZ, Content-Length, and SHA-256 all passed. The smoke test does not write or launch the installer.
 - **Download optimization**: media fragments use 8 connections by default (options 1 / 4 / 8 / 16). Large tool files use up to 4 Range connections. If any segment fails, the other writes are discarded immediately. The frontend waits for the cancel IPC to finish before allowing a retry. In a controlled local transfer of 8 MiB, one connection took 851.69 ms and 4 connections took 527.18 ms. This only shows that the concurrency implementation works; it does not represent an internet speed improvement.
 - **Beginner tutorial smoke test**: 16 highlighted steps, three window sizes. Screenshot comparison allows a maximum synthetic rounding difference of 1 channel level; actual dimming still fails.
-- **Isolated installation** (not a clean system): built `yt-dlp GUI Install Test` with `tauri.install-test.conf.json`, with WebView2 mode `skip`. Silent installation to a path containing Chinese characters and spaces, first launch, configuration isolation, rejection of the update IPC identity, same-version overwrite install, and uninstall all passed. The official installation files, configuration, registry snapshots, and WebView2 registry records were unchanged before and after.
+- **Isolated installation** (not a clean system): built `GrabMeta Install Test` with `tauri.install-test.conf.json`, with WebView2 mode `skip`. Silent installation to a path containing Chinese characters and spaces, first launch, configuration isolation, rejection of the update IPC identity, same-version overwrite install, and uninstall all passed. The official installation files, configuration, registry snapshots, and WebView2 registry records were unchanged before and after.
 - **License resource verification**: after the isolated package was installed, `npm run licenses:installed` verified byte by byte the root LICENSE and all files under licenses/. The first result: 802 files, 4,213,143 bytes, all consistent. The install directory did not contain the three tool EXEs. Evidence is in the ignored directory `.ytdlp-gui-install-resources-*/result.json`; the most recent run is authoritative.
 - **Other**: JS 33 / 33 passed; Rust 22 passed, with 1 network smoke test ignored by default; ESLint, cargo fmt, and clippy passed.
 
@@ -85,7 +85,7 @@ Regular Rust tests do not access the internet. The following ignored test can be
 
 ```powershell
 # Run in the frontend directory; you can also replace the URL with the GitHub Release installer URL you want to verify.
-$release = Invoke-RestMethod 'https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest' -Headers @{ 'User-Agent' = 'yt-dlp-gui-cn-test' }
+$release = Invoke-RestMethod 'https://api.github.com/repos/ssk-shandm/grabmeta/releases/latest' -Headers @{ 'User-Agent' = 'grabmeta-test' }
 $asset = $release.assets | Where-Object { $_.name -like '*_x64-setup.exe' } | Select-Object -First 1
 if (-not $asset.digest.StartsWith('sha256:')) { throw 'Missing GitHub asset SHA-256' }
 $env:YT_DLP_GUI_UPDATE_TEST_URL = $asset.browser_download_url
@@ -104,7 +104,7 @@ This test generates network traffic for a complete installer (about 110 MiB). It
 The script briefly opens the app window and changes settings, then attempts to restore them when it finishes. **Do not run it at the same time as an app instance you use day to day**, because both share the configuration directory. You can pass the path of the installed EXE:
 
 ```powershell
-node scripts/smoke-desktop.mjs 'C:\实际安装目录\yt-dlp-gui-cn.exe'
+node scripts/smoke-desktop.mjs 'C:\实际安装目录\grabmeta.exe'
 ```
 
 ## Desktop / post-install manual checklist

@@ -11,7 +11,7 @@ import { noticeError } from './updateRelease'
 import { i18n } from '../i18n'
 import { errorText } from '../i18n/codes'
 
-const GITHUB_API_URL = 'https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest'
+const GITHUB_API_URL = 'https://api.github.com/repos/ssk-shandm/grabmeta/releases/latest'
 
 async function fetchReleaseInWebView(signal: AbortSignal): Promise<ReleaseData> {
   const response = await fetch(GITHUB_API_URL, {

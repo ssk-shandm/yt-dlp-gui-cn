@@ -13,7 +13,7 @@ import { chromium } from 'playwright-core'
 
 const frontend = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const root = resolve(frontend, '..')
-const executable = resolve(process.argv[2] || join(frontend, 'src-tauri/target/release/yt-dlp-gui-cn.exe'))
+const executable = resolve(process.argv[2] || join(frontend, 'src-tauri/target/release/grabmeta.exe'))
 const temporary = await mkdtemp(join(tmpdir(), 'ytdlp-tauri-smoke-'))
 const downloadPath = join(temporary, '中文 下载')
 await mkdir(downloadPath)

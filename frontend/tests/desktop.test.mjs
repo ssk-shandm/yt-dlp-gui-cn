@@ -163,9 +163,9 @@ test('versions, NSIS configuration, resources and capabilities agree', () => {
   assert.deepEqual(capability.permissions[2], {
     identifier: 'opener:allow-open-url',
     allow: [
-      { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn' },
-      { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn/releases' },
-      { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn/blob/main/LICENSE' },
+      { url: 'https://github.com/ssk-shandm/grabmeta' },
+      { url: 'https://github.com/ssk-shandm/grabmeta/releases' },
+      { url: 'https://github.com/ssk-shandm/grabmeta/blob/main/LICENSE' },
       { url: 'https://github.com/yt-dlp/yt-dlp' },
       { url: 'https://ffmpeg.org/' },
       { url: 'https://github.com/BtbN/FFmpeg-Builds' },

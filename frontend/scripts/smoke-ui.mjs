@@ -124,7 +124,7 @@ try {
     }
   })
   await page.locator('.repository-link').click()
-  assert.deepEqual(await page.evaluate(() => window.__openedUrls), ['https://github.com/ssk-shandm/yt-dlp-gui-cn'])
+  assert.deepEqual(await page.evaluate(() => window.__openedUrls), ['https://github.com/ssk-shandm/grabmeta'])
   const denied = await page.evaluate(async () => {
     const { openExternalUrl } = await import('/src/services/openExternal.ts')
     try {
@@ -145,7 +145,7 @@ try {
       },
     }
     try {
-      await openExternalUrl('https://github.com/ssk-shandm/yt-dlp-gui-cn')
+      await openExternalUrl('https://github.com/ssk-shandm/grabmeta')
       return call
     } finally {
       delete window.isTauri
@@ -153,7 +153,7 @@ try {
     }
   })
   assert.equal(nativeCall.command, 'plugin:opener|open_url')
-  assert.equal(nativeCall.args.url, 'https://github.com/ssk-shandm/yt-dlp-gui-cn')
+  assert.equal(nativeCall.args.url, 'https://github.com/ssk-shandm/grabmeta')
   await page.locator('a.nav-item[title="图片链接"]').click()
   await page.locator('.link-page').waitFor()
   assert.equal(await page.locator('#video-url input').inputValue(), 'https://example.com/video')

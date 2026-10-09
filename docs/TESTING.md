@@ -61,7 +61,7 @@ npm run test:desktop
 - **联网烟测**：读取 GitHub latest（v2.0.1）的 NSIS 资产，完整读取 115,571,498 bytes，MZ、Content-Length 和 SHA-256 均通过。烟测不写入或启动安装器。
 - **下载优化**：媒体分片默认 8 路（可选 1 / 4 / 8 / 16）；工具大文件最多 4 路 Range。任意分段失败时立即丢弃其他写入；前端等取消 IPC 结束后才允许重试。受控 8 MiB 本地传输中，单路 851.69 ms、4 路 527.18 ms，只说明并发实现有效，不代表互联网速度提升。
 - **新手教程烟测**：16 步高亮、三种窗口尺寸；截图比较允许最大 1 级通道的合成舍入差，实际遮暗仍会失败。
-- **隔离安装**（非干净系统）：使用 `tauri.install-test.conf.json` 构建 `yt-dlp GUI Install Test`，WebView2 模式为 `skip`。中文与空格路径静默安装、首次启动、配置隔离、更新 IPC 身份拒绝、同版本覆盖重装及卸载均通过。正式版安装文件、配置、注册表快照和 WebView2 注册表记录前后一致。
+- **隔离安装**（非干净系统）：使用 `tauri.install-test.conf.json` 构建 `GrabMeta Install Test`，WebView2 模式为 `skip`。中文与空格路径静默安装、首次启动、配置隔离、更新 IPC 身份拒绝、同版本覆盖重装及卸载均通过。正式版安装文件、配置、注册表快照和 WebView2 注册表记录前后一致。
 - **许可资源核验**：隔离包安装后，`npm run licenses:installed` 逐字节核验根 LICENSE 和 licenses/ 全部文件。初次结果为 802 个文件、4,213,143 bytes 一致；安装目录没有三个工具 EXE。证据位于忽略目录 `.ytdlp-gui-install-resources-*/result.json`，以最新一次为准。
 - **其他**：JS 33 / 33 通过；Rust 22 项通过，1 项网络烟测按默认设置忽略；ESLint、cargo fmt 和 clippy 通过。
 
@@ -85,7 +85,7 @@ npm run test:install-resources
 
 ```powershell
 # 在 frontend 目录执行；也可改为待验证的 GitHub Release 安装包 URL。
-$release = Invoke-RestMethod 'https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest' -Headers @{ 'User-Agent' = 'yt-dlp-gui-cn-test' }
+$release = Invoke-RestMethod 'https://api.github.com/repos/ssk-shandm/grabmeta/releases/latest' -Headers @{ 'User-Agent' = 'grabmeta-test' }
 $asset = $release.assets | Where-Object { $_.name -like '*_x64-setup.exe' } | Select-Object -First 1
 if (-not $asset.digest.StartsWith('sha256:')) { throw 'Missing GitHub asset SHA-256' }
 $env:YT_DLP_GUI_UPDATE_TEST_URL = $asset.browser_download_url
@@ -104,7 +104,7 @@ cargo test --manifest-path src-tauri/Cargo.toml github_release_download_network_
 脚本会短暂打开应用窗口并修改设置，结束时尝试恢复。**不要与日常使用的应用实例同时运行**，两者共用配置目录。测试安装后的 EXE 可传入路径：
 
 ```powershell
-node scripts/smoke-desktop.mjs 'C:\实际安装目录\yt-dlp-gui-cn.exe'
+node scripts/smoke-desktop.mjs 'C:\实际安装目录\grabmeta.exe'
 ```
 
 ## 桌面 / 安装后手动清单

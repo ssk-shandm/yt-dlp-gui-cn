@@ -2,7 +2,7 @@
 
 # Silent deployment notice and confirmation
 
-Intended for: deployers who install yt-dlp GUI in bulk with `/S` or another silent or passive method. Before distributing the installer, the deployer must read this document and complete the confirmation record at the end.
+Intended for: deployers who install GrabMeta in bulk with `/S` or another silent or passive method. Before distributing the installer, the deployer must read this document and complete the confirmation record at the end.
 
 ## Installed content
 

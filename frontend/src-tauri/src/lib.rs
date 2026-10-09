@@ -241,7 +241,7 @@ pub fn run() {
             tools::open_gui_licenses
         ])
         .build(tauri::generate_context!())
-        .expect("failed to start yt-dlp GUI");
+        .expect("failed to start GrabMeta");
     app.run(|app, event| {
         if matches!(
             event,

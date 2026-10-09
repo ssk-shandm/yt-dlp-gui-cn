@@ -2,11 +2,11 @@
 
 <div align="center">
 
-# yt-dlp GUI 中文版
+# GrabMeta 中文版
 
 **yt-dlp 视频下载工具的 Windows 中文图形界面**
 
-[![Version](https://img.shields.io/github/v/release/ssk-shandm/yt-dlp-gui-cn?label=version)](https://github.com/ssk-shandm/yt-dlp-gui-cn/releases)
+[![Version](https://img.shields.io/github/v/release/ssk-shandm/grabmeta?label=version)](https://github.com/ssk-shandm/grabmeta/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D6?logo=windows&logoColor=white)](#开发启动)
 [![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -18,7 +18,7 @@
 
 ## 项目简介
 
-yt-dlp GUI 中文版是基于 **Vue 3 + TypeScript + Tauri 2 / Rust** 构建的 Windows 桌面应用，为 yt-dlp 视频下载器提供中文图形界面。用户无需输入命令，即可完成视频下载、音频提取以及字幕与封面获取。
+GrabMeta 中文版是基于 **Vue 3 + TypeScript + Tauri 2 / Rust** 构建的 Windows 桌面应用，为 yt-dlp 视频下载器提供中文图形界面。用户无需输入命令，即可完成视频下载、音频提取以及字幕与封面获取。
 
 下载与音视频合并由外部的 **yt-dlp** 与 **FFmpeg** 完成；Windows 安装包采用 **NSIS** 格式发布。
 

@@ -211,7 +211,7 @@ fn client(settings: &crate::model::Settings) -> AppResult<reqwest::Client> {
         // Range workers need independent TCP connections. HTTP/2 multiplexing
         // can otherwise put all four requests on one throttled connection.
         .http1_only()
-        .user_agent("yt-dlp-gui-cn-tools")
+        .user_agent("grabmeta-tools")
         .https_only(true)
         .connect_timeout(Duration::from_secs(30))
         .read_timeout(Duration::from_secs(60))

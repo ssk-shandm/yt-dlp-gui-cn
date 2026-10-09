@@ -6,7 +6,7 @@
 
 **A Windows graphical interface for the yt-dlp video downloader**
 
-[![Version](https://img.shields.io/github/v/release/ssk-shandm/yt-dlp-gui-cn?label=version)](https://github.com/ssk-shandm/yt-dlp-gui-cn/releases)
+[![Version](https://img.shields.io/github/v/release/ssk-shandm/grabmeta?label=version)](https://github.com/ssk-shandm/grabmeta/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-0078D6?logo=windows&logoColor=white)](#development)
 [![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)

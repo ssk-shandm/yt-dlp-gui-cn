@@ -67,7 +67,7 @@ fn validate_update_url(url: &str) -> AppResult<()> {
     }
     let path = parsed
         .path()
-        .strip_prefix("/ssk-shandm/yt-dlp-gui-cn/releases/download/")
+        .strip_prefix("/ssk-shandm/grabmeta/releases/download/")
         .ok_or_else(|| AppError::new("update.urlNotProjectRelease"))?;
     let parts: Vec<_> = path.split('/').collect();
     if parts.len() != 2 || parts.iter().any(|part| part.is_empty()) {
@@ -131,7 +131,7 @@ fn update_http_client(settings: Option<&crate::model::Settings>) -> AppResult<re
         None => builder,
     };
     builder
-        .user_agent("yt-dlp-gui-cn-updater")
+        .user_agent("grabmeta-updater")
         .https_only(true)
         .redirect(reqwest::redirect::Policy::custom(|attempt| {
             let url = attempt.url();
@@ -175,7 +175,7 @@ pub async fn fetch_latest_release(app: AppHandle) -> AppResult<serde_json::Value
         .map_err(|_| AppError::new("update.settingsLocked"))?
         .clone();
     let response = update_http_client(Some(&settings))?
-        .get("https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest")
+        .get("https://api.github.com/repos/ssk-shandm/grabmeta/releases/latest")
         .header("Accept", "application/vnd.github+json")
         .timeout(Duration::from_secs(20))
         .send()
@@ -509,16 +509,16 @@ mod tests {
 
     #[test]
     fn update_urls_are_restricted_to_this_repository() {
-        assert!(validate_update_url("https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.2/app_x64-setup.exe").is_ok());
+        assert!(validate_update_url("https://github.com/ssk-shandm/grabmeta/releases/download/v2.0.2/app_x64-setup.exe").is_ok());
         for url in [
-            "http://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.2/app.exe",
+            "http://github.com/ssk-shandm/grabmeta/releases/download/v2.0.2/app.exe",
             "https://github.com/other/repo/releases/download/v2.0.2/app.exe",
-            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/latest",
-            "https://github.com.evil.example/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
-            "https://user@github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
-            "https://github.com:8443/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
-            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe?redirect=evil",
-            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe#fragment",
+            "https://github.com/ssk-shandm/grabmeta/releases/latest",
+            "https://github.com.evil.example/ssk-shandm/grabmeta/releases/download/v2/app.exe",
+            "https://user@github.com/ssk-shandm/grabmeta/releases/download/v2/app.exe",
+            "https://github.com:8443/ssk-shandm/grabmeta/releases/download/v2/app.exe",
+            "https://github.com/ssk-shandm/grabmeta/releases/download/v2/app.exe?redirect=evil",
+            "https://github.com/ssk-shandm/grabmeta/releases/download/v2/app.exe#fragment",
             "https://release-assets.githubusercontent.com/asset.exe",
         ] {
             assert!(validate_update_url(url).is_err(), "{url}");
@@ -628,7 +628,7 @@ mod tests {
 
     #[test]
     fn installer_names_are_restricted_to_nsis_packages() {
-        assert!(safe_update_file_name("yt-dlp GUI_1.2.0_x64-setup.exe").is_ok());
+        assert!(safe_update_file_name("GrabMeta_1.2.0_x64-setup.exe").is_ok());
         for name in ["yt-dlp.exe", "../app-setup.exe", "app-setup.zip"] {
             assert!(safe_update_file_name(name).is_err());
         }
