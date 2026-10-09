@@ -645,6 +645,19 @@ async fn status_at(dir: PathBuf) -> ToolStatus {
     }
     result
 }
+// Windows reports transient scanner or indexer locks on a freshly written directory as access denied.
+fn rename_with_retry(from: &Path, to: &Path) -> std::io::Result<()> {
+    let mut attempts = 0;
+    loop {
+        match fs::rename(from, to) {
+            Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied && attempts < 10 => {
+                attempts += 1;
+                std::thread::sleep(Duration::from_millis(300));
+            }
+            result => return result,
+        }
+    }
+}
 fn replace_install(stage: &Path, target: &Path) -> AppResult<()> {
     for name in FILE_NAMES.into_iter().chain(["tool-profile.json"]) {
         if !stage.join(name).is_file() {
@@ -665,10 +678,14 @@ fn replace_install(stage: &Path, target: &Path) -> AppResult<()> {
         if target.is_symlink() || !target.is_dir() {
             return Err(AppError::new("tools.targetNotDirectory"));
         }
-        fs::rename(target, &backup)
-            .map_err(|e| AppError::with("tools.replacePrepareFailed", e.to_string()))?;
+        fs::rename(target, &backup).map_err(|e| {
+            AppError::with(
+                "tools.replacePrepareFailed",
+                format!("{e}; from {} to {}", target.display(), backup.display()),
+            )
+        })?;
     }
-    if let Err(error) = fs::rename(stage, target) {
+    if let Err(error) = rename_with_retry(stage, target) {
         if backup.exists() {
             fs::rename(&backup, target).map_err(|rollback| {
                 AppError::with(
@@ -677,7 +694,10 @@ fn replace_install(stage: &Path, target: &Path) -> AppResult<()> {
                 )
             })?;
         }
-        return Err(AppError::with("tools.installKeptOld", error.to_string()));
+        return Err(AppError::with(
+            "tools.installKeptOld",
+            format!("{error}; from {} to {}", stage.display(), target.display()),
+        ));
     }
     // A failed backup cleanup must not falsely report an already committed install as failed.
     if backup.exists() {
