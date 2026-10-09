@@ -10,12 +10,12 @@ test('configured Windows bundle icons and project license exist', () => {
   const config = JSON.parse(read(new URL('tauri.conf.json', tauri)))
   const icons = new Set([...config.bundle.icon, config.bundle.windows.nsis.installerIcon, config.bundle.windows.nsis.uninstallerIcon])
   for (const icon of icons) assert.ok(existsSync(new URL(icon, tauri)), `Missing configured icon: ${icon}`)
-  // External bin tools are local inputs; tools:check validates them before packaging.
+  // Historical bin tools are optional development inputs, not installer resources.
   const license = Object.entries(config.bundle.resources).find(([, destination]) => destination === 'LICENSE')
   assert.ok(license, 'Project license must be bundled')
   assert.ok(existsSync(new URL(license[0], tauri)), 'Missing project license')
-  for (const source of ['frontend/app-icon.png', 'frontend/src-tauri/icons/icon.png', '视频下载工具图标设计.png'])
-    assert.ok(existsSync(new URL(source, repo)), `Missing icon source: ${source}`)
+  // Raw artwork is intentionally ignored; a clean clone only needs bundle icons.
+  assert.ok(existsSync(new URL('icons/icon.png', tauri)))
 })
 
 test('retired implementation and unused demo sources are not active repository files', () => {
@@ -39,7 +39,7 @@ test('all relative Markdown document links point to existing files', () => {
 
 test('current and future release notes use user-facing sections without validation reports', () => {
   const docs = new URL('docs/', repo)
-  // v2.0.0 remains a historical release; the new policy starts at v2.0.1.
+  // Release notes are maintained on GitHub; this repository keeps only the template.
   const notes = readdirSync(docs).filter((name) => {
     if (name === 'RELEASE_TEMPLATE.md') return true
     const match = /^RELEASE_v(\d+)\.(\d+)\.(\d+)\.md$/.exec(name)
@@ -48,7 +48,6 @@ test('current and future release notes use user-facing sections without validati
     return major > 2 || (major === 2 && (minor > 0 || patch >= 1))
   })
   assert.ok(notes.includes('RELEASE_TEMPLATE.md'), 'Release template is required')
-  assert.ok(notes.includes('RELEASE_v2.0.1.md'), 'Updated v2.0.1 notes are required')
   for (const name of notes) {
     const text = read(new URL(name, docs))
     for (const section of ['更新内容', '下载与安装', '使用须知', '文件信息'])
@@ -56,4 +55,37 @@ test('current and future release notes use user-facing sections without validati
     assert.doesNotMatch(text, /^#{1,6}\s+.*(?:验证|测试|验收|\b(?:validation|verification|tests?|testing)\b)/im, name)
     assert.doesNotMatch(text, /自动化测试|单元测试|烟测|\b(?:clippy|ESLint)\b|cargo (?:fmt|test)|\d+\s*\/\s*\d+\s*通过/i, name)
   }
+})
+
+test('installer test overlay isolates product, executable, app data and skips WebView2 changes', () => {
+  const production = JSON.parse(read(new URL('tauri.conf.json', tauri)))
+  const isolated = JSON.parse(read(new URL('tauri.install-test.conf.json', tauri)))
+  assert.notEqual(isolated.productName, production.productName)
+  assert.notEqual(isolated.identifier, production.identifier)
+  assert.notEqual(isolated.mainBinaryName, 'yt-dlp-gui-cn')
+  assert.equal(isolated.productName, 'yt-dlp GUI Install Test')
+  assert.equal(isolated.bundle.windows.nsis.startMenuFolder, isolated.productName)
+  assert.equal(isolated.bundle.windows.webviewInstallMode.type, 'skip')
+  assert.equal(isolated.bundle.windows.webviewInstallMode.silent, null, 'JSON merge patch must remove the production silent field for skip')
+  assert.equal(production.bundle.windows.webviewInstallMode.type, 'downloadBootstrapper')
+  assert.ok(!isolated.bundle.resources, 'Test build must inherit production resources')
+})
+
+test('resource smoke test guards the isolated identity and hides installer helpers', () => {
+  const script = read(new URL('../scripts/smoke-install-resources.ps1', import.meta.url))
+  assert.match(script, /com\.ssk-shandm\.ytdlp-gui\.install-test/)
+  assert.match(script, /refusing to overwrite/)
+  assert.match(script, /Unsafe uninstall target/)
+  assert.match(script, /-WindowStyle Hidden/)
+  assert.match(script, /productionAndWebView2Unchanged/)
+  assert.doesNotMatch(script, /Remove-Item|cmd \/c/i)
+})
+
+
+test('real tool smoke defaults to transfer-only; full installs require an explicit flag', () => {
+  const script = read(new URL('../scripts/smoke-tools.mjs', import.meta.url))
+  assert.ok(script.includes("process.argv.includes('--full')"))
+  assert.ok(script.includes('if (!full)'))
+  assert.match(script, /transfer-only/)
+  assert.match(script, /proxyEnabled: true, proxyUrl/)
 })

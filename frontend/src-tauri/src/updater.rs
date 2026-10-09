@@ -1,10 +1,11 @@
 use crate::{process::tool_directory, AppState};
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 use std::{
     error::Error,
     fs,
-    io::Write,
-    path::Path,
+    io::{BufWriter, Write},
+    path::{Path, PathBuf},
     sync::atomic::{AtomicBool, Ordering},
     time::Duration,
 };
@@ -41,25 +42,61 @@ struct DownloadProgress {
     file_name: String,
 }
 
-fn validate_update_url(url: &str) -> Result<(), String> {
-    let Some(rest) = url.strip_prefix("https://") else {
-        return Err("Update URL must use HTTPS".to_string());
-    };
-    let host = rest
-        .split(['/', '?', '#'])
-        .next()
-        .unwrap_or("")
-        .to_ascii_lowercase();
-    let allowed_hosts = [
-        "github.com",
-        "objects.githubusercontent.com",
-        "github-releases.githubusercontent.com",
-        "release-assets.githubusercontent.com",
-    ];
-    if !allowed_hosts.contains(&host.as_str()) {
-        return Err("Update URL is not a supported GitHub Release asset".to_string());
+fn validate_update_identity(identifier: &str) -> Result<(), String> {
+    if identifier != "com.ssk-shandm.ytdlp-gui" {
+        return Err("隔离测试版不允许下载或启动正式版更新安装器".to_string());
     }
     Ok(())
+}
+
+fn validate_update_url(url: &str) -> Result<(), String> {
+    let parsed = reqwest::Url::parse(url).map_err(|_| "Invalid update URL".to_string())?;
+    if parsed.scheme() != "https"
+        || parsed.host_str() != Some("github.com")
+        || !parsed.username().is_empty()
+        || parsed.password().is_some()
+        || parsed.port().is_some()
+        || parsed.query().is_some()
+        || parsed.fragment().is_some()
+    {
+        return Err("Update URL must use the project's HTTPS GitHub Release endpoint".to_string());
+    }
+    let path = parsed
+        .path()
+        .strip_prefix("/ssk-shandm/yt-dlp-gui-cn/releases/download/")
+        .ok_or_else(|| "Update URL is not a release from this project".to_string())?;
+    let parts: Vec<_> = path.split('/').collect();
+    if parts.len() != 2 || parts.iter().any(|part| part.is_empty()) {
+        return Err("Invalid GitHub Release asset path".to_string());
+    }
+    Ok(())
+}
+
+fn validate_update_sha256(value: Option<&str>) -> Result<String, String> {
+    let value = value.ok_or_else(|| {
+        "该 Release 缺少安装包 SHA-256，已停止自动安装。请到发布页核实后手动安装。".to_string()
+    })?;
+    if value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err("安装包 SHA-256 格式无效，已停止自动安装".to_string());
+    }
+    Ok(value.to_ascii_lowercase())
+}
+
+fn verify_update_sha256(hash: Sha256, expected: &str) -> Result<(), String> {
+    let actual = format!("{:x}", hash.finalize());
+    if actual != expected {
+        return Err("更新安装包 SHA-256 校验失败，文件已丢弃；请重试或到发布页核实。".to_string());
+    }
+    Ok(())
+}
+
+// Created before the writer so error unwinding closes the file before cleanup.
+struct PartialDownload(PathBuf);
+
+impl Drop for PartialDownload {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.0);
+    }
 }
 
 fn safe_update_file_name(file_name: &str) -> Result<String, String> {
@@ -85,15 +122,77 @@ fn safe_update_file_name(file_name: &str) -> Result<String, String> {
 
 // Load the OS trust store (including user-trusted proxy/enterprise roots), and
 // honor system proxies. Keep TLS verification enabled for executable downloads.
-fn update_http_client() -> Result<reqwest::Client, String> {
-    reqwest::Client::builder()
+fn update_http_client(
+    settings: Option<&crate::model::Settings>,
+) -> Result<reqwest::Client, String> {
+    let builder = reqwest::Client::builder();
+    let builder = match settings {
+        Some(settings) => crate::model::configure_http_proxy(builder, settings)?,
+        None => builder,
+    };
+    builder
         .user_agent("yt-dlp-gui-cn-updater")
         .https_only(true)
+        .redirect(reqwest::redirect::Policy::custom(|attempt| {
+            let url = attempt.url();
+            let allowed = matches!(
+                url.host_str(),
+                Some(
+                    "api.github.com"
+                        | "github.com"
+                        | "objects.githubusercontent.com"
+                        | "github-releases.githubusercontent.com"
+                        | "release-assets.githubusercontent.com"
+                )
+            );
+            if attempt.previous().len() >= 10 {
+                attempt.error("too many update redirects")
+            } else if url.scheme() != "https"
+                || !allowed
+                || !url.username().is_empty()
+                || url.password().is_some()
+                || url.port().is_some()
+            {
+                attempt.error("update redirect is not a trusted HTTPS GitHub endpoint")
+            } else {
+                attempt.follow()
+            }
+        }))
         .connect_timeout(Duration::from_secs(30))
         // Limit stalled reads, not the total duration of a large installer download.
         .read_timeout(Duration::from_secs(60))
         .build()
         .map_err(|error| update_network_error("无法初始化更新下载器", &error))
+}
+
+// Fixed endpoint only: the WebView cannot apply a per-request proxy.
+#[tauri::command]
+pub async fn fetch_latest_release(app: AppHandle) -> Result<serde_json::Value, String> {
+    let settings = app
+        .state::<AppState>()
+        .settings
+        .lock()
+        .map_err(|_| "设置锁不可用")?
+        .clone();
+    let response = update_http_client(Some(&settings))?
+        .get("https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest")
+        .header("Accept", "application/vnd.github+json")
+        .timeout(Duration::from_secs(20))
+        .send()
+        .await
+        .map_err(|e| update_network_error("无法检查更新", &e))?;
+    match response.status().as_u16() {
+        403 => return Err("GitHub API 请求受限，请稍后再试".into()),
+        404 => return Err("GitHub 上还没有发布 Release".into()),
+        _ if !response.status().is_success() => {
+            return Err(format!("更新检查失败（HTTP {}）", response.status()))
+        }
+        _ => {}
+    }
+    response
+        .json()
+        .await
+        .map_err(|e| update_network_error("无法解析更新信息", &e))
 }
 
 fn error_chain(error: &dyn Error) -> String {
@@ -128,15 +227,17 @@ pub async fn download_and_install_update(
     state: State<'_, UpdateState>,
     url: String,
     file_name: String,
+    sha256: Option<String>,
 ) -> Result<(), String> {
     #[cfg(not(target_os = "windows"))]
     {
-        let _ = (app, state, url, file_name);
+        let _ = (app, state, url, file_name, sha256);
         return Err("自动安装更新目前仅支持 Windows 桌面端".to_string());
     }
 
     #[cfg(target_os = "windows")]
     {
+        validate_update_identity(&app.config().identifier)?;
         let _busy = state.begin()?;
         validate_update_url(&url)?;
         let safe_name = safe_update_file_name(&file_name)?;
@@ -149,8 +250,11 @@ pub async fn download_and_install_update(
             return Err("当前运行的是便携版或开发版，自动安装不会替换此文件。请使用 Release 中的 *-setup.exe 安装版启动。".to_string());
         }
 
+        let expected_sha256 = validate_update_sha256(sha256.as_deref())?;
         app.state::<AppState>().tasks.begin_update()?;
-        let result = download_update_package(&app, &url, &safe_name, install_directory).await;
+        let result =
+            download_update_package(&app, &url, &safe_name, install_directory, &expected_sha256)
+                .await;
         if result.is_err() {
             app.state::<AppState>().tasks.end_update();
         }
@@ -164,6 +268,7 @@ async fn download_update_package(
     url: &str,
     safe_name: &str,
     install_directory: &Path,
+    expected_sha256: &str,
 ) -> Result<(), String> {
     let save_dir = app
         .path()
@@ -173,7 +278,13 @@ async fn download_update_package(
     fs::create_dir_all(&save_dir).map_err(|error| format!("无法创建更新保存目录：{error}"))?;
     let target = save_dir.join(safe_name);
     let partial = save_dir.join(format!("{safe_name}.part"));
-    let response = update_http_client()?
+    let settings = app
+        .state::<AppState>()
+        .settings
+        .lock()
+        .map_err(|_| "设置锁不可用")?
+        .clone();
+    let response = update_http_client(Some(&settings))?
         .get(url)
         .header("Accept", "application/octet-stream")
         .send()
@@ -185,8 +296,12 @@ async fn download_update_package(
 
     let total = response.content_length();
     let mut downloaded = 0_u64;
-    let mut output =
-        fs::File::create(&partial).map_err(|error| format!("无法创建更新文件：{error}"))?;
+    let mut hash = Sha256::new();
+    let _partial = PartialDownload(partial.clone());
+    let mut output = BufWriter::with_capacity(
+        1024 * 1024,
+        fs::File::create(&partial).map_err(|error| format!("无法创建更新文件：{error}"))?,
+    );
     let emit_progress = |downloaded: u64, percent: Option<u8>| {
         let _ = app.emit(
             "update-download-progress",
@@ -207,6 +322,7 @@ async fn download_update_package(
         .await
         .map_err(|error| update_network_error("读取更新数据失败", &error))?
     {
+        hash.update(&chunk);
         output
             .write_all(&chunk)
             .map_err(|error| format!("保存更新文件失败：{error}"))?;
@@ -239,6 +355,7 @@ async fn download_update_package(
         let _ = fs::remove_file(&partial);
         return Err("更新安装包下载不完整，请重试".to_string());
     }
+    verify_update_sha256(hash, expected_sha256)?;
     if total.is_none() {
         emit_progress(downloaded, None);
     }
@@ -246,16 +363,16 @@ async fn download_update_package(
         let _ = fs::remove_file(&target);
     }
     fs::rename(&partial, &target).map_err(|error| format!("无法保存更新安装包：{error}"))?;
-    let _ = app.emit(
-        "update-install-starting",
-        target.to_string_lossy().into_owned(),
-    );
     launch_installer(&target, install_directory).map_err(|error| {
         format!(
             "{error}。安装包已保存到：{}，可手动运行安装",
             target.display()
         )
     })?;
+    let _ = app.emit(
+        "update-install-starting",
+        target.to_string_lossy().into_owned(),
+    );
     app.exit(0);
     Ok(())
 }
@@ -345,7 +462,7 @@ mod tests {
         let url = std::env::var("YT_DLP_GUI_UPDATE_TEST_URL")
             .expect("set YT_DLP_GUI_UPDATE_TEST_URL to a GitHub Release installer URL");
         validate_update_url(&url).unwrap();
-        let result = update_http_client()
+        let result = update_http_client(None)
             .unwrap()
             .get(url)
             .header("Accept", "application/octet-stream")
@@ -358,11 +475,13 @@ mod tests {
         let mut response = response;
         let mut downloaded = 0_u64;
         let mut signature: Vec<u8> = Vec::new();
+        let mut hash = Sha256::new();
         while let Some(chunk) = response
             .chunk()
             .await
             .unwrap_or_else(|error| panic!("{}", update_network_error("读取更新数据失败", &error)))
         {
+            hash.update(&chunk);
             signature.extend(chunk.iter().copied().take(2 - signature.len()));
             downloaded += chunk.len() as u64;
         }
@@ -371,7 +490,79 @@ mod tests {
         if let Some(length) = expected_length {
             assert_eq!(downloaded, length, "incomplete installer");
         }
-        println!("GitHub installer stream verified: {downloaded} bytes");
+        let expected = validate_update_sha256(
+            std::env::var("YT_DLP_GUI_UPDATE_TEST_SHA256")
+                .ok()
+                .as_deref(),
+        )
+        .unwrap();
+        verify_update_sha256(hash, &expected).unwrap();
+        println!("GitHub installer stream and SHA-256 verified: {downloaded} bytes");
+    }
+
+    #[test]
+    fn update_urls_are_restricted_to_this_repository() {
+        assert!(validate_update_url("https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.2/app_x64-setup.exe").is_ok());
+        for url in [
+            "http://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.2/app.exe",
+            "https://github.com/other/repo/releases/download/v2.0.2/app.exe",
+            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/latest",
+            "https://github.com.evil.example/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
+            "https://user@github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
+            "https://github.com:8443/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe",
+            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe?redirect=evil",
+            "https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2/app.exe#fragment",
+            "https://release-assets.githubusercontent.com/asset.exe",
+        ] {
+            assert!(validate_update_url(url).is_err(), "{url}");
+        }
+    }
+
+    #[test]
+    fn update_digest_is_required_and_checked() {
+        let expected = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
+        assert_eq!(
+            validate_update_sha256(Some(&expected.to_uppercase())).unwrap(),
+            expected
+        );
+        for value in [
+            None,
+            Some(""),
+            Some("sha256:bad"),
+            Some("xyz"),
+            Some(&"g".repeat(64)),
+        ] {
+            assert!(validate_update_sha256(value).is_err());
+        }
+        let mut hash = Sha256::new();
+        hash.update(b"a");
+        hash.update(b"bc");
+        assert!(verify_update_sha256(hash.clone(), expected).is_ok());
+        assert!(verify_update_sha256(hash, &"0".repeat(64)).is_err());
+    }
+
+    #[test]
+    fn failed_download_cleanup_removes_only_the_partial_file() {
+        let root = std::env::temp_dir().join(format!(
+            "yt-dlp-gui-update-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir(&root).unwrap();
+        let partial = root.join("installer.exe.part");
+        let target = root.join("installer.exe");
+        fs::write(&target, b"existing installer").unwrap();
+        {
+            let _guard = PartialDownload(partial.clone());
+            fs::write(&partial, b"incomplete download").unwrap();
+        }
+        assert!(!partial.exists());
+        assert_eq!(fs::read(&target).unwrap(), b"existing installer");
+        fs::remove_file(target).unwrap();
+        fs::remove_dir(root).unwrap();
     }
 
     #[test]
@@ -406,7 +597,7 @@ mod tests {
 
     #[test]
     fn updater_client_can_be_built_with_system_trust() {
-        assert!(update_http_client().is_ok());
+        assert!(update_http_client(None).is_ok());
     }
 
     #[test]
@@ -416,6 +607,13 @@ mod tests {
         assert!(state.begin().is_err());
         drop(busy);
         assert!(state.begin().is_ok());
+    }
+
+    #[test]
+    fn nonproduction_identity_cannot_launch_production_updates() {
+        assert!(validate_update_identity("com.ssk-shandm.ytdlp-gui").is_ok());
+        assert!(validate_update_identity("com.ssk-shandm.ytdlp-gui.install-test").is_err());
+        assert!(validate_update_identity("another.app").is_err());
     }
 
     #[test]

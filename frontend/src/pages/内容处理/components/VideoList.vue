@@ -9,6 +9,7 @@
         <span class="filter-label">类型筛选：</span>
         <a-select
           v-model="filterType"
+          data-guide="format-filter"
           :options="typeOptions"
           class="filter-select"
           @change="handleFilterChange"

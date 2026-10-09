@@ -1,0 +1,31 @@
+THIRD-PARTY NOTICES
+
+CURRENT GUI INSTALLER SCOPE
+
+yt-dlp GUI is distributed under the MIT License. See the LICENSE file at the installation root.
+
+This installer contains the GUI and notice/license documentation only. It does NOT bundle yt-dlp.exe, ffmpeg.exe or ffprobe.exe. After installation, users can choose a tool profile and download tools from supported upstream sources. Actual downloaded versions, providers, hashes and collected notices are recorded separately in the current-user application installation tool directory (bin/licenses/installed-tools.json and bin/licenses/).
+
+HISTORICAL TOOL RECORDS (NOT BUNDLED BINARIES)
+
+1. yt-dlp 2026.08.19
+   - The main project uses the Unlicense.
+   - The recorded official PyInstaller executable includes third-party components and is described in the collected notices as GPL-3.0-or-later.
+   - licenses/yt-dlp/ and licenses/evidence/ retain version-specific reference materials. They do not describe every future download.
+
+2. Gyan FFmpeg / ffprobe 9.0.2 Essentials
+   - The recorded local binaries report --enable-gpl and --enable-version3.
+   - licenses/ffmpeg/ retains upstream license texts and historical build/source leads.
+   - These historical Gyan records do not describe the application's current BtbN download profiles.
+
+3. Microsoft WebView2
+   - The production installer uses downloadBootstrapper (silent runtime install) for Microsoft's separate Evergreen runtime; it does not embed the full runtime. Independent Microsoft terms and SmartScreen/privacy notices are supplied in licenses/gui/INSTALLER-NOTICE.txt and webview2/. Uninstalling the GUI does not remove the shared runtime.
+
+GUI DEPENDENCY COPYRIGHT, LICENSES AND SOURCE
+
+Original package notices: licenses/gui/DEPENDENCY-NOTICES.txt, packages/ and supplemental/. Composite license decisions: licenses/gui/review.json.
+MPL-2.0 exact-version unmodified source is supplied locally in licenses/gui/sources/; extraction instructions, upstream entries and checksums: licenses/gui/SOURCE-NOTICE.txt. Additional composite-license component source archives preserve file-level copyright notices.
+The independent GUI notice directory remains accessible from the About page after downloading tools.
+
+GUI RELEASE REVIEW: INCOMPLETE. number-precision is replaced by a project-owned MIT implementation (frontend/vendor/number-precision); the upstream 1.6.0 package is no longer shipped or depended on. Clean-system WebView2 acceptance remains pending in release-status.json. Do not delete pending items to bypass this review.
+HISTORICAL TOOL REDISTRIBUTION REVIEW: INCOMPLETE. SOURCE-INFO.md files are research pointers, not a GPL written source offer or a complete Corresponding Source distribution. Pending historical work is retained separately in release-status.json and RELEASE-CHECKLIST.md. Do not treat these records as authorization to redistribute the recorded binaries.

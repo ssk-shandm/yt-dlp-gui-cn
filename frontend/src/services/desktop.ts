@@ -9,6 +9,7 @@ import { useUrlStore } from '@/stores/urlStore'
 import { useFormatStore } from '@/stores/formatStore'
 import { useSubtitleStore } from '@/stores/subtitleStore'
 import type { DownloadRequest, LogEvent, Settings, TaskEvent, VideoMetadata } from '@/types/desktop'
+import { initializeTools } from '@/services/tools'
 
 let initialization: Promise<void> | undefined
 const unlisteners: UnlistenFn[] = []
@@ -39,6 +40,8 @@ export function initializeDesktop(): Promise<void> {
     useSettingsStore().applySettings(settings)
     useSettingsStore().initialized = true
     useTerminalStore().addLine('Tauri 桌面端已就绪。下载目录：' + settings.downloadPath)
+    useTerminalStore().addLine(`媒体分片并发：${settings.concurrentFragments}；未设置下载限速。直链/站点限制及代理线路仍会影响实际速度。`)
+    await initializeTools()
   })()
   return initialization
 }
@@ -111,6 +114,20 @@ export function selectDownloadDirectory() {
       store.downloadPath = saved.downloadPath
     }
   })
+}
+export function saveConcurrentFragments(concurrentFragments: number) {
+  return safely(async () => {
+    await persist({ concurrentFragments })
+  })
+}
+// Propagate failures to the form; update the store only after a successful save.
+export async function saveProxySettings(proxyEnabled: boolean, proxyUrl: string): Promise<Settings> {
+  if (!isTauri()) throw new Error('浏览器预览不能保存本地 VPN / 代理设置，请使用桌面端。')
+  const saved = await persist({ proxyEnabled, proxyUrl: proxyUrl.trim() })
+  const store = useSettingsStore()
+  store.proxyEnabled = saved.proxyEnabled
+  store.proxyUrl = saved.proxyUrl
+  return saved
 }
 export function saveRetryTimes(retryTimes: string) {
   return safely(async () => {

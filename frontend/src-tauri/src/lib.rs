@@ -1,5 +1,6 @@
 mod model;
 mod process;
+mod tools;
 mod updater;
 
 use model::{DownloadKind, DownloadRequest, Settings};
@@ -15,6 +16,10 @@ pub struct AppState {
 
 fn validate_settings(settings: &Settings) -> Result<(), String> {
     model::validate_retries(&settings.retry_times)?;
+    model::validate_concurrent_fragments(settings.concurrent_fragments)?;
+    if settings.proxy_enabled {
+        model::validate_proxy_url(&settings.proxy_url)?;
+    }
     if !PathBuf::from(&settings.download_path).is_absolute() {
         return Err("下载目录必须是绝对路径".into());
     }
@@ -50,27 +55,30 @@ async fn analyze_url(
 ) -> Result<serde_json::Value, String> {
     let url = model::validate_url(&url)?;
     let tools = resolve_tools(&app)?;
+    let settings = state.settings.lock().map_err(|_| "设置锁不可用")?.clone();
+    let mut args = model::proxy_args(&settings)?;
+    args.extend(
+        [
+            "--ignore-config",
+            "--encoding",
+            "utf-8",
+            "--no-color",
+            "--no-playlist",
+            "--skip-download",
+            "--dump-single-json",
+            "--socket-timeout",
+            "30",
+            "--retries",
+            "3",
+            "--",
+            &url,
+        ]
+        .into_iter()
+        .map(str::to_string),
+    );
     let (id, control) = state.tasks.reserve()?;
     let title = "链接解析";
     task_event(&app, id, title, "running", "正在获取视频信息");
-    let args = [
-        "--ignore-config",
-        "--encoding",
-        "utf-8",
-        "--no-color",
-        "--no-playlist",
-        "--skip-download",
-        "--dump-single-json",
-        "--socket-timeout",
-        "30",
-        "--retries",
-        "3",
-        "--",
-        &url,
-    ]
-    .into_iter()
-    .map(str::to_string)
-    .collect::<Vec<_>>();
     let result = execute(&app, &tools.ytdlp, &args, id, control, true)
         .await
         .and_then(|bytes| {
@@ -183,6 +191,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(updater::UpdateState::default())
+        .manage(tools::ToolInstallState::default())
         .setup(|app| {
             let config = app.path().app_config_dir()?;
             std::fs::create_dir_all(&config)?;
@@ -195,6 +204,9 @@ pub fn run() {
                     .to_string_lossy()
                     .into_owned(),
                 retry_times: "10".into(),
+                concurrent_fragments: model::default_concurrent_fragments(),
+                proxy_enabled: false,
+                proxy_url: model::default_proxy_url(),
             };
             let settings = std::fs::read(&settings_file)
                 .ok()
@@ -215,8 +227,14 @@ pub fn run() {
             start_download,
             list_supported_sites,
             cancel_task,
+            updater::fetch_latest_release,
             updater::download_and_install_update,
-            updater::get_tool_info
+            updater::get_tool_info,
+            tools::get_tool_status,
+            tools::download_tools,
+            tools::cancel_tool_download,
+            tools::open_tool_licenses,
+            tools::open_gui_licenses
         ])
         .build(tauri::generate_context!())
         .expect("无法启动 yt-dlp GUI");
@@ -225,6 +243,7 @@ pub fn run() {
             event,
             tauri::RunEvent::ExitRequested { .. } | tauri::RunEvent::Exit
         ) {
+            app.state::<tools::ToolInstallState>().cancel();
             app.state::<AppState>().tasks.shutdown();
         }
     });

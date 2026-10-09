@@ -3,11 +3,11 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
-import { createServer } from 'node:http'
+import { createServer, request as httpRequest } from 'node:http'
 import { createServer as createTcpServer } from 'node:net'
-import { mkdtemp, readFile, writeFile, mkdir, readdir, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, mkdir, readdir, rm, copyFile, cp } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { resolve, dirname, join, relative, isAbsolute } from 'node:path'
+import { resolve, dirname, join, relative, isAbsolute, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 
@@ -17,7 +17,9 @@ const executable = resolve(process.argv[2] || join(frontend, 'src-tauri/target/r
 const temporary = await mkdtemp(join(tmpdir(), 'ytdlp-tauri-smoke-'))
 const downloadPath = join(temporary, '中文 下载')
 await mkdir(downloadPath)
-let app, browser, page, originalSettings, server
+let app, browser, page, originalSettings, server, localProxy
+const proxyRequests = []
+let proxyMediaBytes = 0
 const failures = []
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 const slowRequests = new Set()
@@ -71,6 +73,14 @@ async function waitTask(taskId) {
   throw new Error('Task timeout: ' + taskId)
 }
 try {
+  // Run an isolated GUI copy: tools are no longer bundled with the installer.
+  // Never copy tools into or alter the user's application directory.
+  const appDirectory = join(temporary, 'app')
+  await mkdir(appDirectory)
+  const testExecutable = join(appDirectory, basename(executable))
+  await copyFile(executable, testExecutable)
+  await copyFile(join(root, 'LICENSE'), join(appDirectory, 'LICENSE'))
+  await cp(join(root, 'licenses'), join(appDirectory, 'licenses'), { recursive: true })
   await run(join(root, 'bin/ffmpeg.exe'), ['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=160x90:r=10', '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=44100', '-t', '2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-shortest', join(temporary, 'sample.mp4')])
   await run(join(root, 'bin/ffmpeg.exe'), ['-hide_banner', '-loglevel', 'error', '-i', join(temporary, 'sample.mp4'), '-frames:v', '1', join(temporary, 'poster.jpg')])
   await run(join(root, 'bin/ffmpeg.exe'), ['-hide_banner', '-loglevel', 'error', '-i', join(temporary, 'sample.mp4'), '-c', 'copy', '-f', 'dash', join(temporary, 'sample.mpd')])
@@ -97,7 +107,7 @@ try {
   const base = 'http://127.0.0.1:' + server.address().port
   // CDP is enabled only in this test process environment, not in shipping configuration.
   const port = await cdpPort()
-  app = spawn(executable, [], { cwd: temporary, windowsHide: true, stdio: 'ignore', env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: '--remote-debugging-port=' + port, WEBVIEW2_USER_DATA_FOLDER: join(temporary, 'webview') } })
+  app = spawn(testExecutable, [], { cwd: temporary, windowsHide: true, stdio: 'ignore', env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: '--remote-debugging-port=' + port, WEBVIEW2_USER_DATA_FOLDER: join(temporary, 'webview') } })
   for (let i = 0; i < 60; i++) {
     try { browser = await chromium.connectOverCDP('http://127.0.0.1:' + port); break } catch { await wait(500) }
   }
@@ -111,7 +121,27 @@ try {
   page.on('pageerror', (error) => failures.push(String(error)))
   await page.waitForFunction(() => !!window.__TAURI_INTERNALS__)
   await page.waitForTimeout(1000)
+  const missingTools = await invoke('get_tool_status')
+  assert.equal(missingTools.installed, false)
+  assert.deepEqual([...missingTools.missing].sort(), ['ffmpeg.exe', 'ffprobe.exe', 'yt-dlp.exe'])
+  const toolDialog = page.getByRole('dialog', { name: '准备你的下载工具', exact: true })
+  await toolDialog.waitFor()
+  await assert.rejects(invoke('analyze_url', { url: base + '/watch.html' }), /缺少下载工具/)
+  const installedBin = join(appDirectory, 'bin')
+  await mkdir(installedBin)
+  for (const name of ['yt-dlp.exe', 'ffmpeg.exe', 'ffprobe.exe']) {
+    await copyFile(join(root, 'bin', name), join(installedBin, name))
+  }
+  const installedTools = await invoke('get_tool_status')
+  assert.equal(installedTools.installed, true)
+  assert.deepEqual(installedTools.missing, [])
+  assert.equal(resolve(installedTools.binPath), installedBin)
+  assert.ok(installedTools.ytdlpVersion && installedTools.ffmpegVersion && installedTools.ffprobeVersion)
+  await toolDialog.getByRole('button', { name: '稍后安装', exact: true }).click()
+  await toolDialog.waitFor({ state: 'hidden' })
+  console.log('PASS GUI-only first run, missing-tool guard, setup dialog and isolated local tool detection')
   originalSettings = await invoke('get_settings')
+  assert.equal(originalSettings.concurrentFragments >= 1 && originalSettings.concurrentFragments <= 16, true)
   await invoke('save_settings', { settings: { downloadPath, retryTimes: '3' } })
   assert.equal((await invoke('get_settings')).downloadPath, downloadPath)
   await page.evaluate(async () => {
@@ -137,6 +167,12 @@ try {
     assert.equal(result.status, 'success', kind + ': ' + result.message)
     console.log('PASS', kind)
   }
+  assert.equal(await page.getByLabel('分片并发数').inputValue(), '8')
+  await page.getByLabel('分片并发数').selectOption('4')
+  for (let i = 0; (await invoke('get_settings')).concurrentFragments !== 4; i++) {
+    assert.ok(i < 40, 'Parallelism setting was not persisted'); await wait(50)
+  }
+  console.log('PASS parallelism defaults, UI selection and persisted IPC setting')
   const dash = await invoke('analyze_url', { url: base + '/sample.mpd' })
   const video = dash.formats.find((f) => f.vcodec !== 'none' && f.acodec === 'none')
   const audio = dash.formats.find((f) => f.acodec !== 'none' && f.vcodec === 'none')

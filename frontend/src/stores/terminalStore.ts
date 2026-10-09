@@ -8,5 +8,8 @@ export const useTerminalStore = defineStore('terminal', () => {
     state.value.output.push(line)
     if (state.value.output.length > 2000) state.value.output.splice(0, state.value.output.length - 2000)
   }
-  return { state, addLine }
+  function clear() {
+    state.value.output = []
+  }
+  return { state, addLine, clear }
 })

@@ -1,6 +1,6 @@
 {
   "name": "yt-dlp",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -17,19 +17,30 @@
     "tauri": "tauri",
     "desktop:dev": "tauri dev",
     "desktop:build": "node scripts/build-desktop.mjs",
+    "desktop:build:install-test": "node scripts/build-desktop.mjs --config src-tauri/tauri.install-test.conf.json",
     "check:rust": "cargo check --manifest-path src-tauri/Cargo.toml",
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
     "test": "node --test tests/*.test.mjs",
     "lint:check": "eslint .",
     "tools:check": "node scripts/check-tools.mjs",
     "test:desktop": "node scripts/smoke-desktop.mjs",
-    "test:ui": "node scripts/smoke-ui.mjs"
+    "test:ui": "node scripts/smoke-ui.mjs",
+    "test:guide": "node scripts/smoke-guide.mjs",
+    "test:install-resources": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File scripts/smoke-install-resources.ps1",
+    "licenses:installed": "node scripts/verify-installed-licenses.mjs",
+    "licenses:check": "node scripts/check-licenses.mjs",
+    "licenses:release": "node scripts/check-licenses.mjs --release",
+    "test:tools": "node scripts/smoke-tools.mjs",
+    "licenses:collect": "node scripts/collect-license-supplements.mjs && node scripts/collect-dependency-notices.mjs",
+    "licenses:inventory": "node scripts/collect-dependency-notices.mjs",
+    "licenses:redistribution": "node scripts/collect-redistribution-materials.mjs"
   },
   "dependencies": {
     "@arco-design/web-vue": "^2.57.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-opener": "^2.7.0",
+    "number-precision": "file:vendor/number-precision",
     "pinia": "~2.1.7",
     "tdesign-icons-vue-next": "^0.3.7",
     "tdesign-vue-next": "^1.15.4",
@@ -54,5 +65,8 @@
     "typescript-eslint": "^8.71.1",
     "vite": "^8.3.3",
     "vue-tsc": "^3.3.12"
+  },
+  "overrides": {
+    "number-precision": "$number-precision"
   }
 }

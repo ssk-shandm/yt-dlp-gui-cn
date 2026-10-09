@@ -1,5 +1,5 @@
 <template>
-  <BOX title="字幕下载" class="box">
+  <BOX title="字幕下载" class="box" data-guide="subtitles">
     <div class="box-inner">
       <BBB class="btn-sm" @click="download_video_introduction">
         下载描述

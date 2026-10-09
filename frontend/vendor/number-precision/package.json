@@ -1,0 +1,16 @@
+{
+  "name": "number-precision",
+  "version": "1.6.1",
+  "description": "Project-owned, API-compatible replacement for the subset of number-precision used by @arco-design/web-vue. Not the upstream package.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,3813 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "scope": "Technical notice/source review, not legal certification or clean-system acceptance",
+  "decisions": [
+    {
+      "id": "cargo:adler2@2.0.1",
+      "declared": "0BSD OR MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:aho-corasick@1.1.5",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:alloc-no-stdlib@3.0.0",
+      "declared": "BSD-3-Clause",
+      "applied": "BSD-3-Clause",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:alloc-stdlib@0.3.0",
+      "declared": "BSD-3-Clause",
+      "applied": "BSD-3-Clause",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:anyhow@1.0.104",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:atomic-waker@1.1.2",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:autocfg@1.5.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:base64@0.22.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:base64@0.23.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:bit-set@0.8.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:bit-vec@0.8.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:bitflags@1.3.2",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:bitflags@2.13.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:block-buffer@0.10.4",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:brotli-decompressor@6.0.1",
+      "declared": "BSD-3-Clause/MIT",
+      "applied": "BSD-3-Clause AND MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:brotli@9.0.0",
+      "declared": "BSD-3-Clause AND MIT",
+      "applied": "BSD-3-Clause AND MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:bs58@0.5.1",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:bumpalo@3.20.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:byteorder@1.5.0",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:bytes@1.12.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:camino@1.2.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cargo_metadata@0.19.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cargo_toml@1.0.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cargo-platform@0.1.9",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cc@1.6.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cfb@0.14.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cfg_aliases@0.2.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cfg-if@1.0.5",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:chacha20@0.10.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:chrono@0.4.45",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cookie@0.18.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cpufeatures@0.2.17",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cpufeatures@0.3.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:crc32fast@1.5.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:crossbeam-channel@0.5.17",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:crossbeam-utils@0.8.23",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:crypto-common@0.1.7",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cssparser-macros@0.7.1",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:cssparser@0.37.0",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ctor@1.0.13",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:darling_core@0.24.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:darling_macro@0.24.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:darling@0.24.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:defmt-macros@1.1.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:defmt-parser@1.0.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:defmt@1.1.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:deranged@0.5.8",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:derive_more-impl@2.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:derive_more@2.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:digest@0.10.7",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dirs-sys@0.5.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dirs@7.0.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:displaydoc@0.2.7",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dom_query@0.28.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dpi@0.1.2",
+      "declared": "Apache-2.0 AND MIT",
+      "applied": "Apache-2.0 AND MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dtoa-short@0.3.5",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dtoa@1.0.11",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dunce@1.0.5",
+      "declared": "CC0-1.0 OR MIT-0 OR Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:dyn-clone@1.0.20",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:embed-resource@3.0.11",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:equivalent@1.0.2",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:erased-serde@0.4.10",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:fastrand@2.5.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:fdeflate@0.3.7",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:find-msvc-tools@0.1.14",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:flate2@1.1.10",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:fnv@1.0.7",
+      "declared": "Apache-2.0 / MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:foldhash@0.2.0",
+      "declared": "Zlib",
+      "applied": "Zlib",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:form_urlencoded@1.2.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-channel@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-core@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-io@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-macro@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-sink@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-task@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:futures-util@0.3.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:generic-array@0.14.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:getrandom@0.2.17",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:getrandom@0.3.4",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:getrandom@0.4.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:glob@0.3.4",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hashbrown@0.12.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hashbrown@0.17.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:heck@0.5.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hex@0.4.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:html5ever@0.39.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:http-body-util@0.1.5",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:http-body@1.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:http@1.5.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:httparse@1.10.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hyper-rustls@0.27.10",
+      "declared": "Apache-2.0 OR ISC OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hyper-util@0.1.21",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:hyper@1.11.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ico@0.5.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_collections@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_locale_core@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_normalizer_data@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_normalizer@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_properties_data@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_properties@2.3.0",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:icu_provider@2.3.1",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ident_case@1.0.1",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:idna_adapter@1.2.2",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:idna@1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:indexmap@1.9.3",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:indexmap@2.14.2",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:infer@0.22.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ipnet@2.12.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:itoa@1.0.18",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:jiff-core@0.1.1",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:jiff-tzdb-platform@0.1.3",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:jiff-tzdb@0.1.8",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:jiff@0.2.37",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:json-patch@4.2.0",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:jsonptr@0.7.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:keyboard-types@0.8.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:libc@0.2.190",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:litemap@0.8.3",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:lock_api@0.4.14",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:log@0.4.34",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:lru-slab@0.1.3",
+      "declared": "MIT OR Apache-2.0 OR Zlib",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:markup5ever@0.39.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:memchr@2.8.3",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:mime@0.3.17",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:miniz_oxide@0.8.9",
+      "declared": "MIT OR Zlib OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:miniz_oxide@0.9.1",
+      "declared": "MIT OR Zlib OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:mio@1.2.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:muda@0.20.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:new_debug_unreachable@1.0.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:num-conv@0.2.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:num-traits@0.2.19",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:once_cell@1.21.4",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:open@5.4.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:option-ext@0.2.0",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:parking_lot_core@0.9.12",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:parking_lot@0.12.5",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:percent-encoding@2.3.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:phf_codegen@0.13.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:phf_generator@0.13.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:phf_macros@0.13.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:phf_shared@0.13.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:phf@0.13.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:pin-project-lite@0.2.17",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:plist@1.10.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:png@0.17.16",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:png@0.18.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:potential_utf@0.1.6",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:powerfmt@0.2.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:precomputed-hash@0.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:proc-macro2@1.0.107",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:quick-xml@0.42.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:quinn-proto@0.11.19",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:quinn-udp@0.5.16",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:quinn@0.11.12",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:quote@1.0.47",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rand_core@0.10.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rand_pcg@0.10.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rand@0.10.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:raw-window-handle@0.6.2",
+      "declared": "MIT OR Apache-2.0 OR Zlib",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ref-cast-impl@1.0.27",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ref-cast@1.0.27",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:regex-automata@0.4.18",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:regex-syntax@0.8.11",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:regex@1.13.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:reqwest@0.12.28",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rfd@0.16.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ring@0.17.14",
+      "declared": "Apache-2.0 AND ISC",
+      "applied": "Apache-2.0 AND ISC",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustc_version@0.4.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustc-hash@2.1.3",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustls-native-certs@0.8.4",
+      "declared": "Apache-2.0 OR ISC OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustls-pki-types@1.15.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustls-webpki@0.103.15",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:rustls@0.23.45",
+      "declared": "Apache-2.0 OR ISC OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:ryu@1.0.23",
+      "declared": "Apache-2.0 OR BSL-1.0",
+      "applied": "Apache-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:same-file@1.0.6",
+      "declared": "Unlicense/MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:schannel@0.1.29",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:schemars_derive@0.8.22",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:schemars@0.8.22",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:schemars@0.9.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:schemars@1.2.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:scopeguard@1.2.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:selectors@0.38.0",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:semver@1.0.28",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_core@1.0.229",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_derive_internals@0.29.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_derive@1.0.229",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_json@1.0.151",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_repr@0.1.21",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_spanned@1.1.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_urlencoded@0.7.1",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:serde_with_macros@3.24.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde_with@3.24.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde-untagged@0.1.9",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serde@1.0.229",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serialize-to-javascript-impl@0.1.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:serialize-to-javascript@0.1.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:servo_arc@0.4.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:sha2@0.10.9",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:shlex@2.0.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:simd-adler32@0.3.10",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:siphasher@1.0.4",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:slab@0.4.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:smallvec@1.16.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:socket2@0.6.5",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:softbuffer@0.4.8",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:stable_deref_trait@1.2.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:string_cache_codegen@0.6.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:string_cache@0.9.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:strsim@0.11.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:subtle@2.6.1",
+      "declared": "BSD-3-Clause",
+      "applied": "BSD-3-Clause",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:syn@2.0.119",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:syn@3.0.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:sync_wrapper@1.0.2",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:synstructure@0.14.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tao@0.37.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-build@2.7.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-codegen@2.7.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-macros@2.7.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-plugin-dialog@2.8.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-plugin-fs@2.6.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-plugin-opener@2.7.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-plugin@2.7.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-runtime-wry@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-runtime@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-utils@2.10.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri-winres@0.3.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tauri@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tendril@0.5.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:thiserror-impl@2.0.21",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:thiserror@2.0.21",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:time-core@0.1.9",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:time-macros@0.2.32",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:time@0.3.55",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tinystr@0.8.4",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tinyvec@1.13.3",
+      "declared": "Zlib OR Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tokio-macros@2.7.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tokio-rustls@0.26.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tokio-util@0.7.19",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tokio@1.53.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:toml_datetime@1.1.1+spec-1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:toml_parser@1.1.3+spec-1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:toml_writer@1.1.2+spec-1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:toml@1.1.6+spec-1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tower-http@0.6.11",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tower-layer@0.3.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tower-service@0.3.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tower@0.5.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tracing-attributes@0.1.31",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tracing-core@0.1.36",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tracing@0.1.44",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:tray-icon@0.25.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:try-lock@0.2.5",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:typeid@1.0.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:typenum@1.20.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:unicode-ident@1.0.26",
+      "declared": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "applied": "MIT AND Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:unicode-segmentation@1.13.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:untrusted@0.9.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:url@2.5.8",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:urlpattern@0.6.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:utf8_iter@1.0.4",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:uuid@1.27.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:version_check@0.9.5",
+      "declared": "MIT/Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:vswhom-sys@0.1.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:vswhom@0.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:walkdir@2.5.0",
+      "declared": "Unlicense/MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "Upstream dual-license convention; original supplied texts retained; BSD/MIT ambiguity handled cumulatively"
+    },
+    {
+      "id": "cargo:want@0.3.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:web_atoms@0.2.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:web-time@1.1.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:webview2-com-macros@0.8.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:webview2-com-sys@0.39.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:webview2-com@0.39.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:winapi-util@0.1.11",
+      "declared": "Unlicense OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:window-vibrancy@0.8.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows_x86_64_msvc@0.52.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows_x86_64_msvc@0.53.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-collections@0.3.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-core@0.62.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-future@0.3.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-implement@0.60.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-interface@0.59.3",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-link@0.2.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-numerics@0.3.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-registry@0.6.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-result@0.4.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-strings@0.5.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-sys@0.59.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-sys@0.60.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-sys@0.61.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-targets@0.52.6",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-targets@0.53.5",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-threading@0.2.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows-version@0.1.7",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:windows@0.62.2",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:winnow@1.0.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:winreg@0.55.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:writeable@0.6.4",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:wry@0.57.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:yoke-derive@0.8.4",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:yoke@0.8.3",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zerofrom-derive@0.1.8",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zerofrom@0.1.8",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zeroize@1.9.0",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zerotrie@0.2.5",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zerovec-derive@0.11.6",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zerovec@0.11.8",
+      "declared": "Unicode-3.0",
+      "applied": "Unicode-3.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zip@2.4.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zlib-rs@0.6.8",
+      "declared": "Zlib",
+      "applied": "Zlib",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zmij@1.0.23",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "cargo:zopfli@0.8.3",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "Windows Cargo conservative graph; includes build/proc-macro dependencies",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@arco-design/color@0.4.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@arco-design/web-vue@2.58.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@babel/helper-string-parser@7.29.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@babel/helper-validator-identifier@7.29.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@babel/parser@7.29.9",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@babel/runtime@7.29.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@babel/types@7.29.8",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint-community/eslint-utils@4.10.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint-community/regexpp@4.12.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/config-array@0.21.2",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/config-helpers@0.4.2",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/core@0.17.0",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/eslintrc@3.3.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/js@9.39.5",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/object-schema@2.1.7",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@eslint/plugin-kit@0.4.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@humanfs/core@0.19.2",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@humanfs/node@0.16.8",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@humanfs/types@0.15.0",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@humanwhocodes/module-importer@1.0.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@humanwhocodes/retry@0.4.3",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@jridgewell/sourcemap-codec@1.6.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@oxc-project/types@0.152.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@parcel/watcher-win32-x64@2.6.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@parcel/watcher@2.6.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@pkgr/core@0.3.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@popperjs/core@2.11.8",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@rolldown/binding-win32-x64-msvc@1.2.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@rolldown/pluginutils@1.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tauri-apps/api@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tauri-apps/cli-win32-x64-msvc@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tauri-apps/cli@2.12.1",
+      "declared": "Apache-2.0 OR MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tauri-apps/plugin-dialog@2.8.1",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tauri-apps/plugin-opener@2.7.0",
+      "declared": "MIT OR Apache-2.0",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@tsconfig/node22@22.0.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/estree@1.0.9",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/json-schema@7.0.15",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/lodash-es@4.17.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/lodash@4.17.25",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/node@22.20.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/sortablejs@1.15.9",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/tinycolor2@1.4.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@types/validator@13.15.10",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/eslint-plugin@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/parser@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/project-service@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/scope-manager@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/tsconfig-utils@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/type-utils@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/types@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/typescript-estree@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/utils@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@typescript-eslint/visitor-keys@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vitejs/plugin-vue@6.0.9",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@volar/language-core@2.4.28",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@volar/source-map@2.4.28",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@volar/typescript@2.4.28",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/compiler-core@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/compiler-dom@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/compiler-sfc@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/compiler-ssr@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/devtools-api@6.6.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/eslint-config-prettier@10.2.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/language-core@3.3.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/reactivity@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/runtime-core@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/runtime-dom@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/server-renderer@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/shared@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:@vue/tsconfig@0.7.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:acorn-jsx@5.3.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:acorn@8.18.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ajv@6.15.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:alien-signals@3.2.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ansi-styles@4.3.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ansi-styles@6.2.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:argparse@2.0.1",
+      "declared": "Python-2.0",
+      "applied": "Python-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:b-tween@0.3.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:b-validate@1.5.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:balanced-match@1.0.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:balanced-match@1.0.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:balanced-match@1.0.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:balanced-match@4.0.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:boolbase@1.0.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:brace-expansion@1.1.21",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:brace-expansion@1.1.21",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:brace-expansion@1.1.21",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:brace-expansion@5.0.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:callsites@3.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:chalk@4.1.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:chokidar@4.0.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color-convert@1.9.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color-convert@2.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color-name@1.1.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color-name@1.1.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color-string@1.9.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:color@3.2.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:compute-scroll-into-view@1.0.20",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:concat-map@0.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:cross-spawn@7.0.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:cssesc@3.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:csstype@3.2.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:dayjs@1.11.23",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:debug@4.4.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:deep-is@0.1.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:detect-libc@2.1.2",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:entities@7.0.1",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:escape-string-regexp@4.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-config-prettier@10.1.8",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-plugin-prettier@5.5.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-plugin-vue@10.11.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-scope@8.4.0",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-visitor-keys@3.4.3",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-visitor-keys@4.2.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-visitor-keys@4.2.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint-visitor-keys@5.0.1",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:eslint@9.39.5",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:espree@10.4.0",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:esquery@1.7.0",
+      "declared": "BSD-3-Clause",
+      "applied": "BSD-3-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:esrecurse@4.3.0",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:estraverse@5.3.0",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:estree-walker@2.0.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:esutils@2.0.3",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:fast-deep-equal@3.1.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:fast-diff@1.3.0",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:fast-json-stable-stringify@2.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:fast-levenshtein@2.0.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:fdir@6.5.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:file-entry-cache@8.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:find-up@5.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:flat-cache@4.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:flatted@3.4.4",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:glob-parent@6.0.2",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:globals@14.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:has-flag@4.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ignore@5.3.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ignore@7.0.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:immutable@5.1.9",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:import-fresh@3.3.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:imurmurhash@0.1.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:is-arrayish@0.3.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:is-extglob@2.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:is-glob@4.0.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:isexe@2.0.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:isexe@3.1.5",
+      "declared": "BlueOak-1.0.0",
+      "applied": "BlueOak-1.0.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:jiti@2.7.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:js-yaml@4.3.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:json-buffer@3.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:json-parse-even-better-errors@4.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:json-schema-traverse@0.4.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:json-stable-stringify-without-jsonify@1.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:keyv@4.5.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:levn@0.4.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:lightningcss-win32-x64-msvc@1.33.0",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:lightningcss@1.33.0",
+      "declared": "MPL-2.0",
+      "applied": "MPL-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:locate-path@6.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:lodash-es@4.18.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:lodash.merge@4.6.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:magic-string@0.30.21",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:memorystream@0.3.1",
+      "declared": "UNKNOWN",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "Published LICENSE grants MIT terms despite missing package metadata"
+    },
+    {
+      "id": "npm:minimatch@10.2.6",
+      "declared": "BlueOak-1.0.0",
+      "applied": "BlueOak-1.0.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:minimatch@3.1.5",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:minimatch@3.1.5",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:minimatch@3.1.5",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:mitt@3.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ms@2.1.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:muggle-string@0.4.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:nanoid@3.3.20",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:natural-compare@1.4.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:node-addon-api@7.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:npm-normalize-package-bin@4.0.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:npm-run-all2@8.0.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:nth-check@2.1.1",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:number-precision@1.6.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend runtime dependency via @arco-design/web-vue; project-owned replacement in frontend/vendor, not the upstream package",
+      "basis": "Project MIT LICENSE copied into the package; no upstream code copied verbatim"
+    },
+    {
+      "id": "npm:optionator@0.9.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:p-limit@3.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:p-locate@5.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:parent-module@1.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:path-browserify@1.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:path-exists@4.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:path-key@3.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:picocolors@1.1.1",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:picomatch@4.0.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:pidtree@0.6.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:pinia@2.1.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:playwright-core@1.63.0",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:postcss-selector-parser@7.1.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:postcss@8.5.29",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:prelude-ls@1.2.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:prettier-linter-helpers@1.0.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:prettier@3.6.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:punycode@2.3.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:read-package-json-fast@4.0.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:readdirp@4.1.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:resize-observer-polyfill@1.5.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:resolve-from@4.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:rolldown@1.2.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:sass@1.99.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:scroll-into-view-if-needed@2.2.31",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:semver@7.8.5",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:shebang-command@2.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:shebang-regex@3.0.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:shell-quote@1.12.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:simple-swizzle@0.2.4",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:sortablejs@1.15.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:source-map-js@1.2.2",
+      "declared": "BSD-3-Clause",
+      "applied": "BSD-3-Clause",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:strip-json-comments@3.1.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:supports-color@7.2.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:synckit@0.11.13",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:tdesign-icons-vue-next@0.3.7",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:tdesign-icons-vue-next@0.4.10",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:tdesign-vue-next@1.20.6",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:tinycolor2@1.6.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:tinyglobby@0.2.17",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:ts-api-utils@2.5.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:type-check@0.4.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:typescript-eslint@8.71.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:typescript@5.9.3",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:undici-types@6.21.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:uri-js@4.4.1",
+      "declared": "BSD-2-Clause",
+      "applied": "BSD-2-Clause",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:util-deprecate@1.0.2",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:validator@13.15.35",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vite@8.3.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vscode-uri@3.2.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue-demi@0.14.10",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue-eslint-parser@10.4.1",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue-router@4.3.3",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue-tsc@3.3.12",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:vue@3.5.43",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "frontend dependency; conservative coverage",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:which@2.0.2",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:which@5.0.0",
+      "declared": "ISC",
+      "applied": "ISC",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:word-wrap@1.2.5",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:xml-name-validator@5.0.0",
+      "declared": "Apache-2.0",
+      "applied": "Apache-2.0",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    },
+    {
+      "id": "npm:yocto-queue@0.1.0",
+      "declared": "MIT",
+      "applied": "MIT",
+      "scope": "build-only inventory; not shipped as an installed npm package",
+      "basis": "OR selects a supplied alternative; AND retains all required notices; original texts retained"
+    }
+  ],
+  "unresolved": [],
+  "limitations": [
+    "WebView2 absent-runtime clean-system install and non-admin/network failure paths not exercised",
+    "Silent/passive deployment requires prior notice and appropriate consent; NSIS interactive page does not establish consent for silent installs"
+  ]
+}

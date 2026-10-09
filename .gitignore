@@ -63,3 +63,38 @@ Thumbs.db
 # Never commit updater signing secrets
 *.key
 *.key.pub
+
+/frontend/src-tauri/target-*/
+/.ytdlp-gui-install-*/
+/.ytdlp-gui-bin-backup/
+
+# Screenshots, raw artwork, downloads and local test evidence
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp
+*.tif
+*.tiff
+*.psd
+*.mp4
+*.mkv
+*.webm
+*.mov
+*.mp3
+*.m4a
+*.wav
+*.part
+*.ytdl
+*.zip
+*.7z
+*.rar
+*.exe
+*.msi
+/screenshots/
+/test-results/
+/playwright-report/
+
+# Keep the application icons needed by Tauri/NSIS in clean checkouts.
+!/frontend/src-tauri/icons/*.png

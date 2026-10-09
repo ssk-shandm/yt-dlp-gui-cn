@@ -28,6 +28,9 @@
       </RouterLink>
     </nav>
     <div class="sidebar-footer">
+      <button type="button" class="nav-item guide-button" title="新手教程" @click="openGuide">
+        <IconQuestionCircle class="nav-icon" aria-hidden="true" /><span>新手教程</span>
+      </button>
       <RouterLink
         to="/about"
         class="nav-item"
@@ -46,7 +49,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { IconImage, IconVideoCamera, IconDownload, IconCode, IconInfoCircle } from '@arco-design/web-vue/es/icon'
+import { IconImage, IconVideoCamera, IconDownload, IconCode, IconInfoCircle, IconQuestionCircle } from '@arco-design/web-vue/es/icon'
 import { APP_PAGES } from '@/config/appInfo'
 import { useTaskStore } from '@/stores/taskStore'
 const icons = {
@@ -59,6 +62,9 @@ const icons = {
 const workspacePages = APP_PAGES.filter((page) => page.path !== '/about')
 const tasks = useTaskStore()
 const runningCount = computed(() => tasks.tasks.filter((task) => task.status === 'running').length)
+function openGuide() {
+  window.dispatchEvent(new Event('start-beginner-guide'))
+}
 </script>
 <style scoped>
 .leftbar {
@@ -139,6 +145,7 @@ const runningCount = computed(() => tasks.tasks.filter((task) => task.status ===
   margin-top: auto;
   padding-top: 20px;
 }
+.guide-button { width: 100%; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; }
 @media (max-width: 1100px) {
   .nav-item {
     padding: 0 10px;

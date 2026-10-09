@@ -25,6 +25,7 @@ pub struct TaskControl {
 pub struct TaskRegistry {
     next_id: AtomicU64,
     closing: AtomicBool,
+    tools_installing: AtomicBool,
     tasks: Mutex<HashMap<u64, Arc<TaskControl>>>,
 }
 impl TaskRegistry {
@@ -32,6 +33,9 @@ impl TaskRegistry {
         let mut tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
         if self.closing.load(Ordering::SeqCst) {
             return Err("应用正在退出".into());
+        }
+        if self.tools_installing.load(Ordering::SeqCst) {
+            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
         }
         if tasks.len() >= 4 {
             return Err("最多同时运行 4 个任务，请等待或取消已有任务".into());
@@ -54,8 +58,25 @@ impl TaskRegistry {
         kill_tree(task.pid.load(Ordering::SeqCst));
         Ok(())
     }
+    pub fn begin_tools_install(&self) -> Result<(), String> {
+        let tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
+        if self.closing.load(Ordering::SeqCst) || self.tools_installing.load(Ordering::SeqCst) {
+            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+        }
+        if !tasks.is_empty() {
+            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+        }
+        self.tools_installing.store(true, Ordering::SeqCst);
+        Ok(())
+    }
+    pub fn end_tools_install(&self) {
+        self.tools_installing.store(false, Ordering::SeqCst);
+    }
     pub fn begin_update(&self) -> Result<(), String> {
         let tasks = self.tasks.lock().map_err(|_| "任务锁不可用")?;
+        if self.closing.load(Ordering::SeqCst) || self.tools_installing.load(Ordering::SeqCst) {
+            return Err("工具安装或应用更新正在进行，请等待完成后重试".into());
+        }
         if !tasks.is_empty() {
             return Err("仍有下载或解析任务，请等待任务结束后安装更新".into());
         }
@@ -99,7 +120,7 @@ pub struct Tools {
 }
 pub fn tool_directory(app: &AppHandle) -> Result<PathBuf, String> {
     let development = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../bin");
-    if cfg!(debug_assertions) && development.is_dir() {
+    if cfg!(debug_assertions) {
         return Ok(development);
     }
     // NSIS places resources at the install root. Keep a resource_dir fallback for
@@ -133,7 +154,7 @@ pub fn resolve_tools(app: &AppHandle) -> Result<Tools, String> {
             ffmpeg_dir: dir,
         });
     }
-    Err("缺少下载工具。开发时请将 yt-dlp.exe、ffmpeg.exe 和 ffprobe.exe 放入根目录 bin/；安装版请重新安装完整安装包。".into())
+    Err("缺少下载工具。开发时请将 yt-dlp.exe、ffmpeg.exe 和 ffprobe.exe 放入根目录 bin/；安装版请在“关于”页下载安装工具。".into())
 }
 
 fn command(executable: &Path, args: &[String]) -> Command {
@@ -270,6 +291,19 @@ pub async fn execute(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn tool_install_and_application_update_are_mutually_exclusive() {
+        let registry = super::TaskRegistry::default();
+        registry.begin_tools_install().unwrap();
+        assert!(registry.begin_update().is_err());
+        assert!(registry.reserve().is_err());
+        registry.end_tools_install();
+        registry.begin_update().unwrap();
+        assert!(registry.begin_tools_install().is_err());
+        assert!(registry.begin_update().is_err());
+        registry.end_update();
+        assert!(registry.reserve().is_ok());
+    }
     #[test]
     fn updates_do_not_interrupt_tasks_and_block_new_jobs() {
         let registry = super::TaskRegistry::default();

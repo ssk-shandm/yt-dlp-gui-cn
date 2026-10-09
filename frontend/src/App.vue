@@ -14,7 +14,10 @@
       </header>
       <aside v-if="updater.message && route.path !== '/about'" class="update-notice" role="status" aria-live="polite">
         <span>{{ updater.message }}<template v-if="updater.phase === 'downloading' && updater.progress !== null"> {{ updater.progress }}%</template></span>
-        <router-link to="/about">更新设置</router-link>
+      </aside>
+      <aside v-if="!toolManager.checking && toolManager.status && !toolManager.status.installed && !toolManager.visible" class="update-notice" role="status">
+        <span>尚未安装可用的下载工具，解析和下载前请先安装。</span>
+        <button type="button" @click="tools.open()">安装工具</button>
       </aside>
       <div class="page-body">
         <router-view v-slot="{ Component }">
@@ -33,11 +36,16 @@
       </div>
     </main>
   </div>
+  <ToolSetupDialog />
+  <BeginnerGuideDialog />
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Tabs from './components/PageTabs.vue'
+import ToolSetupDialog from './components/ToolSetupDialog.vue'
+import BeginnerGuideDialog from './components/BeginnerGuideDialog.vue'
+import { tools, toolManager } from './services/tools'
 import { appUpdater } from './services/updater'
 const updater = appUpdater.state
 import { APP_PAGES } from './config/appInfo'
@@ -83,9 +91,8 @@ const currentPage = computed(() => APP_PAGES.find((page) => page.path === route.
   font-size: 13px;
   line-height: 1.6;
 }
-.update-notice { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 12px; padding: 10px 14px; background: #edf5ff; border: 1px solid var(--ui-border); border-radius: 10px; color: var(--ui-accent); font-size: 12px; line-height: 1.6; }
+.update-notice { display: flex; align-items: center; gap: 12px; margin: 0 4px 12px; padding: 10px 14px; background: #edf5ff; border: 1px solid var(--ui-border); border-radius: 10px; color: var(--ui-accent); font-size: 12px; line-height: 1.6; }
 .update-notice span { overflow-wrap: anywhere; }
-.update-notice a { flex-shrink: 0; color: inherit; }
 .page-body {
   flex: 1;
   min-height: 0;

@@ -2,7 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main",
   "description": "Main window: events, directory selection and allowlisted project links only",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "dialog:allow-open",
@@ -17,6 +19,15 @@
         },
         {
           "url": "https://github.com/ssk-shandm/yt-dlp-gui-cn/blob/main/LICENSE"
+        },
+        {
+          "url": "https://github.com/yt-dlp/yt-dlp"
+        },
+        {
+          "url": "https://ffmpeg.org/"
+        },
+        {
+          "url": "https://github.com/BtbN/FFmpeg-Builds"
         }
       ]
     }

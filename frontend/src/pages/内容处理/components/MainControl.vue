@@ -2,9 +2,10 @@
   <BOX title="主要用法" class="box">
     <div class="box-inner">
       <div class="row-group">
-        <BBB @click="selectPath" class="btn-sm">下载目录</BBB>
+        <BBB @click="selectPath" class="btn-sm" data-guide="download-directory">下载目录</BBB>
         <DiySelect
           v-model="settingsStore.retryTimes"
+          data-guide="retry-limit"
           :options="timeOptions"
           class="select-sm"
         />
@@ -19,6 +20,13 @@
         <BBB @click="get_cover_image" class="btn-sm">获取封面</BBB>
         <BBB @click="get_all_supported_sites" class="btn-sm">支持网站</BBB>
       </div>
+      <label class="fragment-setting">
+        <span>分片并发</span>
+        <select v-model.number="settingsStore.concurrentFragments" aria-label="分片并发数">
+          <option v-for="count in [1, 4, 8, 16]" :key="count" :value="count">{{ count }} 路{{ count === 8 ? '（推荐）' : '' }}</option>
+        </select>
+      </label>
+      <p class="tip-text">加速 DASH / HLS 分片；直链不变。频繁限流时调低并发。</p>
       <p class="tip-text">下载境外视频请自行使用梯子</p>
     </div>
   </BOX>
@@ -26,16 +34,18 @@
 
 <script lang="ts" setup>
 import { useUrlStore } from '@/stores/urlStore'
-import { selectDownloadDirectory, startDownload, listSupportedSites, saveRetryTimes } from '@/services/desktop'
+import { selectDownloadDirectory, startDownload, listSupportedSites, saveRetryTimes, saveConcurrentFragments } from '@/services/desktop'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { ref, watch } from 'vue'
 import BBB from '@/components/DiyButtom.vue'
 import BOX from '@/components/BoxStyle.vue'
 import DiySelect from '@/components/TxSelect.vue'
 import NotificationPlugin from 'tdesign-vue-next/es/notification/plugin'
+import { useRouter } from 'vue-router'
 
 const settingsStore = useSettingsStore()
 const urlStore = useUrlStore()
+const router = useRouter()
 
 const selectPath = () => {
   void selectDownloadDirectory()
@@ -50,9 +60,10 @@ const get_cover_image = () => {
   void startDownload({ url: urlStore.analyzedUrl, kind: 'thumbnail' })
 }
 
-const get_all_supported_sites = () => {
+const get_all_supported_sites = async () => {
   NotificationPlugin.info({ title: '系统提示', content: '正在获取列表，请稍后在终端查看...' })
-  void listSupportedSites()
+  await listSupportedSites()
+  await router.push('/page-four')
 }
 
 const timeOptions = ref([
@@ -66,6 +77,12 @@ watch(
   () => settingsStore.retryTimes,
   (newValue) => {
     if (settingsStore.initialized) void saveRetryTimes(newValue)
+  },
+)
+watch(
+  () => settingsStore.concurrentFragments,
+  (newValue) => {
+    if (settingsStore.initialized) void saveConcurrentFragments(newValue)
   },
 )
 </script>
@@ -112,6 +129,25 @@ watch(
   padding: 0.25rem 0.5rem;
 }
 
+.fragment-setting {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.fragment-setting select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.4rem;
+  color: var(--ui-text);
+  background: #fff;
+}
+.fragment-setting select:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 2px;
+}
 .tip-text {
   font-size: 0.65rem;
   color: #666;

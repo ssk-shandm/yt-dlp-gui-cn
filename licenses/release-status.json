@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-10-08",
+  "distribution": {
+    "bundlesToolBinaries": false,
+    "toolAcquisition": "user-selected upstream download after installation",
+    "webview2": {
+      "mode": "downloadBootstrapper",
+      "silent": true,
+      "installerNotice": "licenses/gui/INSTALLER-NOTICE.txt",
+      "bundlesFullRuntime": false
+    }
+  },
+  "pending": [
+    "WebView2 缺失 Runtime 的干净系统/标准用户/失败恢复实际验收未执行",
+    "静默部署确认表的部署方、负责人、终端范围及签署栏待部署方补全（docs/SILENT-DEPLOYMENT.md）"
+  ],
+  "historicalTools": {
+    "yt-dlp.exe": {
+      "version": "2026.08.19",
+      "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+      "provenance": "matches official SHA2-256SUMS"
+    },
+    "ffmpeg.exe": {
+      "version": "9.0.2-essentials_build-www.gyan.dev",
+      "sha256": "3256173f3f8bffd7df12227c68adf68025edb1832273a9530688a7bb1ed8edec",
+      "provenance": "local hash only; official archive comparison pending"
+    },
+    "ffprobe.exe": {
+      "version": "9.0.2-essentials_build-www.gyan.dev",
+      "sha256": "f0d36ecbbdd3bcfac3efa078c96c7271c2e68b3810595552ac3b7f17e9a65c52",
+      "provenance": "local hash only; official archive comparison pending"
+    }
+  },
+  "historicalPending": [
+    "yt-dlp 打包组件的完整对应源码及必要构建材料",
+    "FFmpeg 官方归档与本地两个 EXE 的逐一比对",
+    "FFmpeg 静态依赖的许可/版权通知、准确版本、源码、补丁和必要构建脚本",
+    "发布页可直接取得的完整对应源码归档/稳定入口及可用性核验"
+  ],
+  "completed": [
+    {
+      "item": "静默部署告知与同意确认（用户已确认）",
+      "checkedAt": "2026-10-09",
+      "scope": "静默安装 WebView2 Runtime 的告知文件已写入；用户确认同意。确认表的部署方、负责人、终端范围与签署栏尚未填写",
+      "evidence": "docs/SILENT-DEPLOYMENT.md; docs/BUILD.md"
+    },
+    {
+      "item": "number-precision@1.6.0 上游通知缺口：以项目自有 MIT 实现替换运行时依赖",
+      "checkedAt": "2026-10-09",
+      "scope": "frontend/vendor/number-precision 以 MIT 实现 Arco 使用的 times/plus/divide/round/enableBoundaryChecking；与 1.6.0 对 95,848 个样本比对，round 全部一致，其余仅有末位浮点差异（最大相对误差约 2e-14）",
+      "evidence": "frontend/vendor/number-precision/LICENSE; frontend/package.json overrides; frontend/tests/number-precision.test.mjs"
+    },
+    {
+      "item": "重新生成 GUI 安装包并核查已安装的 LICENSE 和 licenses/ 资源",
+      "checkedAt": "2026-10-08",
+      "scope": "继承正式资源映射的隔离 NSIS 安装包，850 个 LICENSE/licenses 文件逐字节比对（包含新增 MPL 精确源码、Microsoft 条款和 NSIS 安装告知）；测试安装卸载成功，正式版设置及 WebView2 注册表快照未变；交互向导及无 Runtime 路径未验收",
+      "evidence": "docs/TESTING.md"
+    },
+    {
+      "item": "GUI 依赖组合许可通知、MPL 精确版本源码与 WebView2 官方条款/安装告知",
+      "checkedAt": "2026-10-08",
+      "scope": "Windows x64 Cargo 图五个 MPL 组件及四个复合许可源码归档，Cargo.lock checksum 和所有归档文件逐字节核验；Microsoft 官网原始分发/最终用户条款；NSIS licenseFile 与独立 GUI 通知入口",
+      "evidence": "licenses/gui/README.md; licenses/gui/redistribution-materials.json; licenses/gui/review.json"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+GUI THIRD-PARTY SOURCE AND COPYRIGHT NOTICE
+
+MPL-2.0 source is supplied with this installer, under the original upstream MPL-2.0 terms. No local changes were found in the published crate files. These archives contain the preferred form for modification, not merely generated JavaScript or license identifiers.
+
+Open licenses/gui/sources/ in the installation directory. Each .crate is a gzip-compressed tar archive; extract it with 7-Zip or: tar -xzf <name-version>.crate
+The extracted upstream source includes its copyright/license notices; the accompanying license texts remain in packages/ or supplemental/. For selectors the full MPL-2.0 text is in supplemental/cargo_selectors_0.38.0-LICENSE-MPL-2.0.txt.
+
+cargo:brotli@9.0.0
+License: BSD-3-Clause AND MIT
+Local archive: gui/sources/brotli-9.0.0.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/brotli/9.0.0/download
+SHA-256: f8b851b75c23ca7873623d612fe49bd1989aeb03d08fb9432187eb253d3d4c6b
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:cssparser-macros@0.7.1
+License: MPL-2.0
+Local archive: gui/sources/cssparser-macros-0.7.1.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/cssparser-macros/0.7.1/download
+SHA-256: d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:cssparser@0.37.0
+License: MPL-2.0
+Local archive: gui/sources/cssparser-0.37.0.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/cssparser/0.37.0/download
+SHA-256: 8c9cdaae01d5ed7882b04d795e7f752f46ff52d2fa3b50a20d28c464510bba98
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:dpi@0.1.2
+License: Apache-2.0 AND MIT
+Local archive: gui/sources/dpi-0.1.2.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/dpi/0.1.2/download
+SHA-256: d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:dtoa-short@0.3.5
+License: MPL-2.0
+Local archive: gui/sources/dtoa-short-0.3.5.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/dtoa-short/0.3.5/download
+SHA-256: cd1511a7b6a56299bd043a9c167a6d2bfb37bf84a6dfceaba651168adfb43c87
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:option-ext@0.2.0
+License: MPL-2.0
+Local archive: gui/sources/option-ext-0.2.0.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/option-ext/0.2.0/download
+SHA-256: 04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:ring@0.17.14
+License: Apache-2.0 AND ISC
+Local archive: gui/sources/ring-0.17.14.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/ring/0.17.14/download
+SHA-256: a4689e6c2294d81e88dc6261c768b63bc4fcdb852be6d1352498b114f61383b7
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:selectors@0.38.0
+License: MPL-2.0
+Local archive: gui/sources/selectors-0.38.0.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/selectors/0.38.0/download
+SHA-256: 8adfa1c298912827b8a28b223b3b874357397ae706e6190acd9bf28cee99114d
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+cargo:unicode-ident@1.0.26
+License: (MIT OR Apache-2.0) AND Unicode-3.0
+Local archive: gui/sources/unicode-ident-1.0.26.crate
+Upstream exact-version archive: https://crates.io/api/v1/crates/unicode-ident/1.0.26/download
+SHA-256: d245f478577f809a851594d02313b640fb437e0bb33866753cff937863096954
+Modification status: No local changes: published archive files verified byte-for-byte against installed crate
+
+lightningcss and its npm Windows binding are build-time tools, not deployed executables. Their original notices remain in the conservative inventory; their MPL metadata does not relicense CSS/JS output. If later distributing the build tools themselves, include their preferred-form source and re-review that separate delivery.
+
+ring uses ISC, Apache-2.0, MIT and additional vendored component notices. The unmodified ring archive is also supplied to retain file-level attribution (including BoringSSL and fiat); do not describe all of ring as MIT or as OpenSSL-licensed merely because it derives from BoringSSL. dpi, brotli and unicode-ident archives likewise preserve composite-license notices.
+
+These GUI component source archives do NOT provide Corresponding Source for separately downloaded yt-dlp/FFmpeg or for Microsoft's independent runtime.

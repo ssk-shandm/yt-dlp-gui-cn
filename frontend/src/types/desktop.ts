@@ -17,7 +17,7 @@ export interface VideoMetadata {
   formats: VideoFormat[]
   subtitles: Subtitle[]
 }
-export interface Settings { downloadPath: string; retryTimes: string }
+export interface Settings { downloadPath: string; retryTimes: string; concurrentFragments: number; proxyEnabled: boolean; proxyUrl: string }
 export interface DownloadRequest {
   url: string
   kind: 'quick' | 'format' | 'combined' | 'subtitle' | 'thumbnail' | 'description'

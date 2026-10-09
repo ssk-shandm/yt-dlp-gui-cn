@@ -8,6 +8,84 @@ pub struct Settings {
     pub download_path: String,
     #[serde(default = "default_retries")]
     pub retry_times: String,
+    #[serde(default = "default_concurrent_fragments")]
+    pub concurrent_fragments: u8,
+    #[serde(default)]
+    pub proxy_enabled: bool,
+    #[serde(default = "default_proxy_url")]
+    pub proxy_url: String,
+}
+pub fn default_proxy_url() -> String {
+    "http://127.0.0.1:7890".into()
+}
+
+// Only local client endpoints are accepted; input is never shell-expanded.
+pub fn validate_proxy_url(input: &str) -> Result<String, String> {
+    let invalid =
+        || "请输入本地代理地址，例如 http://127.0.0.1:7890 或 socks5://127.0.0.1:1080".to_string();
+    let input = input.trim();
+    if input.len() > 512 || input.chars().any(|c| c.is_control() || c.is_whitespace()) {
+        return Err(invalid());
+    }
+    let proxy = url::Url::parse(input).map_err(|_| invalid())?;
+    let local = match proxy.host() {
+        Some(url::Host::Domain(host)) => {
+            host.eq_ignore_ascii_case("localhost")
+                || host
+                    .parse::<std::net::IpAddr>()
+                    .is_ok_and(|ip| ip.is_loopback())
+        }
+        Some(url::Host::Ipv4(host)) => host.is_loopback(),
+        Some(url::Host::Ipv6(host)) => host.is_loopback(),
+        None => false,
+    };
+    if !matches!(proxy.scheme(), "http" | "https" | "socks5" | "socks5h")
+        || !local
+        || proxy.port_or_known_default().is_none_or(|port| port == 0)
+        || !proxy.username().is_empty()
+        || proxy.password().is_some()
+        || !matches!(proxy.path(), "" | "/")
+        || proxy.query().is_some()
+        || proxy.fragment().is_some()
+    {
+        return Err(invalid());
+    }
+    Ok(proxy.to_string())
+}
+
+pub fn proxy_args(settings: &Settings) -> Result<Vec<String>, String> {
+    if settings.proxy_enabled {
+        Ok(vec![
+            "--proxy".into(),
+            validate_proxy_url(&settings.proxy_url)?,
+        ])
+    } else {
+        // Preserve environment/system routing when the override is disabled.
+        Ok(vec![])
+    }
+}
+
+pub fn configure_http_proxy(
+    builder: reqwest::ClientBuilder,
+    settings: &Settings,
+) -> Result<reqwest::ClientBuilder, String> {
+    if !settings.proxy_enabled {
+        return Ok(builder);
+    }
+    let proxy = reqwest::Proxy::all(validate_proxy_url(&settings.proxy_url)?)
+        .map_err(|_| "无法初始化本地代理".to_string())?;
+    // Explicit settings override OS/env proxies; do not fall back to direct.
+    Ok(builder.no_proxy().proxy(proxy))
+}
+pub fn default_concurrent_fragments() -> u8 {
+    8
+}
+pub fn validate_concurrent_fragments(value: u8) -> Result<(), String> {
+    if (1..=16).contains(&value) {
+        Ok(())
+    } else {
+        Err("分片并发数必须在 1–16 之间".into())
+    }
 }
 fn default_retries() -> String {
     "10".into()
@@ -91,6 +169,7 @@ pub fn download_args(
     ffmpeg_dir: &str,
 ) -> Result<Vec<String>, String> {
     validate_retries(&settings.retry_times)?;
+    validate_concurrent_fragments(settings.concurrent_fragments)?;
     let mut args: Vec<String> = [
         "--ignore-config",
         "--encoding",
@@ -107,10 +186,26 @@ pub fn download_args(
         "-P",
         &settings.download_path,
         "--progress",
+        "--progress-delta",
+        "0.5",
     ]
     .into_iter()
     .map(str::to_string)
     .collect();
+    args.extend(proxy_args(settings)?);
+    if matches!(
+        request.kind,
+        DownloadKind::Quick | DownloadKind::Format | DownloadKind::Combined
+    ) {
+        args.extend([
+            "--concurrent-fragments".into(),
+            settings.concurrent_fragments.to_string(),
+            "--fragment-retries".into(),
+            settings.retry_times.clone(),
+            "--buffer-size".into(),
+            "256K".into(),
+        ]);
+    }
     match request.kind {
         DownloadKind::Quick => {}
         DownloadKind::Format => {
@@ -201,8 +296,244 @@ mod tests {
         Settings {
             download_path: r"C:\测试 下载".into(),
             retry_times: "10".into(),
+            concurrent_fragments: default_concurrent_fragments(),
+            proxy_enabled: false,
+            proxy_url: default_proxy_url(),
         }
     }
+    #[test]
+    fn old_settings_keep_directory_and_retries_and_gain_parallel_default() {
+        let settings: Settings =
+            serde_json::from_value(json!({"downloadPath": r"C:\测试 下载", "retryTimes": "3"}))
+                .unwrap();
+        assert!(settings.download_path.contains("测试 下载"));
+        assert_eq!(settings.retry_times, "3");
+        assert_eq!(settings.concurrent_fragments, 8);
+        assert!(!settings.proxy_enabled);
+        assert_eq!(settings.proxy_url, default_proxy_url());
+    }
+    #[test]
+    fn media_downloads_use_bounded_parallelism_without_rate_limits() {
+        for count in [1, 4, 8, 16] {
+            let settings = Settings {
+                concurrent_fragments: count,
+                ..settings()
+            };
+            for kind in [
+                DownloadKind::Quick,
+                DownloadKind::Format,
+                DownloadKind::Combined,
+            ] {
+                let args = download_args(&request(kind), &settings, "bin").unwrap();
+                assert!(args
+                    .windows(2)
+                    .any(|pair| pair == ["--concurrent-fragments", &count.to_string()]));
+                assert!(args
+                    .windows(2)
+                    .any(|pair| pair == ["--fragment-retries", "10"]));
+                assert!(args
+                    .windows(2)
+                    .any(|pair| pair == ["--progress-delta", "0.5"]));
+                assert!(!args
+                    .iter()
+                    .any(|s| s == "--limit-rate" || s == "--no-check-certificates"));
+            }
+        }
+        for count in [0, 17, 255] {
+            let settings = Settings {
+                concurrent_fragments: count,
+                ..settings()
+            };
+            assert!(download_args(&request(DownloadKind::Quick), &settings, "bin").is_err());
+        }
+        for kind in [
+            DownloadKind::Subtitle,
+            DownloadKind::Thumbnail,
+            DownloadKind::Description,
+        ] {
+            assert!(!download_args(&request(kind), &settings(), "bin")
+                .unwrap()
+                .iter()
+                .any(|s| s == "--concurrent-fragments"));
+        }
+    }
+    #[test]
+    fn local_proxy_urls_reject_nonlocal_hosts_credentials_and_options() {
+        for value in [
+            "http://127.0.0.1:7890",
+            "https://localhost:7890",
+            "http://127.0.0.1:80",
+            "socks5://127.0.0.1:1080",
+            "socks5h://localhost:1080",
+            "socks5://[::1]:1080",
+            " http://127.0.0.1:7890 ",
+        ] {
+            assert!(validate_proxy_url(value).is_ok(), "{value}");
+        }
+        for value in [
+            "",
+            "--exec=calc",
+            "ftp://127.0.0.1:7890",
+            "http://example.com:7890",
+            "http://192.168.1.1:7890",
+            "http://localhost.evil:7890",
+            "http://[::2]:7890",
+            "http://user:pass@127.0.0.1:7890",
+            "http://127.0.0.1:0",
+            "socks5://localhost",
+            "http://127.0.0.1:65536",
+            "http://127.0.0.1:7890/path",
+            "http://127.0.0.1:7890?x=1",
+            "http://127.0.0.1:7890#fragment",
+            "http://127.0.0.1:7890\n--exec=calc",
+        ] {
+            assert!(validate_proxy_url(value).is_err(), "{value}");
+        }
+    }
+
+    #[test]
+    fn all_modes_share_proxy_args_and_disabled_settings_preserve_old_routing() {
+        let mut settings = settings();
+        settings.proxy_enabled = true;
+        settings.proxy_url = "socks5://127.0.0.1:1080".into();
+        for kind in [
+            DownloadKind::Quick,
+            DownloadKind::Format,
+            DownloadKind::Combined,
+            DownloadKind::Subtitle,
+            DownloadKind::Thumbnail,
+            DownloadKind::Description,
+        ] {
+            let args = download_args(&request(kind), &settings, "bin").unwrap();
+            let index = args.iter().position(|a| a == "--proxy").unwrap();
+            assert_eq!(
+                args[index + 1],
+                validate_proxy_url(&settings.proxy_url).unwrap()
+            );
+            assert!(index < args.iter().position(|a| a == "--").unwrap());
+        }
+        let roundtrip: Settings =
+            serde_json::from_value(serde_json::to_value(&settings).unwrap()).unwrap();
+        assert!(roundtrip.proxy_enabled);
+        assert_eq!(roundtrip.proxy_url, settings.proxy_url);
+        settings.proxy_url = "bad address".into();
+        assert!(proxy_args(&settings).is_err());
+        settings.proxy_enabled = false;
+        assert!(proxy_args(&settings).unwrap().is_empty());
+        assert!(
+            !download_args(&request(DownloadKind::Quick), &settings, "bin")
+                .unwrap()
+                .contains(&"--proxy".into())
+        );
+    }
+
+    #[tokio::test]
+    async fn explicit_http_and_socks5h_proxies_route_requests_without_origin_dns() {
+        use std::time::Duration;
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+        for scheme in ["http", "socks5h"] {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let port = listener.local_addr().unwrap().port();
+            let server = tokio::spawn(async move {
+                let (mut stream, _) =
+                    tokio::time::timeout(Duration::from_secs(3), listener.accept())
+                        .await
+                        .unwrap()
+                        .unwrap();
+                if scheme == "socks5h" {
+                    let mut greeting = [0; 2];
+                    stream.read_exact(&mut greeting).await.unwrap();
+                    assert_eq!(greeting[0], 5);
+                    let mut methods = vec![0; greeting[1] as usize];
+                    stream.read_exact(&mut methods).await.unwrap();
+                    stream.write_all(&[5, 0]).await.unwrap();
+                    let mut connect = [0; 5];
+                    stream.read_exact(&mut connect).await.unwrap();
+                    assert_eq!(&connect[..4], &[5, 1, 0, 3]);
+                    let mut host = vec![0; connect[4] as usize];
+                    stream.read_exact(&mut host).await.unwrap();
+                    assert_eq!(host, b"proxy-routing.invalid");
+                    let mut port = [0; 2];
+                    stream.read_exact(&mut port).await.unwrap();
+                    assert_eq!(port, [0, 80]);
+                    stream
+                        .write_all(&[5, 0, 0, 1, 127, 0, 0, 1, 0, 80])
+                        .await
+                        .unwrap();
+                }
+                let mut header = Vec::new();
+                loop {
+                    header.push(stream.read_u8().await.unwrap());
+                    if header.ends_with(b"\r\n\r\n") {
+                        break;
+                    }
+                    assert!(header.len() < 8192);
+                }
+                let expected = if scheme == "http" {
+                    "GET http://proxy-routing.invalid/test HTTP/1.1"
+                } else {
+                    "GET /test HTTP/1.1"
+                };
+                assert!(String::from_utf8(header).unwrap().starts_with(expected));
+                stream
+                    .write_all(
+                        b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nOK",
+                    )
+                    .await
+                    .unwrap();
+            });
+            let settings = Settings {
+                proxy_enabled: true,
+                proxy_url: format!("{scheme}://127.0.0.1:{port}"),
+                ..settings()
+            };
+            let client = configure_http_proxy(reqwest::Client::builder(), &settings)
+                .unwrap()
+                .timeout(Duration::from_secs(3))
+                .build()
+                .unwrap();
+            assert_eq!(
+                client
+                    .get("http://proxy-routing.invalid/test")
+                    .send()
+                    .await
+                    .unwrap()
+                    .text()
+                    .await
+                    .unwrap(),
+                "OK"
+            );
+            server.await.unwrap();
+        }
+    }
+
+    #[tokio::test]
+    async fn unavailable_local_proxy_does_not_fall_back_to_direct() {
+        let origin = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let proxy = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let settings = Settings {
+            proxy_enabled: true,
+            proxy_url: format!("http://{}", proxy.local_addr().unwrap()),
+            ..settings()
+        };
+        drop(proxy);
+        let client = configure_http_proxy(reqwest::Client::builder(), &settings)
+            .unwrap()
+            .timeout(std::time::Duration::from_secs(2))
+            .build()
+            .unwrap();
+        assert!(client
+            .get(format!("http://{}/video", origin.local_addr().unwrap()))
+            .send()
+            .await
+            .is_err());
+        assert!(
+            tokio::time::timeout(std::time::Duration::from_millis(50), origin.accept())
+                .await
+                .is_err()
+        );
+    }
+
     #[test]
     fn urls_reject_options_and_local_files() {
         for value in [

@@ -1,62 +1,113 @@
 # 测试与验收
 
-## 自动化（frontend 目录）
+本文记录自动化检查、各次本地验证结果，以及尚未完成的验收项。**自动化检查通过不等于安装、网络、站点或发行审核已通过**；所有未执行的项目统一列在[未验收范围](#未验收范围)。
+
+## 当前状态（2026-10-09，未发布源码）
+
+已发布版本仍为 2.0.1。本地工作树包含未发布的变更，下表为最近一次执行结果。
+
+| 检查 | 结果 |
+| --- | --- |
+| `npm test` | 55 / 55 通过 |
+| `npm run build` | 通过 |
+| `npm run lint:check` | 通过 |
+| `npm run test:ui` | 通过 |
+| `npm run licenses:inventory` | 543 个包，unresolved 为 0 |
+| `npm run licenses:check` | 通过 |
+| `npm run licenses:release` | 失败（预期）：仅剩 WebView2 干净系统验收与静默部署表待办，pending 未被清空 |
+
+Rust 与桌面烟测的最近记录见 [2026-10-08](#2026-10-08更新链路下载优化与隔离安装)，本次未重跑。
+
+## 自动化命令
+
+在 `frontend/` 目录执行：
 
 ```powershell
 npm run build
 npm run lint:check
 npm test
 npm run test:ui
+npm run test:guide
+npm run tools:check
+npm run licenses:check
+npm audit
 cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 npm run test:rust
+cargo clippy --manifest-path src-tauri/Cargo.toml --locked --all-targets -- -D warnings
 npm run desktop:build
 npm run test:desktop
 ```
 
-前端测试覆盖任务事件更新、历史数量限制、日志上限、设置初始化、协议注册、NSIS/资源配置和自动更新控制器（手动更新、无更新、并发点击、任务延后、偏好关闭、网络错误及浏览器预览限制）。Rust 测试覆盖 URL / 参数验证、下载模式、元数据映射、UTF-8 流、JSON 大小限制、任务并发限制和更新安装器校验。
+- 前端测试覆盖任务事件、历史数量限制、设置初始化、协议注册、NSIS/资源配置、自动更新控制器、许可材料、项目自有 number-precision 替换和文档相对链接。
+- Rust 测试覆盖 URL/参数验证、下载模式、元数据映射、UTF-8 流、JSON 大小限制、任务并发限制和更新安装器校验。
+- `npm run tools:check` 只检查可选的本地开发工具，不代表安装包包含这些工具。
+- 测试通过不代表目标网站一定可下载；站点、登录、地区限制和 yt-dlp 版本都会影响结果。
 
-测试通过不代表目标网站一定可下载；站点、登录、地区限制和 yt-dlp 版本会影响结果。
+## 历史验证记录
 
-## 项目整理验证（未发布变更）
+### 2026-10-09：number-precision 项目自有替换
 
-验证日期：**2026-10-06**。仅整理当前工作树和本地产物，不改变应用 2.0.1 版本号。
+- 替换：`frontend/vendor/number-precision`（MIT，版本 1.6.1），通过 `$number-precision` override 替代上游 1.6.0。未复制上游源码，上游仅用于行为对照。
+- 对照：与上游 1.6.0 比较 95,848 个样本。`round` 结果完全一致；`plus`、`times`、`divide` 的最大相对误差约 2e-14，属于浮点表示差异。除零时 Infinity / -Infinity / NaN 与上游一致。
+- 单元测试：新增 `number-precision.test.mjs` 5 项，覆盖浮点误差、极小商、负数、四舍五入及无负零。
+- 依赖与许可：`licenses:inventory` 为 543 个包、unresolved 为 0；`licenses:redistribution` 重新生成后 `licenses:check` 通过。
+- 构建与界面：`npm run build`、`npm run lint:check`、`npm run test:ui` 通过。
 
-- 前端测试 **24/24** 通过；新增配置图标/许可证存在性、旧源码/示例清理、相对文档链接有效性及发布说明格式策略检查。测试不要求本地 `bin/`，外部工具由打包预检独立验证。
-- TypeScript/Vite 构建、ESLint、UI 浏览器烟测、三个工具预检通过。Vite 仍有组件库大 chunk 提示，不属于本次引入的构建错误。
-- Rust 常规测试 **12/12** 通过，网络烟测 1 项按默认设置忽略；cargo fmt 与 cargo clippy（all-targets / -D warnings）通过。本次未重跑联网下载测试。
-- 依赖清理移除 3 个未使用的直接依赖及 22 个 lockfile 包条目；未添加包，也未改变保留包的锁定版本。
-- 旧文件及本地产物合计清理 **654,717,629 bytes（约 624 MiB）**，不计 npm 移除依赖释放的额外空间。下载工具、原始图稿、新版构建缓存、用户设置和下载内容保留。
-- 已发布的 2.0.1 安装包保留，SHA-256 仍为 `02f471aff9cf4480f989ff8ea39b56c249e3a9de50bba70cec5795130656aa24`；本次未重新打包或发布，不复用旧安装包来声称已包含本次源码整理。项目整理本身未改动已发布说明；后续发布说明格式调整不改变安装包。
+### 2026-10-08：更新链路、下载优化与隔离安装
 
-## 更新下载网络烟测（2.0.1 修复）
+- **更新链路**：Release 检查使用原生 HTTPS 客户端，与安装包下载共享代理和系统根证书。解析器测试覆盖 x64 NSIS 选择、digest 校验和版本比较；digest 缺失或不匹配时不安装，校验发生在任务更新锁之前。
+- **联网烟测**：读取 GitHub latest（v2.0.1）的 NSIS 资产，完整读取 115,571,498 bytes，MZ、Content-Length 和 SHA-256 均通过。烟测不写入或启动安装器。
+- **下载优化**：媒体分片默认 8 路（可选 1 / 4 / 8 / 16）；工具大文件最多 4 路 Range。任意分段失败时立即丢弃其他写入；前端等取消 IPC 结束后才允许重试。受控 8 MiB 本地传输中，单路 851.69 ms、4 路 527.18 ms，只说明并发实现有效，不代表互联网速度提升。
+- **新手教程烟测**：16 步高亮、三种窗口尺寸；截图比较允许最大 1 级通道的合成舍入差，实际遮暗仍会失败。
+- **隔离安装**（非干净系统）：使用 `tauri.install-test.conf.json` 构建 `yt-dlp GUI Install Test`，WebView2 模式为 `skip`。中文与空格路径静默安装、首次启动、配置隔离、更新 IPC 身份拒绝、同版本覆盖重装及卸载均通过。正式版安装文件、配置、注册表快照和 WebView2 注册表记录前后一致。
+- **许可资源核验**：隔离包安装后，`npm run licenses:installed` 逐字节核验根 LICENSE 和 licenses/ 全部文件。初次结果为 802 个文件、4,213,143 bytes 一致；安装目录没有三个工具 EXE。证据位于忽略目录 `.ytdlp-gui-install-resources-*/result.json`，以最新一次为准。
+- **其他**：JS 33 / 33 通过；Rust 22 项通过，1 项网络烟测按默认设置忽略；ESLint、cargo fmt 和 clippy 通过。
 
-常规 Rust 测试不访问互联网。可单独运行以下忽略测试，使用生产下载器相同的系统证书、系统代理和超时配置，完整读取 GitHub Release 安装包；检查 EXE 的 MZ 标识及 Content-Length，不写入或启动安装器。
+```powershell
+npm run desktop:build:install-test
+npm run test:install-resources
+```
+
+`test:install-resources` 在测试身份已有安装时拒绝覆盖，卸载前确认目标位于本次专属测试目录，不安装或卸载正式版和 WebView2。测试版卸载时使用 NSIS `_?=` 参数等待完成，目录内保留的卸载器是本地证据，不是正式版残留。
+
+该隔离测试只证明“重新生成安装包并核查已安装的 LICENSE 与 licenses/ 资源”，不等于正式身份跨版本升级或干净系统验收。
+
+### 2026-10-06：2.0.0 与 2.0.1 发布
+
+- **2.0.1**：修复更新下载的证书信任问题，改用系统根证书并启用 Windows 系统代理，保持 HTTPS 校验。在本机复现 `InvalidCertificate(UnknownIssuer)` 后，修复版同一 URL 可完整读取。前端 20 / 20、Rust 12 / 12 通过；网络烟测单独运行通过。未验证 PAC、代理认证、离线及其他机器环境。
+- **2.0.0**：本地构建 115,596,191 bytes，SHA-256 `de5fb0162348e6b7ed364cfd1be4a97ec3711607dae2bb1a5ad730666a8966a8`。前端 19 / 19、Rust 10 / 10 通过；`npm run test:desktop` 覆盖六种下载模式、解析、封面、字幕、中文与空格路径、并发限制、取消和退出清理。
+
+## 更新下载网络烟测
+
+常规 Rust 测试不访问互联网。可单独运行以下忽略测试，使用生产下载器相同的系统证书、代理和超时配置，完整读取 GitHub Release 安装包，检查 EXE 的 MZ 标识、Content-Length 及 GitHub 资产 SHA-256。不写入或启动安装器。
 
 ```powershell
 # 在 frontend 目录执行；也可改为待验证的 GitHub Release 安装包 URL。
-$env:YT_DLP_GUI_UPDATE_TEST_URL = 'https://github.com/ssk-shandm/yt-dlp-gui-cn/releases/download/v2.0.0/yt-dlp.GUI_2.0.0_x64-setup.exe'
+$release = Invoke-RestMethod 'https://api.github.com/repos/ssk-shandm/yt-dlp-gui-cn/releases/latest' -Headers @{ 'User-Agent' = 'yt-dlp-gui-cn-test' }
+$asset = $release.assets | Where-Object { $_.name -like '*_x64-setup.exe' } | Select-Object -First 1
+if (-not $asset.digest.StartsWith('sha256:')) { throw 'Missing GitHub asset SHA-256' }
+$env:YT_DLP_GUI_UPDATE_TEST_URL = $asset.browser_download_url
+$env:YT_DLP_GUI_UPDATE_TEST_SHA256 = $asset.digest.Substring(7)
 cargo test --manifest-path src-tauri/Cargo.toml github_release_download_network_smoke -- --ignored --nocapture
 ```
 
-该测试会产生完整安装包的网络流量（v2.0.0 约 110 MiB）。不代表 NSIS 覆盖安装或所有网络环境已验收。
+该测试会产生完整安装包的网络流量（约 110 MiB）。不代表 NSIS 覆盖安装或所有网络环境已验收。
 
-本机修复前使用原下载器复现 `InvalidCertificate(UnknownIssuer)`；系统证书配置修复后，同一 URL 完整读取 115,596,191 字节，HTTPS、EXE 标识和 Content-Length 验证通过。2.0.1 前端测试 20/20、Rust 常规测试 12/12 通过；网络烟测单独运行通过。Windows 系统代理支持由依赖特性启用，尚未逐一验证 PAC、代理认证、离线及其他机器环境。
+## 界面与桌面烟测
 
-本地 2.0.1 验证：TypeScript/Vite 构建、ESLint、cargo fmt、cargo clippy（all-targets / -D warnings）、UI 浏览器烟测及 NSIS 打包通过。已生成并发布 v2.0.1 安装包；未执行本次 NSIS 覆盖安装。
+**浏览器界面烟测**（`npm run test:ui`）：使用本机 Edge / Chrome 无头模式，独立启动 1421 端口的 Vite 服务，结束时关闭浏览器和服务。不访问真实视频站点，不创建下载任务；找不到浏览器时可通过 `UI_BROWSER_PATH` 指定 Chromium。覆盖封面状态、加载中防重复操作、路由切换后输入保留、关于页链接与 opener 调用分支、非白名单链接拒绝、减少动画偏好、任务数量徽标、三个工具配置弹窗，以及所有页面在 1280 / 960 / 640px 宽度下的水平溢出检查。通过不等于原生系统浏览器已实际启动。
 
-安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.1_x64-setup.exe`；大小 **115571498 bytes**。SHA-256：`02f471aff9cf4480f989ff8ea39b56c249e3a9de50bba70cec5795130656aa24`。
+**真实桌面烟测**（`npm run test:desktop`）：使用 release EXE 与随应用资源提供的下载工具，工作目录设为临时目录。通过 playwright-core 连接测试进程 WebView2 的临时 CDP 端口，正式配置不开放调试端口。覆盖真实 Vue 输入与分析操作、快速/指定格式/音视频组合下载、封面、简介、字幕、中文与空格输出目录、非 HTTP URL 拒绝、404 错误事件、支持网站列表、4 任务并发限制、取消、原生窗口关闭及子进程清理。媒体由本机 FFmpeg 生成并经 loopback HTTP 提供，不代表外部视频网站兼容性。
 
-## 界面浏览器烟测
+脚本会短暂打开应用窗口并修改设置，结束时尝试恢复。**不要与日常使用的应用实例同时运行**，两者共用配置目录。测试安装后的 EXE 可传入路径：
 
-`npm run test:ui` 使用本机 Edge / Chrome 的无头模式，独立启动 1421 端口的 Vite 服务，结束时关闭浏览器和服务。不访问真实视频站点、不创建下载任务；找不到默认浏览器时通过 `UI_BROWSER_PATH` 指定 Chromium 可执行文件。
-
-覆盖初始空封面、有效封面预览、封面失败回退、加载中按钮防重复操作、路由切换后输入保留、关于页浏览器链接与桌面 opener 调用分支、非白名单链接拒绝、减少动画偏好、真实任务数量徽标，以及所有页面在 1280 / 960 / 640px 宽度下的水平溢出检查。截图保存在运行输出提示的系统临时目录。
-
-Rust 与 UI 测试通过不等于已经验证原生系统浏览器实际启动；关于页链接仍需在桌面运行时手动点击验收。
-
-精简界面检查另覆盖侧栏品牌和顶部徽标移除、关于页四项信息及两个分区、更新偏好开关的鼠标/键盘操作与新页面恢复、FFmpeg 完整版入口禁用。自动更新单元测试覆盖 GitHub Releases 检查、手动更新、签名安装失败、任务延后、重复点击和浏览器预览保护；UI 测试不会执行真实安装。
+```powershell
+node scripts/smoke-desktop.mjs 'C:\实际安装目录\yt-dlp-gui-cn.exe'
+```
 
 ## 桌面 / 安装后手动清单
+
+以下项目保持未勾选，自动化的部分覆盖不能代表所有安装与交互场景通过。
 
 - [ ] 初始不显示示例封面；关于页的版本、许可证和仓库链接能在系统浏览器打开。
 - [ ] 启动窗口正常，不依赖 Python、Chrome 或单独的 Node.js。
@@ -72,59 +123,17 @@ Rust 与 UI 测试通过不等于已经验证原生系统浏览器实际启动�
 - [ ] 日志里的 HTML-like 文本只是文本，不执行脚本。
 - [ ] NSIS 在标准用户中安装、覆盖安装和卸载正常；下载目录和设置的数据保留策略符合预期。
 - [ ] 无 WebView2 机器验证联网引导；若发布离线包，单独测试无网络安装。
-- [ ] 用非开发路径启动安装程序，确认三个工具从安装资源目录加载。
+- [ ] 用非开发路径启动安装后的 GUI，确认首次运行引导安装工具；安装后从主程序目录下的 bin/ 加载三个工具。
 - [ ] 在已安装版本的“关于”页手动检查更新：有新 Release 时显示版本，下载并启动 `*-setup.exe`，应用随后退出。
 - [ ] 自动更新关闭时启动应用不下载；手动检查仍可用；有活动任务时更新进入等待状态，任务结束后只安装一次。
 - [ ] 没有 `*-setup.exe`、使用开发版/便携版、GitHub API 失败或下载不完整时，界面显示错误且不替换当前程序。
 
-## 本地验证记录（v2.0.0 历史记录）
+## 未验收范围
 
-验证日期：**2026-10-06**。环境：Windows x64、Node.js 24.19.0、Rust 1.98.1 MSVC、本机 WebView2；使用本地 bin 中记录于 THIRD_PARTY.md 的工具。
-
-| 检查 | 本次结果 |
-| --- | --- |
-| TypeScript + Vite production build | 通过；保留组件库带来大 chunk 提示，不是构建错误 |
-| ESLint | 通过 |
-| 前端状态 / 配置 / 更新控制器测试 | 19 / 19 通过 |
-| Rust 单元测试 | 10 / 10 通过 |
-| cargo fmt --check | 通过 |
-| cargo clippy --all-targets -- -D warnings | 通过 |
-| npm audit | 0 vulnerabilities（仅指该次 JS 依赖审计，不等于完整安全审计） |
-| Tauri release / NSIS x64 构建 | 通过 |
-| WebView2 真实桌面烟测 | 通过，范围见下节 |
-
-安装包：`frontend/src-tauri/target/release/bundle/nsis/yt-dlp GUI_2.0.0_x64-setup.exe`。本次文件大小 **115,596,191 bytes（约 110.24 MiB）**。未签名；代码与 `v2.0.0` 标签已推送，GitHub Release 已公开发布。发布并不代表下方未验收项目通过；第三方分发材料审核状态见 THIRD_PARTY.md。
-
-安装包 SHA-256：`de5fb0162348e6b7ed364cfd1be4a97ec3711607dae2bb1a5ad730666a8966a8`。
-
-### 桌面烟测范围
-
-`npm run test:desktop` 使用真实 release EXE 与随应用资源提供的下载工具；工作目录故意设为临时目录，避免依赖仓库当前目录。通过 playwright-core 连接该测试进程 WebView2 的本地临时 CDP 端口，正式应用配置不开放调试端口。
-
-- 由 FFmpeg 生成本地 2 秒视频、DASH 音视频分片、封面及人工字幕，通过 loopback HTTP 提供测试数据，不依赖外部站点。
-- 通过真实 Vue 输入和“分析链接”按钮验证 IPC 服务、状态更新及封面显示。
-- 保存/读取中文与空格下载路径，测试结束恢复原设置。
-- 快速下载、指定格式、音视频组合及 FFmpeg 合并、封面、简介、字幕均成功，并检查实际输出文件。
-- 非 HTTP URL 被拒绝；404 下载产生 error 任务事件；支持网站列表任务成功。
-- 4 个真实等待任务占满并发额度，第 5 个被拒绝；取消产生 cancelled 事件，并确认观察到的下载工具进程及其下载工具后代进程消失。
-- 活跃下载时请求原生窗口正常关闭，确认应用成功退出且观察到的下载工具进程不残留。
-- 未收到 WebView 页面异常。
-
-脚本需要 Windows、可运行的 release EXE、本地 bin 工具和 WebView2。会短暂打开应用窗口、修改设置并在 finally 尝试恢复，使用独立临时数据并仅清理自身创建的目录。**不要与日常使用的应用实例同时运行**，两者共用配置目录。进程检查会调用 PowerShell / CIM；首次构建后执行即可，无需单独安装 Playwright 浏览器。
-
-测试安装后的 EXE 可在 frontend 目录传入路径：
-
-```powershell
-node scripts/smoke-desktop.mjs 'C:\实际安装目录\yt-dlp-gui-cn.exe'
-```
-
-### 本次尚未验证
-
-- 未执行 NSIS 安装、覆盖升级、卸载、干净机器及标准用户账户验收。
-- 未执行无 WebView2 / 无网络安装、SmartScreen 与证书签名验收。
-- 未逐站验证 YouTube、Bilibili 等实际互联网视频、登录或地区限制场景。
-- 未逐项手动验证原生目录对话框、全部 UI 控件、重启后的设置、损坏配置回退、封装编码兼容性和播放效果。
-- 退出测试覆盖正常窗口关闭；未保证应用被强制结束、系统崩溃时没有残留进程。
-- 第三方许可证、对应源码、工具下载链尚未完成发行审核；见 THIRD_PARTY.md。
-
-上方手动清单保持未勾选，避免把自动化的部分覆盖误写为所有安装与交互场景通过。
+- **WebView2 与干净系统**：无 Runtime 的干净 Windows 机器、离线引导器、断网、标准用户及失败恢复。当前由 [readme.md](../readme.md#todo) 跟踪。
+- **安装与升级**：正式产品身份下的跨版本覆盖升级、交互式安装向导、卸载时“删除应用数据”选项、UAC 与权限边界。
+- **签名与提示**：SmartScreen 表现及代码签名。
+- **真实网络**：真实上游两种工具配置的完整下载、安装、中断与升级；YouTube、Bilibili 等站点的实际下载、登录或地区限制场景。
+- **原生交互**：原生目录对话框、全部 UI 控件的手动操作、重启后的设置、损坏配置回退、封装编码兼容性和播放效果。
+- **进程退出**：强制结束或系统崩溃后的子进程残留；当前覆盖的是正常窗口关闭。
+- **许可审核**：第三方依赖的完整许可与源码审核，以及历史工具的重新分发事项，见 [licenses/RELEASE-CHECKLIST.md](../licenses/RELEASE-CHECKLIST.md)。

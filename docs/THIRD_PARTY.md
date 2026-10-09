@@ -8,28 +8,22 @@
 - FFmpeg / ffprobe：应采用来源可追溯的 Windows x64 构建。运行 `-version`、`-L`、`-buildconf` 查看版本与构建选项。
 - WebView2：使用 Microsoft 官方引导器/运行时与 Tauri 支持的分发模式。
 
-本仓库不托管上述 EXE。Tauri 安装包会将本地 bin 中三个 EXE 打包；成功打包不代表完成第三方许可审核。
+本仓库不托管上述 EXE，GUI 安装包也不包含这些第三方二进制。用户首次启动后可在 GUI 中选择并从受支持的上游地址下载工具；第三方程序的许可证和使用条件由相应上游项目或构建供应方负责。
 
-## 2026-10-06 本地构建记录
+## 上游与下载策略
 
-以下哈希由本次使用的文件直接计算。版本、供应方信息来自工具自身输出，**未完成官方来源、签名和下载链核验**。
+应用不再把 yt-dlp、FFmpeg 和 ffprobe 作为固定 EXE 写入安装包。首次启动时，用户选择“基础版”或“完整版”，应用通过 HTTPS 从配置的上游发布地址下载并安装到本机 `bin/`；“关于”页可以再次下载完整版。
 
-| 文件 | 版本 | 来源状态 | SHA-256 | 许可状态 |
-| --- | --- | --- | --- | --- |
-| yt-dlp.exe | 2026.08.19 | 本地 EXE 自报版本；原始下载 URL 尚未核实 | `66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a` | 单文件构建含其他组件，完整许可待审核 |
-| ffmpeg.exe | 7.1.1-full_build-www.gyan.dev | 二进制自报 Gyan 构建；原始下载 URL 尚未核实 | `b1383f5d07470d503edecdaee4bddc5891e986e916a698299b357f79cfe445fd` | 本地 `-L` 自报 GPL v3 or later |
-| ffprobe.exe | 7.1.1-full_build-www.gyan.dev | 同一 FFmpeg 构建标识，未核实来源链 | `012bddded3cbc5204055210d7ff4f0b3f7521bca441a694939856d01909f5756` | 构建启用 GPL / version3；完整分发材料待补 |
+- yt-dlp 上游：[yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp)。
+- FFmpeg 上游：[ffmpeg.org](https://ffmpeg.org/)。
+- Windows 二进制构建供应方及其许可材料必须随版本记录；具体地址、版本和构建选项应以实际下载结果为准。
+- 基础版和完整版必须分别记录其构建类型、适用许可证、第三方通知和对应源码入口。
 
-本地 FFmpeg 配置含 `--enable-gpl` 和 `--enable-version3`，且 `ffmpeg.exe -L` 显示 GPL v3 or later。当前安装包仅带有本项目 LICENSE，**尚未补齐完整的第三方许可、对应源码及构建资料；公开发布不代表已完成第三方合规审核**。
+发布说明不列出安装包或工具的 SHA-256。哈希可以作为维护者本地排查和缓存校验手段，但不是用户必须阅读的发布信息，也不能替代来源、许可证或对应源码材料。
 
-正式发布前，应核实准确下载 URL、各二进制对应的许可证和通知文件、对应源码/源码获取与构建信息，并依据实际分发方式完成必要审核。不要仅用本项目 MIT 许可覆盖这些工具。参考 FFmpeg 官方 `License and Legal Considerations` 页面；本文不是法律意见。
-
-## 重新记录
-
-在 frontend 目录执行：
+开发调试时仍可使用以下命令检查本地工具：
 
 ```powershell
-Get-FileHash ../bin/*.exe -Algorithm SHA256
 ../bin/yt-dlp.exe --version
 ../bin/ffmpeg.exe -version
 ../bin/ffmpeg.exe -L
@@ -37,4 +31,30 @@ Get-FileHash ../bin/*.exe -Algorithm SHA256
 ../bin/ffprobe.exe -version
 ```
 
-更换 bin 内容后必须重新构建并更新此表。哈希仅标识文件，不等于来源可信或许可合规证明。
+## 随包说明
+
+项目将根目录 `licenses/` 作为 Tauri resource 一起打包到安装目录，内容包括：
+
+- 面向用户的 `NOTICE.txt`；
+- 上游项目和构建供应方链接；
+- 已收集的第三方许可证与来源说明。旧 yt-dlp / Gyan FFmpeg 材料明确标为历史工具记录，不代表运行时下载版本。
+
+这些文件是来源和使用提示，不表示安装包包含 yt-dlp 或 FFmpeg，也不提供 yt-dlp / FFmpeg 的完整对应源码归档。GUI 的 MPL 精确版本源码另保存在 `licenses/gui/sources/`。
+
+这不等于自动完成全部法律审核。如果更换下载供应方、工具版本或构建类型，必须重新更新版本、来源和许可证提示。应用下载并校验工具后，会把实际安装记录写入用户本机的 `bin/licenses/installed-tools.json`。
+
+## GUI 依赖与 WebView2 通知
+
+已补充精确版本的 MPL 源码归档、复合许可与 Unicode 通知，以及 Microsoft 官网 Runtime 原始条款，均随 `licenses/gui/` 分发。NSIS 许可页和“关于”页提供版权与条款告知；工具安装后仍可独立访问 GUI 通知。
+
+number-precision 已替换为项目自有 MIT 实现（`frontend/vendor/number-precision`），不再依赖上游 1.6.0。上游 1.6.0 缺少完整版权通知，项目不凭 npm 作者字段补写，详见 [GUI 许可记录](../licenses/gui/README.md)。
+
+## 发布检查
+
+具体审核动作和当前缺口见 [许可审核清单](../licenses/RELEASE-CHECKLIST.md)。这是对交付材料与适用条件的核对，不是收费认证。
+
+- 依赖组合条款和 WebView2 通知已记录在 `licenses/gui/`。
+- 无 Runtime 干净系统的 WebView2 验收尚未执行，见 [readme.md](../readme.md#todo)。
+- 静默部署告知与确认见 [SILENT-DEPLOYMENT.md](SILENT-DEPLOYMENT.md)。
+
+在 `frontend/` 目录运行 `npm run licenses:check` 检查随包说明材料。工具下载成功不等于 GUI 代替上游承担第三方项目的许可证义务；发布时应保留清楚的上游链接和用户提示。

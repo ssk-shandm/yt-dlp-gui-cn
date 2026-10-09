@@ -1,7 +1,7 @@
 <template>
   <BOX title="DIY下载" class="box">
     <div class="box-inner">
-      <div class="select-row">
+      <div class="select-row" data-guide="video-audio-quality">
         <div class="select-item">
           <label class="label-sm">视频</label>
           <DiySelect
@@ -24,11 +24,12 @@
           <label class="label-sm">格式</label>
           <DiySelect
             v-model="selectedContainerFormat"
+            data-guide="container-format"
             :options="containerFormatOptions"
             class="select-sm"
           />
         </div>
-        <BBB class="btn-download" @click="handleDownload">下载</BBB>
+        <BBB class="btn-download" data-guide="custom-download" @click="handleDownload">下载</BBB>
       </div>
       <p class="warning-text">此方式可能占用极高cpu</p>
     </div>

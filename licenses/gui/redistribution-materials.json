@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-09T05:37:06.952Z",
+  "inventorySha256": "1e90cbedd96e541551a86b8c602bad32b671bc0dfbc4fc8d520237e393122115",
+  "sources": [
+    {
+      "id": "cargo:brotli@9.0.0",
+      "license": "BSD-3-Clause AND MIT",
+      "file": "gui/sources/brotli-9.0.0.crate",
+      "sha256": "f8b851b75c23ca7873623d612fe49bd1989aeb03d08fb9432187eb253d3d4c6b",
+      "source": "https://crates.io/api/v1/crates/brotli/9.0.0/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 76
+    },
+    {
+      "id": "cargo:cssparser-macros@0.7.1",
+      "license": "MPL-2.0",
+      "file": "gui/sources/cssparser-macros-0.7.1.crate",
+      "sha256": "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a",
+      "source": "https://crates.io/api/v1/crates/cssparser-macros/0.7.1/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 6
+    },
+    {
+      "id": "cargo:cssparser@0.37.0",
+      "license": "MPL-2.0",
+      "file": "gui/sources/cssparser-0.37.0.crate",
+      "sha256": "8c9cdaae01d5ed7882b04d795e7f752f46ff52d2fa3b50a20d28c464510bba98",
+      "source": "https://crates.io/api/v1/crates/cssparser/0.37.0/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 24
+    },
+    {
+      "id": "cargo:dpi@0.1.2",
+      "license": "Apache-2.0 AND MIT",
+      "file": "gui/sources/dpi-0.1.2.crate",
+      "sha256": "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76",
+      "source": "https://crates.io/api/v1/crates/dpi/0.1.2/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 10
+    },
+    {
+      "id": "cargo:dtoa-short@0.3.5",
+      "license": "MPL-2.0",
+      "file": "gui/sources/dtoa-short-0.3.5.crate",
+      "sha256": "cd1511a7b6a56299bd043a9c167a6d2bfb37bf84a6dfceaba651168adfb43c87",
+      "source": "https://crates.io/api/v1/crates/dtoa-short/0.3.5/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 6
+    },
+    {
+      "id": "cargo:option-ext@0.2.0",
+      "license": "MPL-2.0",
+      "file": "gui/sources/option-ext-0.2.0.crate",
+      "sha256": "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d",
+      "source": "https://crates.io/api/v1/crates/option-ext/0.2.0/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 8
+    },
+    {
+      "id": "cargo:ring@0.17.14",
+      "license": "Apache-2.0 AND ISC",
+      "file": "gui/sources/ring-0.17.14.crate",
+      "sha256": "a4689e6c2294d81e88dc6261c768b63bc4fcdb852be6d1352498b114f61383b7",
+      "source": "https://crates.io/api/v1/crates/ring/0.17.14/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 391
+    },
+    {
+      "id": "cargo:selectors@0.38.0",
+      "license": "MPL-2.0",
+      "file": "gui/sources/selectors-0.38.0.crate",
+      "sha256": "8adfa1c298912827b8a28b223b3b874357397ae706e6190acd9bf28cee99114d",
+      "source": "https://crates.io/api/v1/crates/selectors/0.38.0/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 22
+    },
+    {
+      "id": "cargo:unicode-ident@1.0.26",
+      "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "file": "gui/sources/unicode-ident-1.0.26.crate",
+      "sha256": "d245f478577f809a851594d02313b640fb437e0bb33866753cff937863096954",
+      "source": "https://crates.io/api/v1/crates/unicode-ident/1.0.26/download",
+      "modification": "No local changes: published archive files verified byte-for-byte against installed crate",
+      "verifiedFiles": 26
+    }
+  ],
+  "terms": [
+    {
+      "kind": "distributor",
+      "source": "https://developer.microsoft.com/microsoft-edge/api/eula/webview2?locale=en-us",
+      "materials": [
+        {
+          "file": "gui/webview2/runtime-distributor-terms.json",
+          "sha256": "e15b53f476b66f8335c18436998256dc9862b210242a8e4c7f7e14d2de53591d"
+        },
+        {
+          "file": "gui/webview2/runtime-distributor-terms.html",
+          "sha256": "ce6fa83e57c338256e5cabe9e1eea83076c271b0fdb253408213eeb08859d7b6"
+        },
+        {
+          "file": "gui/webview2/runtime-distributor-terms.txt",
+          "sha256": "2a09c2dd24311fd1636583c87f206b50790760fa33ba63265c458e9ce26bb49f"
+        }
+      ]
+    },
+    {
+      "kind": "consumer",
+      "source": "https://developer.microsoft.com/microsoft-edge/api/eula/webview2?locale=en-us&consumer=true",
+      "materials": [
+        {
+          "file": "gui/webview2/runtime-consumer-terms.json",
+          "sha256": "afbdf3f7281f675fde202b5e58f2883889fdf9bd586c54eaa5aa5e0deff4819a"
+        },
+        {
+          "file": "gui/webview2/runtime-consumer-terms.html",
+          "sha256": "0f094b4a9bd140fef99fa8cba17e76984b98453bb2cad126587b8a5172b47d7c"
+        },
+        {
+          "file": "gui/webview2/runtime-consumer-terms.txt",
+          "sha256": "175c464fd5b340065324631851fc0c8dd74711d10e559c0c6448073e145005c5"
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "file": "gui/INSTALLER-NOTICE.txt",
+      "sha256": "0aac800b86430a0869b79361bc89758205e0ad93a5cf81b567e63f8bbd4e99fb"
+    },
+    {
+      "file": "gui/SOURCE-NOTICE.txt",
+      "sha256": "54bc9ff8741645bf1123156cacf5ceddcf8b6d941d30f4ef7c14f72cd1716526"
+    },
+    {
+      "file": "gui/review.json",
+      "sha256": "2a0b2ba5691edd605b7b10e09d9eb77bdd3b480cab8cce67f26cc1532daf5c72"
+    }
+  ]
+}

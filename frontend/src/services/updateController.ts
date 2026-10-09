@@ -8,6 +8,7 @@ export interface UpdateInfo {
   releaseNotes?: string | null
   installerUrl?: string | null
   installerName?: string | null
+  installerSha256?: string | null
 }
 export interface UpdateDependencies {
   isDesktop: () => boolean
@@ -32,6 +33,14 @@ export function createUpdateController(deps: UpdateDependencies) {
   let initialized = false
   let pendingUpdate: UpdateInfo | null = null
   let automatic = false
+  let latestMessageTimer: ReturnType<typeof setTimeout> | undefined
+
+  function clearLatestMessageTimer() {
+    if (latestMessageTimer) {
+      clearTimeout(latestMessageTimer)
+      latestMessageTimer = undefined
+    }
+  }
 
   function initializePreference() {
     if (initialized) return
@@ -94,6 +103,7 @@ export function createUpdateController(deps: UpdateDependencies) {
       return
     }
     automatic = source === 'automatic'
+    clearLatestMessageTimer()
     busy = true
     state.phase = 'checking'
     state.progress = null
@@ -104,6 +114,13 @@ export function createUpdateController(deps: UpdateDependencies) {
       if (!update.available) {
         state.phase = 'latest'
         state.message = '当前已是最新正式版本。'
+        latestMessageTimer = setTimeout(() => {
+          if (state.phase === 'latest' && state.message === '当前已是最新正式版本。') {
+            state.phase = 'idle'
+            state.message = ''
+          }
+          latestMessageTimer = undefined
+        }, 3000)
       } else if (!automatic || state.autoCheck) {
         pendingUpdate = update
       } else {

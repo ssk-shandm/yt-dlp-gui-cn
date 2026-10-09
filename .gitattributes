@@ -4,3 +4,5 @@ Dockerfile -linguist-detectable
 *.html -linguist-detectable
 *.css -linguist-detectable
 *.js -linguist-detectable
+# Preserve exact upstream notice/source bytes and the recorded material hashes.
+/licenses/** -text

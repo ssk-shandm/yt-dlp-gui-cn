@@ -7,6 +7,7 @@ import { useTaskStore } from '../src/stores/taskStore.ts'
 import { useTerminalStore } from '../src/stores/terminalStore.ts'
 import { useSettingsStore } from '../src/stores/settingsStore.ts'
 import { useUrlStore } from '../src/stores/urlStore.ts'
+import { createToolController } from '../src/services/toolController.ts'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 test('task events update one task rather than append duplicate rows', () => {
@@ -39,10 +40,110 @@ test('settings use string retries and can hydrate from native configuration', ()
   setActivePinia(createPinia())
   const store = useSettingsStore()
   assert.equal(store.retryTimes, '10')
+  assert.equal(store.concurrentFragments, 8)
   assert.equal(store.initialized, false)
+  assert.equal(store.proxyEnabled, false)
+  assert.equal(store.proxyUrl, 'http://127.0.0.1:7890')
   store.applySettings({ downloadPath: 'C:\\测试 下载', retryTimes: 'infinite' })
   assert.equal(store.retryTimes, 'infinite')
   assert.match(store.downloadPath, /测试/)
+  assert.equal(store.concurrentFragments, 8)
+  store.applySettings({ downloadPath: store.downloadPath, retryTimes: '3', concurrentFragments: 4 })
+  assert.equal(store.concurrentFragments, 4)
+  store.applySettings({ downloadPath: store.downloadPath, retryTimes: '3', concurrentFragments: 4, proxyEnabled: true, proxyUrl: 'socks5://127.0.0.1:1080' })
+  assert.equal(store.proxyEnabled, true)
+  assert.equal(store.proxyUrl, 'socks5://127.0.0.1:1080')
+})
+test('tool setup opens on first run, blocks active tasks, and reports failed installs', async () => {
+  let installs = 0
+  let hasActiveTasks = true
+  const controller = createToolController({
+    isDesktop: () => true,
+    activeTasks: () => hasActiveTasks,
+    getStatus: async () => ({ installed: false, profile: null, binPath: 'bin', ytdlpVersion: null, ffmpegVersion: null, ffprobeVersion: null, missing: [], error: null }),
+    install: async () => { installs++; throw new Error('网络失败') },
+    cancel: async () => {},
+  })
+  await controller.refresh(true)
+  assert.equal(controller.state.visible, true)
+  await controller.install('full')
+  assert.equal(installs, 0)
+  assert.match(controller.state.error, /任务/)
+  hasActiveTasks = false
+  await controller.install('full')
+  assert.equal(installs, 1)
+  assert.match(controller.state.error, /网络失败/)
+  assert.match(controller.state.message, /未成功/)
+})
+test('retry waits for the cancellation IPC and cannot receive a late cancel', async () => {
+  let rejectInstall, resolveCancel, installs = 0
+  const status = { installed: true, profile: 'basic', binPath: 'bin', missing: [], error: null }
+  const controller = createToolController({
+    isDesktop: () => true, activeTasks: () => false, getStatus: async () => status,
+    install: () => { installs++; return installs === 1 ? new Promise((_resolve, reject) => { rejectInstall = reject }) : Promise.resolve(status) },
+    cancel: () => new Promise(resolve => { resolveCancel = resolve }),
+  })
+  const first = controller.install('basic')
+  const cancel = controller.cancel()
+  await Promise.resolve()
+  rejectInstall(new Error('cancelled'))
+  await Promise.resolve()
+  await Promise.resolve()
+  assert.equal(controller.state.busy, true)
+  await controller.install('basic')
+  assert.equal(installs, 1)
+  resolveCancel()
+  await Promise.all([first, cancel])
+  assert.equal(controller.state.busy, false)
+  await controller.install('basic')
+  assert.equal(installs, 2)
+  assert.equal(controller.state.error, '')
+  assert.equal(controller.state.status.installed, true)
+})
+test('failed cancellation is handled and does not wedge tool installation', async () => {
+  let finish
+  const status = { installed: true, profile: 'basic', binPath: 'bin', missing: [], error: null }
+  const controller = createToolController({
+    isDesktop: () => true, activeTasks: () => false, getStatus: async () => status,
+    install: () => new Promise(resolve => { finish = resolve }),
+    cancel: () => { throw new Error('cancel IPC unavailable') },
+  })
+  const pending = controller.install()
+  await controller.cancel()
+  assert.match(controller.state.error, /IPC unavailable/)
+  assert.equal(controller.state.cancelling, false)
+  finish(status)
+  await pending
+  assert.equal(controller.state.busy, false)
+})
+test('tool transfer progress shows measured speed, ETA, and resets for a new asset', async (t) => {
+  let now = 1000
+  t.mock.method(Date, 'now', () => now)
+  let finish
+  const status = { installed: true, profile: 'basic', binPath: 'bin', ytdlpVersion: '1', ffmpegVersion: '1', ffprobeVersion: '1', missing: [], error: null }
+  const controller = createToolController({
+    isDesktop: () => true, activeTasks: () => false,
+    getStatus: async () => status,
+    install: () => new Promise(resolve => { finish = resolve }),
+    cancel: async () => {},
+  })
+  const pending = controller.install('basic')
+  const payload = { profile: 'basic', stage: 'ffmpeg.zip', downloaded: 0, total: 4 * 1024 * 1024, percent: 0 }
+  controller.progress(payload)
+  now += 1000
+  controller.progress({ ...payload, downloaded: 1024 * 1024, percent: 25 })
+  assert.equal(controller.state.speed, '1.00 MiB/s')
+  assert.equal(controller.state.remaining, '预计剩余 3 秒')
+  assert.match(controller.state.message, /1.0 \/ 4.0 MiB/)
+  controller.progress({ ...payload, profile: 'full', stage: 'ignored' })
+  assert.equal(controller.state.stage, 'ffmpeg.zip')
+  controller.progress({ ...payload, stage: '校验工具' })
+  assert.equal(controller.state.speed, '')
+  assert.equal(controller.state.remaining, '')
+  finish(status)
+  await pending
+  controller.progress({ ...payload, stage: 'ignored-after-install' })
+  assert.notEqual(controller.state.stage, 'ignored-after-install')
 })
 test('versions, NSIS configuration, resources and capabilities agree', () => {
   const config = JSON.parse(read('../src-tauri/tauri.conf.json'))
@@ -52,8 +153,10 @@ test('versions, NSIS configuration, resources and capabilities agree', () => {
   assert.match(cargo, new RegExp('version = "' + pkg.version.replaceAll('.', '\\.') + '"'))
   assert.deepEqual(config.bundle.targets, ['nsis'])
   assert.equal(config.bundle.windows.nsis.installMode, 'currentUser')
-  for (const name of ['yt-dlp.exe', 'ffmpeg.exe', 'ffprobe.exe'])
-    assert.equal(config.bundle.resources['../../bin/' + name], 'bin/' + name)
+  assert.equal(config.bundle.resources['../../bin/yt-dlp.exe'], undefined)
+  assert.equal(config.bundle.resources['../../bin/ffmpeg.exe'], undefined)
+  assert.equal(config.bundle.resources['../../bin/ffprobe.exe'], undefined)
+  assert.equal(config.bundle.resources['../../licenses'], 'licenses')
   assert.match(config.app.security.csp, /object-src 'none'/)
   const capability = JSON.parse(read('../src-tauri/capabilities/main.json'))
   assert.deepEqual(capability.permissions.slice(0, 2), ['core:default', 'dialog:allow-open'])
@@ -63,6 +166,9 @@ test('versions, NSIS configuration, resources and capabilities agree', () => {
       { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn' },
       { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn/releases' },
       { url: 'https://github.com/ssk-shandm/yt-dlp-gui-cn/blob/main/LICENSE' },
+      { url: 'https://github.com/yt-dlp/yt-dlp' },
+      { url: 'https://ffmpeg.org/' },
+      { url: 'https://github.com/BtbN/FFmpeg-Builds' },
     ],
   })
   assert.equal(capability.permissions.length, 3)

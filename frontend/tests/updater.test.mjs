@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { parseRelease, normalizeSha256, compareVersions } from '../src/services/updateRelease.ts'
 import { createUpdateController } from '../src/services/updateController.ts'
 function fixture(overrides = {}) {
   const calls = []
@@ -100,6 +101,8 @@ test('release updates use the GitHub Release NSIS installer directly', () => {
   const frontend = read('../src/services/updater.ts')
   assert.match(frontend, /api\.github\.com\/repos\/ssk-shandm\/yt-dlp-gui-cn\/releases\/latest/)
   assert.match(frontend, /fetch\(GITHUB_API_URL/)
+  assert.match(frontend, /isTauri\(\)[\s\S]*?invoke<ReleaseData>\('fetch_latest_release'\)/)
+  assert.match(frontend, /await initializeDesktop\(\)/)
   assert.match(rust, /ends_with\("-setup\.exe"\)/)
   assert.match(rust, /download_and_install_update/)
   assert.match(rust, /update-download-progress/)
@@ -127,4 +130,46 @@ test('update downloader honors system trust/proxies without disabling TLS verifi
   assert.match(rust, /update_network_error\("更新下载失败"/)
   assert.match(rust, /update_network_error\("读取更新数据失败"/)
   assert.doesNotMatch(rust, /danger_accept_invalid_(?:certs|hostnames)/)
+})
+
+test('release parser selects x64 NSIS and carries the GitHub SHA-256 into installation', async () => {
+  const digest = 'AB'.repeat(32)
+  const update = parseRelease({ tag_name: 'v2.0.2', assets: [
+    { name: 'app_2.0.2_arm64-setup.exe', digest: 'bad' },
+    null,
+    { name: 'app_2.0.2_x64-setup.exe', browser_download_url: 'https://github.com/project/asset', digest: 'sha256:' + digest },
+  ] }, '2.0.1', 'releases')
+  assert.equal(update.installerName, 'app_2.0.2_x64-setup.exe')
+  assert.equal(update.installerSha256, digest.toLowerCase())
+  let installed
+  const { controller } = fixture({ check: async () => update, install: async (value) => { installed = value } })
+  await controller.checkAndInstall()
+  assert.equal(installed.installerSha256, digest.toLowerCase())
+})
+
+test('missing or invalid digest never silently bypasses installer verification', async () => {
+  for (const digest of [undefined, null, '', 'sha256:bad', 'sha512:' + 'a'.repeat(64), 'a'.repeat(64), 123]) {
+    assert.throws(() => normalizeSha256(digest), /SHA-256/)
+    const { controller, calls } = fixture({ check: async () => parseRelease({
+      tag_name: 'v2.0.2', assets: [{ name: 'app_x64-setup.exe', digest }],
+    }, '2.0.1', 'releases') })
+    await controller.checkAndInstall()
+    assert.equal(controller.state.phase, 'error')
+    assert.ok(!calls.includes('install'))
+  }
+})
+
+test('current releases need no digest; version comparison handles multi-digit parts', () => {
+  assert.deepEqual(parseRelease({ tag_name: 'v2.0.1' }, '2.0.1', 'releases'), { available: false, version: '2.0.1' })
+  assert.ok(compareVersions('2.10.0', '2.9.9') > 0)
+  assert.throws(() => parseRelease({ tag_name: 'broken' }, '2.0.1', 'releases'), /版本号/)
+  assert.throws(() => parseRelease({ tag_name: 'v2.0.2-rc.1' }, '2.0.1', 'releases'), /版本号/)
+})
+
+test('native updater validates before locking tasks and signals install only after launch', () => {
+  const rust = readFileSync(new URL('../src-tauri/src/updater.rs', import.meta.url), 'utf8')
+  assert.ok(rust.indexOf('let expected_sha256 = validate_update_sha256') < rust.indexOf('tasks.begin_update()?'))
+  assert.ok(rust.indexOf('verify_update_sha256(hash, expected_sha256)?') < rust.indexOf('launch_installer(&target'))
+  assert.ok(rust.indexOf('launch_installer(&target') < rust.indexOf('"update-install-starting"'))
+  assert.match(rust, /PartialDownload\(partial\.clone\(\)\)/)
 })

@@ -1,0 +1,219 @@
+{
+  "checkedAt": "2026-10-08",
+  "entries": [
+    {
+      "id": "npm:@arco-design/web-vue@2.58.0",
+      "revision": "5a707cc60c1130d8dae3aefb2e93616541952a66",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__arco-design_web-vue_2.58.0-LICENSE",
+          "url": "https://raw.githubusercontent.com/arco-design/arco-design-vue/5a707cc60c1130d8dae3aefb2e93616541952a66/LICENSE",
+          "sha256": "41f929ce996762fbbfc9760266c45558e9f48f6179b2c2149e6eca6d1efc9123"
+        }
+      ]
+    },
+    {
+      "id": "npm:@humanfs/types@0.15.0",
+      "revision": "85069f193cbacc371c3beb649ce746f8c5a493be",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__humanfs_types_0.15.0-packages_core_LICENSE",
+          "url": "https://raw.githubusercontent.com/humanwhocodes/humanfs/85069f193cbacc371c3beb649ce746f8c5a493be/packages/core/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ]
+    },
+    {
+      "id": "npm:@pkgr/core@0.3.6",
+      "revision": "6e1c7260486c7251e61404176a293986229a5869",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__pkgr_core_0.3.6-LICENSE",
+          "url": "https://raw.githubusercontent.com/un-ts/pkgr/6e1c7260486c7251e61404176a293986229a5869/LICENSE",
+          "sha256": "82a222189ab9764f8ec1c052b9661f2c9f12db52387312acbf73b2be5b8b6c32"
+        }
+      ]
+    },
+    {
+      "id": "npm:@rolldown/binding-win32-x64-msvc@1.2.12",
+      "revision": "npm:rolldown@1.2.12",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__rolldown_binding-win32-x64-msvc_1.2.12-LICENSE",
+          "sourcePackage": "rolldown@1.2.12",
+          "sourcePath": "LICENSE",
+          "sha256": "23ecfff35a5a2e80d92142f75228912c3b1abc4b5a8337a821ff4397e2f9f734"
+        },
+        {
+          "file": "gui/supplemental/npm__rolldown_binding-win32-x64-msvc_1.2.12-THIRD-PARTY-LICENSE",
+          "sourcePackage": "rolldown@1.2.12",
+          "sourcePath": "THIRD-PARTY-LICENSE",
+          "sha256": "a877291d800ed43692f3f9ae09d8e01cc6f7293ad39d43896059c188ffbb8b7c"
+        }
+      ]
+    },
+    {
+      "id": "npm:@tauri-apps/cli-win32-x64-msvc@2.12.1",
+      "revision": "npm:@tauri-apps/cli@2.12.1",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__tauri-apps_cli-win32-x64-msvc_2.12.1-LICENSE-APACHE-2.0",
+          "sourcePackage": "@tauri-apps/cli@2.12.1",
+          "sourcePath": "LICENSE-APACHE-2.0",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "file": "gui/supplemental/npm__tauri-apps_cli-win32-x64-msvc_2.12.1-LICENSE-MIT",
+          "sourcePackage": "@tauri-apps/cli@2.12.1",
+          "sourcePath": "LICENSE-MIT",
+          "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d"
+        }
+      ]
+    },
+    {
+      "id": "npm:@vue/devtools-api@6.6.4",
+      "revision": "df6ab6bb7791a7a525a97990de73b3ea5e9a1941",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm__vue_devtools-api_6.6.4-LICENSE",
+          "url": "https://raw.githubusercontent.com/vuejs/vue-devtools/df6ab6bb7791a7a525a97990de73b3ea5e9a1941/LICENSE",
+          "sha256": "050bbca6960784db52ff387271bf2ecc5cbed7cf8581b415d528a6ecb6585015"
+        }
+      ]
+    },
+    {
+      "id": "npm:boolbase@1.0.0",
+      "revision": "be0bcd8a4e917a0a5895e95b523fbbed05a64871",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm_boolbase_1.0.0-LICENSE",
+          "url": "https://raw.githubusercontent.com/fb55/boolbase/be0bcd8a4e917a0a5895e95b523fbbed05a64871/LICENSE",
+          "sha256": "cdf4d87ae0a6c160227263bf4e39a0a10e30e89ae7256e0f7ac7bde0836552c6"
+        }
+      ]
+    },
+    {
+      "id": "npm:esrecurse@4.3.0",
+      "revision": "npm:esrecurse@4.3.0",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm_esrecurse_4.3.0-README-NOTICE.md",
+          "sourcePackage": "esrecurse@4.3.0",
+          "sourcePath": "README.md",
+          "sha256": "a7007c78c9d9da690ef6cdb0e7a3427d05832edb00abd1f5a9882700d73be4ad"
+        }
+      ]
+    },
+    {
+      "id": "npm:imurmurhash@0.1.4",
+      "revision": "npm:imurmurhash@0.1.4",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm_imurmurhash_0.1.4-README-NOTICE.md",
+          "sourcePackage": "imurmurhash@0.1.4",
+          "sourcePath": "README.md",
+          "sha256": "4491517f7deb68d0b2a3bb590e785e276a60f12448447a9650d0bd50161a101c"
+        }
+      ]
+    },
+    {
+      "id": "npm:keyv@4.5.4",
+      "revision": "e4d608eccdfc094b80f6e9545c5307ee0810af72",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm_keyv_4.5.4-LICENSE",
+          "url": "https://raw.githubusercontent.com/jaredwray/keyv/e4d608eccdfc094b80f6e9545c5307ee0810af72/LICENSE",
+          "sha256": "1f7dca26d2d328c3dbb9b6fe3b15ec3cda08ffe2288e47b73d617454b256f959"
+        }
+      ]
+    },
+    {
+      "id": "npm:natural-compare@1.4.0",
+      "revision": "Published 1.4.0 README links to author MIT license; author URL fetched over HTTPS",
+      "materials": [
+        {
+          "file": "gui/supplemental/npm_natural-compare_1.4.0-AUTHOR-LICENSE.txt",
+          "url": "https://lauri.rooden.ee/mit-license.txt",
+          "sha256": "353fe762ba595bf1ffe786acf0f5984bb164205901d74f258af195fc8228c67d"
+        }
+      ]
+    },
+    {
+      "id": "cargo:alloc-stdlib@0.3.0",
+      "revision": "0a81fd6928ea3b33c8cd484aa4575d50ffb98012",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_alloc-stdlib_0.3.0-LICENSE",
+          "url": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE",
+          "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae"
+        }
+      ]
+    },
+    {
+      "id": "cargo:defmt-parser@1.0.0",
+      "revision": "4a8cdb44891ed57b8ff5a023b6bec7137c48708f",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_defmt-parser_1.0.0-LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-MIT",
+          "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50"
+        }
+      ]
+    },
+    {
+      "id": "cargo:selectors@0.38.0",
+      "revision": "Published crate declares MPL-2.0; license authority text",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_selectors_0.38.0-LICENSE-MPL-2.0.txt",
+          "url": "https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt",
+          "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+        }
+      ]
+    },
+    {
+      "id": "cargo:tauri-plugin@2.7.1",
+      "revision": "30da1fd6e17de6107ecc850c95dfb16b5729f2dd",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_tauri-plugin_2.7.1-LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/tauri-apps/tauri/30da1fd6e17de6107ecc850c95dfb16b5729f2dd/LICENSE-MIT",
+          "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d"
+        }
+      ]
+    },
+    {
+      "id": "cargo:webview2-com@0.39.1",
+      "revision": "edc2caf886175ccaebe86078c9cfe1ae2a187328",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_webview2-com_0.39.1-LICENSE",
+          "url": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73"
+        }
+      ]
+    },
+    {
+      "id": "cargo:webview2-com-macros@0.8.1",
+      "revision": "dffa41a8a46d3f5565eefbff2de57d38d399f158",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_webview2-com-macros_0.8.1-LICENSE",
+          "url": "https://raw.githubusercontent.com/wravery/webview2-rs/dffa41a8a46d3f5565eefbff2de57d38d399f158/LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73"
+        }
+      ]
+    },
+    {
+      "id": "cargo:webview2-com-sys@0.39.1",
+      "revision": "edc2caf886175ccaebe86078c9cfe1ae2a187328",
+      "materials": [
+        {
+          "file": "gui/supplemental/cargo_webview2-com-sys_0.39.1-LICENSE",
+          "url": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73"
+        }
+      ]
+    }
+  ]
+}
