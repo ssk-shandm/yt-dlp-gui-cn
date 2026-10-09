@@ -1,8 +1,12 @@
-# Exclude small supporting languages from GitHub Linguist statistics.
-# Keep these files tracked and usable; this only affects language detection.
-Dockerfile -linguist-detectable
-*.html -linguist-detectable
-*.css -linguist-detectable
-*.js -linguist-detectable
-# Preserve exact upstream notice/source bytes and the recorded material hashes.
-/licenses/** -text
+# GitHub Linguist: count only Rust, JavaScript and Vue in language statistics.
+# This affects statistics only; other source files remain tracked and usable.
+* -linguist-detectable
+*.rs linguist-detectable
+*.js linguist-detectable
+*.mjs linguist-detectable
+*.cjs linguist-detectable
+*.vue linguist-detectable
+
+# Third-party notices, source excerpts and archives are redistribution materials,
+# not application code. Preserve their exact bytes and exclude them from stats.
+/licenses/** linguist-vendored -linguist-detectable -text
